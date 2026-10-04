@@ -1,0 +1,23 @@
+{
+  "name": "themailtell",
+  "version": "0.1.0",
+  "description": "email arrangement detection: signals and evidence, not verdicts",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "sync:lists": "node scripts/sync-disposable-list.mjs",
+    "eval": "npm run build && node dist/src/eval/run-eval.js",
+    "start": "npm run build && node dist/src/eval/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

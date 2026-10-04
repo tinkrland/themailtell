@@ -4,8 +4,10 @@ a standalone email-detection component for applications that need to understand
 whether an address appears to use a dedicated mailbox, an alias, a forwarding
 service, a masked relay, or a disposable service.
 
-this repository currently contains the design brief only. no detector, hosted
-api, provider integration or accuracy claim is implemented here.
+this repository contains the design brief and a reference implementation of
+the classification core. it makes no accuracy claim; the seed provider table
+and the fixture evaluation corpus both require verified research before any
+production use. see [the implementation notes](docs/implementation.md).
 
 ## the problem
 
@@ -70,3 +72,4 @@ prove that one address corresponds to one unique human.
 
 see [the detection contract](docs/detection-contract.md) for evidence boundaries,
 the proposed separation of responsibilities, and the required evaluation cases.
+see [the implementation notes](docs/implementation.md) for how the core is built.
