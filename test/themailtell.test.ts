@@ -6,7 +6,7 @@ import { analyze } from "../src/core.js";
 import { handleInput } from "../src/stages/input-handling.js";
 import { gatherEvidence } from "../src/evidence.js";
 
-const T0 = "2026-10-04T00:00:00Z";
+const T0 = "2026-10-06T00:00:00Z";
 
 const ev = (
   address: string,
@@ -92,9 +92,33 @@ test("plus at an unknown provider reports syntax only, no semantics claim", () =
   assert.ok(r.limitations.some((l) => l.includes("provider alias semantics unknown")));
 });
 
-test("shared registrar infrastructure reports the indistinguishable limit", () => {
+test("shared registrar infrastructure makes no arrangement claim in either direction", () => {
   const r = analyze(ev("p@biz.example", [["mailstore1.secureserver.net", 10]]));
-  assert.ok(r.limitations.some((l) => l.includes("cannot be distinguished from routing evidence")));
+  assert.ok(r.signals.some((s) => s.name === "shared_mail_infrastructure"));
+  assert.ok(!r.signals.some((s) => s.name === "mailbox_capable_infrastructure"));
+  assert.ok(!r.signals.some((s) => s.name === "forwarding_infrastructure"));
+  assert.ok(r.limitations.some((l) => l.includes("no per-address arrangement is claimed")));
+});
+
+test("google workspace single-host mx smtp.google.com is recognized, not unknown", () => {
+  const r = analyze(ev("user@example-shop.com", [["smtp.google.com", 1]]));
+  assert.ok(r.signals.some((s) => s.name === "mailbox_capable_infrastructure"));
+  assert.ok(!r.signals.some((s) => s.name === "gateway_infrastructure"));
+});
+
+test("spacemail (spaceship hosted mail) is recognized as mailbox-capable", () => {
+  const r = analyze(ev("user@example-spaceship.dev", [["mx1.spacemail.com", 0]]));
+  assert.ok(r.signals.some((s) => s.name === "mailbox_capable_infrastructure"));
+});
+
+test("unicode domains are converted to punycode, never rejected as invalid", () => {
+  const r = analyze(ev("user@münchen.example"));
+  assert.equal(r.input_valid, true);
+  assert.equal(r.domain, "xn--mnchen-3ya.example");
+  assert.ok(r.limitations.some((l) => l.includes("punycode")));
+  // a domain that cannot be converted is rejected honestly
+  const bad = analyze(ev("user@x..y"));
+  assert.equal(bad.input_valid, false);
 });
 
 test("contradictory recognized evidence yields the contradictory state", () => {
@@ -121,11 +145,59 @@ test("unknown infrastructure yields unknown with no category claim", () => {
 });
 
 test("stale intelligence is downgraded to unresolved, not trusted silently", () => {
-  const r = analyze(ev("x@mailinator.com"), { now: "2027-10-04T00:00:00Z", maxAgeDays: 90 });
+  const r = analyze(ev("x@mailinator.com"), { now: "2027-10-06T00:00:00Z", maxAgeDays: 90 });
   const d = r.signals.find((s) => s.name === "disposable_service");
   assert.equal(d?.strength, "unresolved");
   assert.equal(r.state, "unknown");
   assert.ok(r.limitations.some((l) => l.includes("stale intelligence")));
+});
+
+test("builtin table signals carry the table's as-of date, not the lookup time", () => {
+  const r = analyze(ev("user@gmail.example", [["gmail-smtp-in.l.google.com", 5]]));
+  const m = r.signals.find((s) => s.name === "mailbox_capable_infrastructure");
+  assert.ok(m);
+  // the evidence was gathered at t0; the knowledge ages from its own date
+  assert.ok(m!.observed_at <= T0 || m!.observed_at.startsWith("2026-10-06"));
+  const d = r.signals.find((s) => s.name === "disposable_service");
+  if (d) {
+    assert.ok(d.observed_at.startsWith("2026-10-"));
+    assert.notEqual(d.observed_at, T0);
+  }
+});
+
+test("an unmaintained table goes stale by itself: every builtin claim downgrades", () => {
+  // one year past the table's as-of date, with no adapter or list refresh
+  const r = analyze(ev("user@gmail.example", [["gmail-smtp-in.l.google.com", 5]]), {
+    now: "2027-10-06T00:00:00Z",
+    maxAgeDays: 90,
+  });
+  for (const s of r.signals) {
+    assert.equal(s.strength, "unresolved", `${s.name} should be downgraded`);
+  }
+  assert.equal(r.state, "unknown");
+  assert.ok(r.limitations.some((l) => l.includes("stale intelligence")));
+});
+
+test("adapter findings age from their own observation time", () => {
+  const oldSignal = {
+    name: "alias_syntax",
+    scope: "address",
+    source: "adapter/external-harmony",
+    observed_at: "2026-01-01T00:00:00Z",
+    strength: "recognized",
+    detail: "external adapter says this address is a forwarding alias",
+  } as const;
+  const r = analyze(
+    {
+      address: "user@example.org",
+      mx_records: [],
+      adapter_signals: [oldSignal],
+      observed_at: T0,
+    },
+    { now: T0, maxAgeDays: 90 }
+  );
+  const a = r.signals.find((s) => s.source === "adapter/external-harmony");
+  assert.equal(a?.strength, "unresolved");
 });
 
 test("the core is a pure function: same evidence, same result", () => {

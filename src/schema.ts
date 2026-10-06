@@ -1,7 +1,7 @@
 // schema.ts — versioned result format.
 // required concepts, deliberately not invented probabilities.
 
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
 
 // the six signal kinds. each is independent evidence, never a verdict.
 export type SignalName =
@@ -10,6 +10,7 @@ export type SignalName =
   | "forwarding_infrastructure" // mx maps to a recognized forwarding-only service
   | "mailbox_capable_infrastructure" // mx maps to a service that hosts inboxes
   | "gateway_infrastructure" // mx maps to a recognized security gateway
+  | "shared_mail_infrastructure" // mx maps to infrastructure shared by forwarding and mailbox products; no arrangement claim
   | "alias_syntax"; // address-level syntax that may indicate an alias
 
 // what the signal is about, not what it proves.
@@ -29,7 +30,11 @@ export interface Signal {
   scope: SignalScope;
   // provenance: builtin table version, adapter name+version, or dns observation
   source: string;
-  // iso 8601. when the underlying evidence was observed
+  // iso 8601. when the underlying evidence was observed. for builtin-table
+  // signals this is the table's verification date and for community-list
+  // signals the snapshot date, so the knowledge itself ages; for dns
+  // observations and adapter findings it is the observation time; for
+  // syntax facts it is the evidence time of the address sighting.
   observed_at: string;
   strength: EvidenceStrength;
   detail: string;

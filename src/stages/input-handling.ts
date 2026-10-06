@@ -1,15 +1,26 @@
 // stage 1: input handling.
 // preserves the address. validates syntax with no product-specific acceptance
 // rules and never rewrites the local part: no plus-tag stripping, no dot
-// removal, no case folding. the domain is lowercased for dns purposes only.
+// removal, no case folding.
+//
+// domain policy: the domain is lowercased for dns purposes, and a unicode
+// domain is converted to its punycode (ascii) form, because dns matching
+// and the intelligence lists are ascii-only. this is a deliberate policy
+// choice: the domain is normalized (like lowercasing), the local part is
+// never rewritten. a domain that cannot be converted is rejected as invalid
+// rather than silently mangled. punycode conversion uses node:url's
+// domainToASCII (deterministic, offline); a browser build swaps this one
+// call for url.domainToASCII, which is the same whatwg algorithm.
 
 export interface InputHandle {
   valid: boolean;
   invalid_reason?: string;
   // verbatim local part, exactly as given
   local_part?: string;
-  // lowercased for dns lookups only
+  // lowercased (and punycoded, if the input was unicode) for dns lookups only
   domain?: string;
+  // true when a unicode domain was converted to its punycode form
+  domain_converted_to_ascii?: boolean;
   syntax_facts: {
     has_plus: boolean;
     has_dot_in_local_part: boolean;
@@ -19,6 +30,8 @@ export interface InputHandle {
 
 const MAX_ADDRESS = 254;
 const MAX_LOCAL = 64;
+import { domainToASCII } from "node:url";
+
 const LABEL_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
 
 export function handleInput(address: string): InputHandle {
@@ -46,7 +59,18 @@ export function handleInput(address: string): InputHandle {
     return { ...base, invalid_reason: "local part contains unsupported characters" };
   }
 
-  const domain = domainRaw.toLowerCase().replace(/\.$/, "");
+  let domain = domainRaw.toLowerCase().replace(/\.$/, "");
+  let converted = false;
+  // dns and the intelligence lists are ascii-only; convert idn to punycode.
+  // policy: normalize the domain like lowercasing, never the local part.
+  if (/[^a-z0-9.-]/.test(domain)) {
+    const ascii = domainToAscii(domain);
+    if (!ascii) {
+      return { ...base, invalid_reason: "non-ascii domain could not be converted to punycode" };
+    }
+    domain = ascii;
+    converted = true;
+  }
   if (domain.includes("..") || domain.startsWith(".") || domain.endsWith(".")) {
     return { ...base, invalid_reason: "domain has empty labels" };
   }
@@ -64,6 +88,7 @@ export function handleInput(address: string): InputHandle {
     valid: true,
     local_part: local,
     domain,
+    domain_converted_to_ascii: converted,
     syntax_facts: {
       has_plus: local.includes("+"),
       has_dot_in_local_part: local.includes("."),
@@ -74,4 +99,10 @@ export function handleInput(address: string): InputHandle {
 
 function isQuoted(local: string): boolean {
   return local.length >= 2 && local.startsWith('"') && local.endsWith('"');
+}
+
+// punycode conversion via the whatwg url algorithm as implemented by
+// node:url. deterministic and offline; see the domain policy note above.
+function domainToAscii(domain: string): string {
+  return domainToASCII(domain) ?? "";
 }

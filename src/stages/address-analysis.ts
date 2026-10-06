@@ -5,7 +5,7 @@
 
 import type { InputHandle } from "./input-handling.js";
 import type { Signal } from "../schema.js";
-import { PROVIDER_TABLE_VERSION } from "../providers.js";
+import { PROVIDER_TABLE_VERSION, PROVIDER_TABLE_AS_OF } from "../providers.js";
 
 export interface AddressOutcome {
   signals: Signal[];
@@ -30,7 +30,7 @@ export function addressAnalysis(
       name: "alias_syntax",
       scope: "address",
       source: "syntax-observation",
-      observed_at: observedAt,
+      observed_at: observedAt, // the sighting time; syntax does not age
       strength: "suggestive",
       detail:
         "local part contains a plus sign; it may be a tagging alias or a " +
@@ -44,7 +44,7 @@ export function addressAnalysis(
       name: "alias_syntax",
       scope: "provider_infrastructure",
       source: `builtin-table/${PROVIDER_TABLE_VERSION}`,
-      observed_at: observedAt,
+      observed_at: PROVIDER_TABLE_AS_OF,
       strength: "recognized",
       detail:
         `${p.provider} is known to treat a plus tag as a sub-address ` +

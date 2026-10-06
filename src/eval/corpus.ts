@@ -1,10 +1,16 @@
 // eval/corpus.ts — the evaluation corpus harness.
 // the contract wants authorized test addresses with known arrangements and
 // contrasting cases on the same provider, so success cannot be explained by
-// recognizing a brand. these seed cases use fixture evidence (recorded mx
-// sets) so the harness runs offline and deterministically; replace them
-// with your own authorized, verified addresses and live lookups as you
-// build the real corpus.
+// recognizing a brand.
+//
+// honest limitation: these seed cases use fixture evidence (recorded mx
+// sets) written by the same author as the provider tables, so they can
+// only prove internal consistency — fixtures agree with the tables by
+// construction. the errors that matter (like a shared-infrastructure
+// service being filed as forwarding, or a provider whose products changed)
+// are exactly the ones only real, authorized addresses with verified
+// arrangements can expose. put those in data/authorized-corpus.json
+// (gitignored) and the runner merges them automatically.
 
 import type { Evidence } from "../core.js";
 
@@ -32,7 +38,7 @@ export interface CorpusCase {
   expectations: Expectation;
 }
 
-const T0 = "2026-10-04T00:00:00Z";
+const T0 = "2026-10-06T00:00:00Z";
 
 function ev(address: string, mx?: Array<[string, number]>, dnsError?: string): Evidence {
   return {
@@ -92,6 +98,9 @@ export const CORPUS: CorpusCase[] = [
   {
     id: "custom-domain-same-registrar-hosted-mailbox",
     arrangement: "custom domain registered at same registrar, hosted mailboxes",
+    // contrast pair with custom-domain-porkbun-forwarding: same kind of
+    // registrar-registered custom domain, different mail arrangement, so
+    // the pass cannot come from recognizing the registrar
     scope: "provider_infrastructure",
     evidence: ev("hello@example-shop.com", [
       ["aspmx.l.google.com", 1],
@@ -188,9 +197,12 @@ export const CORPUS: CorpusCase[] = [
       ["smtp.secureserver.net", 20],
     ]),
     expectations: {
-      expect_signals: ["mailbox_capable_infrastructure"],
+      // shared infrastructure makes no arrangement claim in either
+      // direction: not "hosts inboxes", not "forwarding-only"
+      expect_signals: ["shared_mail_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure", "mailbox_capable_infrastructure"],
       expect_state: "signals_present",
-      expect_limitation: "cannot be distinguished from routing evidence",
+      expect_limitation: "no per-address arrangement is claimed",
     },
   },
   {
@@ -237,6 +249,33 @@ export const CORPUS: CorpusCase[] = [
     expectations: {
       expect_state: "unknown",
       expect_limitation: "no infrastructure category is claimed",
+    },
+  },
+  {
+    id: "google-workspace-single-host-mx",
+    arrangement: "google workspace using the single-host mx smtp.google.com",
+    scope: "provider_infrastructure",
+    evidence: ev("hello@example-workspace.com", [
+      ["smtp.google.com", 1],
+    ]),
+    expectations: {
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure", "gateway_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "spacemail-hosted",
+    arrangement: "custom domain on spaceship's spacemail hosted product",
+    scope: "provider_infrastructure",
+    evidence: ev("hello@example-spaceship.dev", [
+      ["mx1.spacemail.com", 0],
+      ["mx2.spacemail.com", 0],
+    ]),
+    expectations: {
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
     },
   },
 ];

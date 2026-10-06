@@ -53,8 +53,15 @@ export function analyze(
   const limitations: string[] = [];
   const signals: Signal[] = [];
 
+  if (input.domain_converted_to_ascii) {
+    limitations.push(
+      "domain was given in unicode and converted to its punycode form " +
+        "for dns matching; the local part was not touched"
+    );
+  }
+
   // stage 2: domain-level list intelligence
-  signals.push(...domainIntelligence(input.domain, observedAt));
+  signals.push(...domainIntelligence(input.domain));
 
   if (evidence.dns_error) {
     limitations.push(
@@ -64,7 +71,7 @@ export function analyze(
   }
 
   // stage 3: routing intelligence over the observed mx records
-  const routing = routingIntelligence(evidence.mx_records, observedAt);
+  const routing = routingIntelligence(evidence.mx_records);
   signals.push(...routing.signals);
   limitations.push(...routing.limitations);
 
