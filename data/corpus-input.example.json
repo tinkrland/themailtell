@@ -1,0 +1,68 @@
+[
+  {
+    "_example": true,
+    "id": "porkbun-forwarding",
+    "address": "contact@YOUR-DOMAIN-WITH-PORKBUN-FORWARDING.com",
+    "arrangement": "registrar-forwarding",
+    "ground_truth_source": "i own the domain; porkbun dashboard shows email forwarding, no hosted inbox",
+    "notes": "contrast pair with porkbun-hosted-mailbox"
+  },
+  {
+    "_example": true,
+    "id": "porkbun-hosted-mailbox",
+    "address": "hello@YOUR-DOMAIN-WITH-PORKBUN-HOSTED-INBOX.com",
+    "arrangement": "registrar-hosted-mailbox",
+    "ground_truth_source": "i own the domain; porkbun dashboard shows a hosted email inbox (trial is fine)",
+    "notes": "the case that tests whether fwd1/fwd2 are shared with hosted mail"
+  },
+  {
+    "_example": true,
+    "id": "porkbun-domain-google-workspace",
+    "address": "me@YOUR-PORKBUN-DOMAIN-ON-WORKSPACE.com",
+    "arrangement": "dedicated-mailbox",
+    "ground_truth_source": "i own the domain; registered at porkbun, MX set to google workspace"
+  },
+  {
+    "_example": true,
+    "id": "spaceship-forwarding",
+    "address": "info@YOUR-DOMAIN-WITH-SPACESHIP-FORWARDING.com",
+    "arrangement": "registrar-forwarding",
+    "ground_truth_source": "i own the domain; spaceship dashboard shows email forwarding",
+    "notes": "currently expected to FAIL: spaceship forwarding hosts are not in the table. that failure is the gap, not a bug."
+  },
+  {
+    "_example": true,
+    "id": "spaceship-spacemail",
+    "address": "team@YOUR-DOMAIN-WITH-SPACEMAIL.com",
+    "arrangement": "dedicated-mailbox",
+    "ground_truth_source": "i own the domain; spaceship dashboard shows spacemail mailbox"
+  },
+  {
+    "_example": true,
+    "id": "cloudflare-routing",
+    "address": "name@YOUR-DOMAIN-WITH-CLOUDFLARE-ROUTING.com",
+    "arrangement": "forwarding-service",
+    "ground_truth_source": "i own the domain; cloudflare email routing enabled, no mailbox"
+  },
+  {
+    "_example": true,
+    "id": "gmail-plus-tag",
+    "address": "YOURNAME+test@gmail.com",
+    "arrangement": "plus-tag-at-mailbox-provider",
+    "ground_truth_source": "my own gmail account; plus tag delivers to my one inbox"
+  },
+  {
+    "_example": true,
+    "id": "apple-hide-my-email",
+    "address": "RANDOM-STRING@privaterelay.appleid.com",
+    "arrangement": "masked-relay-domain",
+    "ground_truth_source": "generated from my own apple account"
+  },
+  {
+    "_example": true,
+    "id": "self-hosted",
+    "address": "me@YOUR-SELF-HOSTED-DOMAIN.com",
+    "arrangement": "self-hosted-or-unknown",
+    "ground_truth_source": "i run the mail server myself"
+  }
+]

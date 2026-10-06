@@ -10,6 +10,7 @@
     "test": "npm run build && node --test dist/test/*.test.js",
     "sync:lists": "node scripts/sync-disposable-list.mjs",
     "eval": "npm run build && node dist/src/eval/run-eval.js",
+    "corpus": "node scripts/build-corpus.mjs",
     "start": "npm run build && node dist/src/eval/cli.js"
   },
   "devDependencies": {

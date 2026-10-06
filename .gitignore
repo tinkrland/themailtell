@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.tsbuildinfo
 data/authorized-corpus.json
+data/corpus-input.json

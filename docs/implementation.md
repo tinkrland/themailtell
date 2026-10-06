@@ -57,6 +57,13 @@ dns, the clock, the network, or policy. evidence arrives as a plain object;
   ongoing maintenance cost of the disposable list.
 - `scripts/sync-disposable-list.mjs` — the maintenance script behind the
   generated list. it uses the network; the core never does.
+- `scripts/build-corpus.mjs` + `docs/authorized-corpus.md` — the workflow
+  that breaks the self-grading loop: labeled, authorized real addresses
+  (ground truth written before running anything) are recorded with live mx
+  and merged into the eval. fixture passes alone only ever proved
+  consistency; failures on the authorized corpus are data (a wrong or
+  missing table entry, or a documented coverage gap), never something to
+  edit the corpus over.
 - `src/adapters.ts` — the external intelligence boundary. adapters declare
   what data they receive; domain-only lookups are preferred so the local
   part never leaves the core. provenance is retained on every signal.

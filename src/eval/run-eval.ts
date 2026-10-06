@@ -100,7 +100,7 @@ function runCase(c: CorpusCase): Row {
 
 // optional authorized corpus of real, verified addresses; gitignored so it
 // never ships. fixture passes alone must never be read as real accuracy.
-const realCorpusPath = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "data", "authorized-corpus.json");
+const realCorpusPath = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "data", "authorized-corpus.json");
 const realCases: CorpusCase[] = [];
 if (existsSync(realCorpusPath)) {
   try {
