@@ -81,6 +81,65 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     verified_on: "2026-10-08",
   },
   {
+    provider: "us global mail",
+    kind: "virtual_mailbox",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us virtual-mailbox provider since 1999 operating from houston. " +
+      "its own site footer publishes the facility (1321 upland drive, " +
+      "houston tx 77043); customer addresses at it carry no brand token, " +
+      "so this row cannot match locally and the facility row is the " +
+      "evidence path. worldwide forwarding",
+    citation:
+      "https://www.usglobalmail.com/faq/ (site footer facility address)",
+    verified_on: "2026-10-08",
+  },
+  {
+    provider: "earth class mail",
+    kind: "virtual_mailbox",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "the earthclassmail.com domain now serves legalzoom virtual mail " +
+      "(observed 2026-10-08: the domain redirects to legalzoom's virtual " +
+      "mailbox product page), so the historical brand persists in the " +
+      "wild but its own address format is no longer published there. no " +
+      "verifiable facility address was published on the page read, so " +
+      "this row has neither a pattern nor a facility row: honest " +
+      "non-coverage",
+    citation: "https://www.earthclassmail.com/ (redirects to legalzoom virtual mail)",
+    verified_on: "2026-10-08",
+  },
+  {
+    provider: "post scan mail",
+    kind: "virtual_mailbox",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us virtual-mailbox network (1,000+ locations). its own location " +
+      "page shows the verbatim customer form: name and company lines " +
+      "above the facility street address, no brand token, so this row " +
+      "cannot match locally and the facility row is the evidence path. " +
+      "worldwide forwarding",
+    citation: "https://www.postscanmail.com/a/2345-e-thomas-rd-ste-100.html (verbatim form)",
+    verified_on: "2026-10-08",
+  },
+  {
+    provider: "traveling mailbox",
+    kind: "virtual_mailbox",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us virtual-mailbox provider. verification attempt on 2026-10-08 " +
+      "failed: travelingmailbox.com returns 403 to automated reads, so " +
+      "neither the verbatim address format nor a facility address could " +
+      "be read from the provider's own site. this row stays an unverified " +
+      "seed; treat coverage as unknown until it can be verified",
+    citation: "https://www.travelingmailbox.com/ (403 as of 2026-10-08, unread)",
+    verified_on: null,
+  },
+  {
     provider: "myus",
     kind: "mail_forwarder",
     markets: ["us"],
@@ -164,19 +223,33 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     markets: ["us", "ca"],
     patterns: ["\\bthe\\s+ups\\s+store\\b"],
     note:
-      "the largest us cmra chain; storefront addresses put the brand in " +
-      "the lines, but a mail drop used without the brand token is " +
-      "indistinguishable from any other suite address locally",
-    citation: "https://www.theupsstore.com/mailboxes",
-    verified_on: null,
+      "the largest us cmra chain. verification corrected the note: their " +
+      "own mailbox faq documents the customer format as the holder name " +
+      "first with a pmb or # designator at the store street address, " +
+      "with 'the ups store' NOT in the lines ('instead of the ups " +
+      "store, your name appears first'). the pattern still fires when " +
+      "a sender writes the brand into the lines (merchant labels often " +
+      "do), but the documented format is tokenless, so absence of the " +
+      "brand is never evidence of a private residence",
+    citation:
+      "https://www.theupsstore.com/mailboxes/business-mailboxes (verbatim format example)",
+    verified_on: "2026-10-08",
   },
   {
     provider: "mail boxes etc.",
     kind: "cmra_chain",
     markets: ["us", "gb"],
     patterns: ["\\bmail\\s+boxes\\s+etc\\.?\\b"],
-    citation: "https://www.mbe.com",
-    verified_on: null,
+    note:
+      "the mbe.co.uk store pages verify the service: mailboxes and " +
+      "virtual offices live at ordinary mbe store street addresses (for " +
+      "example london maida vale at 464 edgware road w2 1ah) with " +
+      "forwarding anywhere in the world. the brand token fires only " +
+      "when the sender writes it into the lines; the store address " +
+      "itself is tokenless",
+    citation:
+      "https://www.mbe.co.uk/londonmaidavale/mailbox/virtual-mailing-address",
+    verified_on: "2026-10-08",
   },
   {
     provider: "regus",
@@ -184,11 +257,15 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     markets: ["us", "gb"],
     patterns: ["\\bregus\\b"],
     note:
-      "virtual office addresses are business street addresses with suite " +
-      "numbers; the brand appears in the lines only when the customer " +
-      "writes it there",
-    citation: "https://www.regus.com/virtual-offices",
-    verified_on: null,
+      "verified on regus.com's own virtual-office pages: the address is " +
+      "a business postal address usable on documents and company " +
+      "registrations. the addresses themselves are plain business " +
+      "street addresses with suite numbers; the brand appears in the " +
+      "lines only when the customer writes it there, so the token fires " +
+      "on that case and its absence says nothing",
+    citation:
+      "https://www.regus.com/virtual-offices, https://www.regus.com/virtual-offices/can-you-register-a-business-to-a-virtual-office",
+    verified_on: "2026-10-08",
   },
   {
     provider: "ipostal1",
@@ -196,30 +273,47 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     markets: ["us"],
     patterns: [],
     note:
-      "issues street-style suite addresses at its facilities; no local " +
-      "token exists to match, so local analysis cannot detect it. the " +
-      "carrier validation adapter path (cmra indicator) or a facility " +
-      "address table would be needed, and neither is seeded here",
-    citation: "https://ipostal1.com",
-    verified_on: null,
+      "issues street-style suite addresses across 4,250+ locations; no " +
+      "local token exists, so the facility-address table is the local " +
+      "evidence path. but ipostal1's location addresses sit behind a " +
+      "cloudflare-protected store locator (ipostal1.com returns 403 to " +
+      "automated reads, observed 2026-10-08), so no ipostal1 facility " +
+      "row is honestly seedable yet and this provider stays locally " +
+      "undetectable here; the carrier validation adapter with a cmra " +
+      "indicator remains the evidence path",
+    citation: "https://ipostal1.com/virtual-address-locations.php (403 as of 2026-10-08)",
+    verified_on: "2026-10-08",
   },
   {
     provider: "anytime mailbox",
     kind: "virtual_mailbox",
     markets: ["us"],
     patterns: [],
-    note: "same undetectability as the ipostal1 row: street-style suite addresses",
-    citation: "https://www.anytimemailbox.com",
-    verified_on: null,
+    note:
+      "street-style suite addresses across a 2500+ location network; no " +
+      "local token exists, so the facility-address table is the local " +
+      "evidence path, and a carson city nv facility row is seeded from " +
+      "the provider's own locations page. one row in a moving network is " +
+      "an enumerated snapshot, not coverage: absence of a match is never " +
+      "evidence of a private residence",
+    citation: "https://www.anytimemailbox.com/l/usa/nevada (facility address)",
+    verified_on: "2026-10-08",
   },
   {
     provider: "davinci virtual",
     kind: "virtual_office",
     markets: ["us"],
     patterns: [],
-    note: "same undetectability as the ipostal1 row: street-style suite addresses",
-    citation: "https://www.davincivirtual.com",
-    verified_on: null,
+    note:
+      "virtual-office addresses across thousands of locations, each " +
+      "issuing a personal suite number (their bayonne facility page: " +
+      "'personal suite number issued/required'); no local token exists, " +
+      "so the facility-address table is the local evidence path, and a " +
+      "bayonne nj facility row is seeded from the provider's own " +
+      "facility page. one row in a moving network is an enumerated " +
+      "snapshot, not coverage",
+    citation: "https://www.davincivirtual.com/loc/us/new-jersey/bayonne-virtual-offices/facility-1853",
+    verified_on: "2026-10-08",
   },
   {
     provider: "uk postbox",
@@ -238,10 +332,16 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     markets: ["gb"],
     patterns: ["\\bbm\\s*\\d"],
     note:
-      "long-standing london mail-handling service whose addresses use a " +
-      "distinctive bm number; verify the current address format before " +
-      "relying on this pattern",
-    citation: "https://www.britishmonomark.co.uk",
+      "long-standing london mail-handling service whose addresses " +
+      "historically use a distinctive bm number. verification attempt " +
+      "on 2026-10-08 failed: britishmonomark.co.uk does not resolve and " +
+      "britishmonomarks.co.uk is bot-gated, so the current address " +
+      "format is unverified and this row stays a seed. treat a match as " +
+      "suggestive, never verified. honest in the other direction too: " +
+      "'bm' plus a number is plausible-shaped, so a false positive on " +
+      "an unrelated bm-numbered line is possible",
+    citation:
+      "https://www.britishmonomarks.co.uk (bot-gated as of 2026-10-08, unread)",
     verified_on: null,
   },
 ];

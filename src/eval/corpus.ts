@@ -398,6 +398,83 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "us-davinci-bayonne-unbranded-suite",
+    shape: "us virtual office, no brand token, an unbranded suite at the known davinci bayonne facility",
+    scope: "address",
+    evidence: ev("us", ["418 Broadway", "Suite 210"], { city: "Bayonne", region: "NJ", postal_code: "07002" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_state: "signals_present",
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+      forbid_signals: ["mail_forwarding_or_reshipping"],
+    },
+  },
+  {
+    id: "us-davinci-bayonne-other-suite",
+    shape: "us same facility street with a different suite number, still the provider's space",
+    scope: "address",
+    evidence: ev("us", ["418 Broadway, Suite 305"], { city: "Bayonne", region: "NJ", postal_code: "07002" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-anytime-carson-city-suite",
+    shape: "us virtual mailbox network location, unbranded # designator at the known anytime mailbox carson city facility",
+    scope: "address",
+    evidence: ev("us", ["3827 S Carson St", "#112"], { city: "Carson City", region: "NV", postal_code: "89701" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_state: "signals_present",
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-carson-city-nearby-street-number",
+    shape: "us address one number away from the anytime mailbox facility, the near-facility contrast pair",
+    scope: "address",
+    evidence: ev("us", ["3829 S Carson St"], { city: "Carson City", region: "NV", postal_code: "89701" }),
+    expectations: {
+      forbid_signals: ["cmra_or_virtual_mailbox", "mail_forwarding_or_reshipping"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "no_evidence_found" },
+      expect_limitation: "never evidence of a private residence",
+    },
+  },
+  {
+    id: "us-usglobalmail-suite-at-facility",
+    shape: "us virtual mailbox, unbranded suite at the known us global mail houston facility",
+    scope: "address",
+    evidence: ev("us", ["1321 Upland Drive", "Suite 4012"], { city: "Houston", region: "TX", postal_code: "77043" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_state: "signals_present",
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-postscan-suite-at-facility",
+    shape: "us virtual mailbox, the verbatim postscan phoenix form with the customer mailbox appended",
+    scope: "address",
+    evidence: ev("us", ["2345 E Thomas Rd Ste 100", "# 242"], { city: "Phoenix", region: "AZ", postal_code: "85016" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_state: "signals_present",
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-houston-nearby-street-number",
+    shape: "us address one number away from the us global mail facility, the near-facility contrast pair",
+    scope: "address",
+    evidence: ev("us", ["1323 Upland Drive"], { city: "Houston", region: "TX", postal_code: "77043" }),
+    expectations: {
+      forbid_signals: ["cmra_or_virtual_mailbox", "mail_forwarding_or_reshipping"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "no_evidence_found" },
+      expect_limitation: "never evidence of a private residence",
+    },
+  },
+  {
     id: "us-pmb-marker",
     shape: "us cmra private mailbox disclosure, the legally mandated pmb token",
     scope: "address",
