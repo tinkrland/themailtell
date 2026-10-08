@@ -7,7 +7,17 @@ fixture suite proves consistency only.
 
 - numbers you own or explicitly control: your handset, a virtual number
   you bought, a family landline with the holder's consent
-- operator-published example numbers, marked as such in ground truth
+- operator-published example numbers, marked as such in ground truth; the
+  builder requires authorization "operator-published" and the operator's
+  own page url inside the ground truth notes (the url is the authorization)
+- attempted sources on 2026-10-08, all blocked, so no operator-published
+  case is seeded yet: ofcom's drama-numbers page (ofcom.org.uk 403s to
+  automated reads; the parent numbering page, already cited in the gb
+  table, confirms drama ranges exist but does not enumerate them), the
+  nanpa 555-01xx fictional-range page (url moved), and twilio's magic
+  test-number docs (urls moved). seeding awaits readable first-party
+  sources; unverified ranges stay out of the corpus rather than entering
+  as guessed ground truth
 - nothing else: scraped lists, purchased lists, or any number whose holder
   has not authorized the use are out of bounds
 

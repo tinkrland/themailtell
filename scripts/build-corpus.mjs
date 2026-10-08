@@ -34,11 +34,27 @@ async function main() {
 
   const cases = [];
   let rejected = 0;
+  let operatorPublished = 0;
   for (const c of raw.cases ?? []) {
-    if (!c.number || !c.authorization || c.authorization !== "confirmed-controlled") {
-      console.error(`rejected ${c.id ?? c.number}: missing authorization "confirmed-controlled"`);
+    // two authorization classes, nothing else: numbers confirmed controlled
+    // by the corpus owner, and operator-published example numbers per
+    // docs/authorized-corpus.md. an operator-published case must carry the
+    // operator's own page url in its ground truth notes: the url IS the
+    // authorization, and the notes mark the case as operator-published.
+    const controlled = c.authorization === "confirmed-controlled";
+    const published = c.authorization === "operator-published";
+    if (!c.number || !c.authorization || !(controlled || published)) {
+      console.error(`rejected ${c.id ?? c.number}: authorization must be "confirmed-controlled" or "operator-published"`);
       rejected++;
       continue;
+    }
+    if (published) {
+      if (!c.ground_truth?.notes || !/https?:\/\//.test(c.ground_truth.notes)) {
+        console.error(`rejected ${c.id ?? c.number}: operator-published cases must name the operator's own page url in ground truth notes`);
+        rejected++;
+        continue;
+      }
+      operatorPublished++;
     }
     if (!c.ground_truth || typeof c.ground_truth.line_type !== "string") {
       console.error(`rejected ${c.id ?? c.number}: ground truth with a line_type must be recorded before running anything`);
@@ -61,7 +77,9 @@ async function main() {
 
   const out = {
     built_at: new Date().toISOString(),
-    authorization: "all numbers are confirmed-controlled by the corpus owner",
+    authorization: operatorPublished
+      ? `${cases.length - operatorPublished} confirmed-controlled, ${operatorPublished} operator-published (operator's own pages, urls in ground truth)`
+      : "all numbers are confirmed-controlled by the corpus owner",
     cases,
   };
   await writeFile(join(repo, "data", "authorized-corpus.json"), JSON.stringify(out, null, 2) + "\n");

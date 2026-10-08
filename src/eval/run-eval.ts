@@ -18,6 +18,56 @@ const COMMUNITY_LIST: CommunityListRow = {
 
 const DEFAULT_NOW = "2026-10-08T00:00:00Z";
 
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+// authorized cases carry ground truth in the corpus author's own words
+// (docs/authorized-corpus.md), never in tool vocabulary, so the runner
+// derives the mechanical expectation from it here: a stated line type
+// must be found; a "reserved" number must produce no line-type claim;
+// an "unknown" ground truth expects the honest unknown state.
+function loadAuthorized(): { cases: FixtureCase[]; loaded: boolean } {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const path = join(here, "..", "..", "data", "authorized-corpus.json");
+  let raw: any;
+  try {
+    raw = JSON.parse(readFileSync(path, "utf8"));
+  } catch {
+    return { cases: [], loaded: false };
+  }
+  const lineTypes = ["mobile", "landline", "fixed_voip", "non_fixed_voip"];
+  const cases: FixtureCase[] = [];
+  for (const c of raw.cases ?? []) {
+    const lt = c.ground_truth?.line_type;
+    const expectations: FixtureCase["expectations"] = {};
+    if (lineTypes.includes(lt)) {
+      expectations.findings = { [lt]: "evidence_found" };
+    } else if (lt === "reserved") {
+      expectations.forbid_findings = {
+        mobile: "evidence_found",
+        landline: "evidence_found",
+        fixed_voip: "evidence_found",
+        non_fixed_voip: "evidence_found",
+      };
+    } else if (lt === "unknown") {
+      expectations.state = "unknown";
+    }
+    cases.push({
+      id: c.id ?? c.number,
+      input: c.number,
+      carriers: (c.adapter_evidence ?? []).map((a: any) => ({
+        source: a.source,
+        observed_at: a.observed_at,
+        coverage: a.coverage,
+        line_type: a.line_type,
+      })),
+      expectations,
+    });
+  }
+  return { cases, loaded: true };
+}
+
 function runCase(c: FixtureCase): { result: ClassificationResult; now: string } {
   const now = c.now ?? DEFAULT_NOW;
   return {
@@ -59,7 +109,8 @@ function fail(case_id: string, kind: FailureKind, detail: string) {
 const failures: Failure[] = [];
 
 let passed = 0;
-for (const c of FIXTURES) {
+const AUTHORIZED = loadAuthorized();
+for (const c of [...FIXTURES, ...AUTHORIZED.cases]) {
   const { result } = runCase(c);
   const e = c.expectations;
   const market = result.market ?? "?";
@@ -118,7 +169,8 @@ for (const c of FIXTURES) {
   perMarket.set(market, m);
 }
 
-console.log(`total: ${passed}/${FIXTURES.length} cases pass. unknown is first-class: absence of evidence is a statement about the search, never a line-type verdict.`);
+console.log(`total: ${passed}/${FIXTURES.length + AUTHORIZED.cases.length} cases pass. unknown is first-class: absence of evidence is a statement about the search, never a line-type verdict.`);
+console.log(`corpus: ${FIXTURES.length} fixtures + ${AUTHORIZED.cases.length} authorized cases`);
 if (counts.size === 0) {
   console.log("failure kinds: none.");
 } else {
