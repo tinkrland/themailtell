@@ -1,0 +1,23 @@
+{
+  "name": "thelocaletell",
+  "version": "0.1.0",
+  "description": "delivery-address shape detection: signals and evidence, not verdicts",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "eval": "npm run build && node dist/src/eval/run-eval.js",
+    "corpus": "node scripts/build-corpus.mjs",
+    "start": "npm run build && node dist/src/eval/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

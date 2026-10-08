@@ -1,0 +1,29 @@
+[
+  {
+    "id": "example-us-po-box-mine",
+    "market": "us",
+    "lines": ["PO Box 12345"],
+    "city": "Anytown",
+    "region": "NY",
+    "postal_code": "10001",
+    "shape": "usps po box",
+    "expect": {
+      "po_box_equivalent": "evidence_found",
+      "state": "signals_present"
+    }
+  },
+  {
+    "id": "example-us-street-mine-contrast-pair",
+    "market": "us",
+    "lines": ["12 Real Street"],
+    "city": "Anytown",
+    "region": "NY",
+    "postal_code": "10001",
+    "shape": "us street address",
+    "expect": {
+      "po_box_equivalent": "no_evidence_found",
+      "parcel_locker_or_pickup_point": "no_evidence_found",
+      "cmra_or_virtual_mailbox": "no_evidence_found"
+    }
+  }
+]

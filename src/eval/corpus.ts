@@ -1,0 +1,467 @@
+// eval/corpus.ts — the evaluation corpus harness.
+// the contract wants authorized addresses with known shapes and
+// contrasting pairs on the same operator, so success cannot be explained
+// by recognizing a brand.
+//
+// honest limitation: these seed cases were written by the same author as
+// the intelligence tables, so they can only prove internal consistency —
+// fixtures agree with the tables by construction. the errors that matter
+// (a carrier changing its format, a false positive on a real customer
+// address) are exactly the ones only authorized real addresses with
+// verified shapes can expose. put those in data/authorized-corpus.json
+// (gitignored) and the runner merges them automatically.
+
+import type { Evidence } from "../core.js";
+import type { ShapeFindings } from "../schema.js";
+
+export interface Expectation {
+  // signals that must be present at recognized strength
+  expect_signals?: string[];
+  // signals that must be present at any strength
+  expect_signals_any_strength?: string[];
+  // signals that must NOT be present at any strength
+  forbid_signals?: string[];
+  // the required aggregate state
+  expect_state?: string;
+  // required shape findings, per class
+  expect_shape_findings?: Partial<ShapeFindings>;
+  // limitations that must be mentioned (substring match)
+  expect_limitation?: string;
+}
+
+export interface CorpusCase {
+  id: string;
+  // the known ground-truth shape, written before running anything
+  shape: string;
+  // the scope the evidence should be resolvable at
+  scope: "address" | "carrier" | "market";
+  evidence: Evidence;
+  expectations: Expectation;
+  // when set, the case is additionally evaluated this many days past the
+  // table date with default staleness, and must degrade honestly
+  staleAfterDays?: number;
+  // expectations for the stale re-evaluation (required when staleAfterDays
+  // is set): the degraded result, not the fresh one
+  stale_expectations?: Expectation;
+}
+
+const T0 = "2026-10-08T00:00:00Z";
+
+function ev(
+  market: string,
+  lines: string[],
+  extra: Partial<Evidence["address"]> = {}
+): Evidence {
+  return {
+    address: { market, lines, ...extra },
+    observed_at: T0,
+  };
+}
+
+export const CORPUS: CorpusCase[] = [
+  {
+    id: "us-po-box",
+    shape: "usps po box",
+    scope: "address",
+    evidence: ev("us", ["PO Box 12345"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_state: "signals_present",
+      expect_shape_findings: {
+        po_box_equivalent: "evidence_found",
+        parcel_locker_or_pickup_point: "no_evidence_found",
+        format_validity: "valid",
+      },
+    },
+  },
+  {
+    id: "us-street-same-operator",
+    // contrast pair with us-po-box: the same us market and zip, a genuine
+    // street delivery address; success cannot come from the zip alone
+    shape: "us street address",
+    scope: "address",
+    evidence: ev("us", ["1600 Example Parkway"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["po_box_equivalent", "parcel_locker_or_pickup_point", "cmra_or_virtual_mailbox"],
+      // no shape evidence found is a statement about the search, not a
+      // street-address verdict: the state stays unknown and the limitation
+      // says so
+      expect_state: "unknown",
+      expect_shape_findings: {
+        po_box_equivalent: "no_evidence_found",
+        parcel_locker_or_pickup_point: "no_evidence_found",
+        cmra_or_virtual_mailbox: "no_evidence_found",
+        format_validity: "valid",
+      },
+      expect_limitation: "not a verification of a street address",
+    },
+  },
+  {
+    id: "us-pbsa-style-vs-genuine-street",
+    // contrast pair: a pbsa-style secondary unit and a genuine street
+    // address produce the same local result, and that honesty is asserted
+    shape: "street-style secondary unit, indistinguishable from pbsa",
+    scope: "address",
+    evidence: ev("us", ["123 Main St", "#45678-9012"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "no_evidence_found" },
+      expect_limitation: "po box street addressing",
+    },
+  },
+  {
+    id: "de-postfach",
+    shape: "de postfach",
+    scope: "address",
+    evidence: ev("de", ["Postfach 12 34 56"], { city: "Bonn", postal_code: "53000" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "de-packstation-with-postnummer",
+    shape: "dhl packstation, street field literal packstation, postnummer in company field",
+    scope: "carrier",
+    evidence: ev("de", ["Packstation 123"], { company: "987654321", city: "Berlin", postal_code: "10115" }),
+    expectations: {
+      expect_signals_any_strength: ["parcel_locker_or_pickup_point"],
+      forbid_signals: ["po_box_equivalent"],
+      expect_shape_findings: {
+        parcel_locker_or_pickup_point: "evidence_found",
+        po_box_equivalent: "no_evidence_found",
+      },
+      expect_limitation: "postnummer",
+    },
+  },
+  {
+    id: "de-street-near-locker",
+    // contrast pair with de-packstation: a street near a packstation,
+    // nothing locker-shaped in the text
+    shape: "de street address near a locker",
+    scope: "address",
+    evidence: ev("de", ["Musterstraße 1"], { city: "Berlin", postal_code: "10115" }),
+    expectations: {
+      forbid_signals: ["parcel_locker_or_pickup_point", "po_box_equivalent"],
+      expect_shape_findings: { parcel_locker_or_pickup_point: "no_evidence_found" },
+    },
+  },
+  {
+    id: "au-locked-bag",
+    shape: "au locked bag",
+    scope: "address",
+    evidence: ev("au", ["Locked Bag 1234"], { city: "Sydney", region: "NSW", postal_code: "2000" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "au-parcel-locker",
+    shape: "australia post parcel locker, street-style era format",
+    scope: "carrier",
+    evidence: ev("au", ["Parcel Locker 12345", "1 Example Street"], { city: "Sydney", region: "NSW", postal_code: "2000" }),
+    expectations: {
+      expect_signals_any_strength: ["parcel_locker_or_pickup_point"],
+      expect_shape_findings: { parcel_locker_or_pickup_point: "evidence_found" },
+      expect_limitation: "formats change on the carrier's schedule",
+    },
+  },
+  {
+    id: "ca-flexdelivery",
+    shape: "canada post flexdelivery, a free staffed po box",
+    scope: "carrier",
+    evidence: ev("ca", ["FlexDelivery 123456"], { city: "Toronto", region: "ON", postal_code: "M5V 2T6" }),
+    expectations: {
+      // flexdelivery is both a pickup point and a po box shape; the linked
+      // pair shares one source and is one finding, not a mix
+      expect_signals_any_strength: ["parcel_locker_or_pickup_point", "po_box_equivalent"],
+      expect_state: "signals_present",
+      expect_shape_findings: {
+        parcel_locker_or_pickup_point: "evidence_found",
+        po_box_equivalent: "evidence_found",
+      },
+    },
+  },
+  {
+    id: "fr-bp",
+    shape: "fr boîte postale",
+    scope: "address",
+    evidence: ev("fr", ["BP 40200"], { city: "Paris", postal_code: "75001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "fr-boite-postale-diacritics",
+    shape: "fr boîte postale typed with its accent",
+    scope: "address",
+    evidence: ev("fr", ["Boîte postale 12"], { city: "Paris", postal_code: "75001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "fr-cedex",
+    shape: "fr cedex special distribution scheme",
+    scope: "address",
+    evidence: ev("fr", ["1 Rue Exemple", "CEDEX 123"], { city: "Lyon", postal_code: "69001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "it-cp",
+    shape: "it casella postale",
+    scope: "address",
+    evidence: ev("it", ["C.P. 12345"], { city: "Roma", postal_code: "00100" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "nl-postbus",
+    shape: "nl postbus",
+    scope: "address",
+    evidence: ev("nl", ["Postbus 123"], { city: "Amsterdam", postal_code: "1234 AB" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "es-apartado",
+    shape: "es apartado de correos",
+    scope: "address",
+    evidence: ev("es", ["Apartado de correos 1234"], { city: "Madrid", postal_code: "28001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "be-postbus-multilingual",
+    shape: "be postbus, dutch-language label",
+    scope: "address",
+    evidence: ev("be", ["Postbus 45"], { city: "Brussel", postal_code: "1000" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "ch-case-postale-multilingual",
+    shape: "ch case postale, french-language label in a multilingual market",
+    scope: "address",
+    evidence: ev("ch", ["Case postale 123"], { city: "Genève", postal_code: "1200" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "dk-postboks",
+    shape: "dk postboks",
+    scope: "address",
+    evidence: ev("dk", ["Postboks 123"], { city: "København", postal_code: "1000" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "se-box",
+    shape: "se box (boxadress)",
+    scope: "address",
+    evidence: ev("se", ["Box 1234"], { city: "Stockholm", postal_code: "111 22" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "gb-bfpo",
+    shape: "gb bfpo forces post",
+    scope: "address",
+    evidence: ev("gb", ["BFPO 123"], { city: "London", postal_code: "BFPO 123" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "nz-private-bag",
+    shape: "nz private bag",
+    scope: "address",
+    evidence: ev("nz", ["Private Bag 12345"], { city: "Wellington", postal_code: "6011" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "us-ups-store-cmra",
+    shape: "the ups store, a us cmra chain that puts its brand in the lines",
+    scope: "address",
+    evidence: ev("us", ["The UPS Store #123"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals_any_strength: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-virtual-mailbox-undetectable",
+    shape: "a virtual mailbox provider's street-style suite address; no local token exists",
+    scope: "address",
+    evidence: ev("us", ["123 Main St", "Suite 100"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "no_evidence_found" },
+      expect_limitation: "no local token exists",
+    },
+  },
+  {
+    id: "format-missing-postal-code",
+    shape: "us street address missing its postal code",
+    scope: "market",
+    evidence: ev("us", ["123 Main St"], { city: "Anytown", region: "NY" }),
+    expectations: {
+      expect_signals_any_strength: ["format_issue"],
+      expect_shape_findings: { format_validity: "issues_found" },
+    },
+  },
+  {
+    id: "format-missing-street",
+    shape: "address with no street line at all",
+    scope: "market",
+    evidence: ev("gb", [], { city: "London", postal_code: "SW1A 1AA" }),
+    expectations: {
+      expect_signals_any_strength: ["format_issue"],
+      expect_shape_findings: { format_validity: "issues_found" },
+    },
+  },
+  {
+    id: "format-malformed-postal-code",
+    shape: "gb address with a malformed postcode",
+    scope: "market",
+    evidence: ev("gb", ["1 Example Road"], { city: "London", postal_code: "12345" }),
+    expectations: {
+      expect_signals_any_strength: ["format_issue"],
+      expect_shape_findings: { format_validity: "issues_found" },
+    },
+  },
+  {
+    id: "unknown-market",
+    shape: "a market with no seeded tables",
+    scope: "market",
+    evidence: ev("jp", ["1-2-3 Shibuya"], { city: "Tokyo", postal_code: "150-0002" }),
+    expectations: {
+      expect_state: "unknown",
+      expect_shape_findings: {
+        po_box_equivalent: "unknown",
+        parcel_locker_or_pickup_point: "unknown",
+        cmra_or_virtual_mailbox: "unknown",
+        format_validity: "unknown",
+      },
+      expect_limitation: "no local tables",
+    },
+  },
+  {
+    id: "mixed-evidence",
+    shape: "a po box written at a cmra chain: two shape classes, two sources",
+    scope: "address",
+    evidence: ev("us", ["The UPS Store", "PO Box 123"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent", "cmra_or_virtual_mailbox"],
+      expect_state: "mixed_evidence",
+      expect_shape_findings: {
+        po_box_equivalent: "evidence_found",
+        cmra_or_virtual_mailbox: "evidence_found",
+      },
+    },
+  },
+  {
+    id: "contradictory-adapter",
+    shape: "po box evidence contradicted by a carrier-confirmed street delivery point",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["PO Box 12345"], city: "Anytown", region: "NY", postal_code: "10001" },
+      adapter_signals: [
+        {
+          name: "street_delivery_point_confirmed",
+          scope: "address",
+          source: "adapter:example-dpv/1.0",
+          observed_at: T0,
+          strength: "recognized",
+          coverage: "full",
+          detail: "dpv confirmed a street delivery point for this address",
+        },
+      ],
+      observed_at: T0,
+    },
+    expectations: {
+      expect_state: "contradictory",
+      expect_limitation: "neither wins",
+    },
+  },
+  {
+    id: "adapter-cmra-indicator",
+    shape: "a cmra flag from a carrier validation adapter, coverage full",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["123 Main St", "Suite 100"], city: "Anytown", region: "NY", postal_code: "10001" },
+      adapter_signals: [
+        {
+          name: "cmra_or_virtual_mailbox",
+          scope: "address",
+          source: "adapter:example-dpv/1.0",
+          observed_at: T0,
+          strength: "recognized",
+          coverage: "full",
+          detail: "dpv cmra indicator: this delivery point is a commercial mail receiving agency",
+        },
+      ],
+      observed_at: T0,
+    },
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+      // the adapter check ran, so the honest limitation about coverage none
+      // must not claim no external check ran
+      // (the clean-result limitation only appears when nothing was found)
+    },
+  },
+  {
+    id: "adapter-unevaluated-is-coverage-none",
+    shape: "no adapter ran; local signals keep coverage none and the limitation says so",
+    scope: "address",
+    evidence: ev("us", ["PO Box 12345"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_state: "signals_present",
+      expect_limitation: "no carrier validation adapter ran",
+    },
+  },
+  {
+    id: "stale-table",
+    shape: "unmaintained tables stop producing claims on their own",
+    scope: "address",
+    evidence: ev("us", ["PO Box 12345"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+    // the same case re-evaluated 180 days later with default 90-day
+    // staleness: every local signal must downgrade and the finding
+    // becomes unknown, never silently trusted
+    staleAfterDays: 90,
+    stale_expectations: {
+      expect_state: "unknown",
+      expect_shape_findings: { po_box_equivalent: "unknown" },
+      expect_limitation: "stale intelligence",
+    },
+  },
+];
