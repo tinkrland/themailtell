@@ -9,7 +9,7 @@
 import { TABLE_VERSION, TABLE_AS_OF } from "../tables.js";
 import type { MARKET_TABLES } from "../markets/index.js";
 import type { Signal } from "../schema.js";
-import type { InputHandle } from "./input-handling.js";
+import { matchTexts, type InputHandle } from "./input-handling.js";
 
 export interface LexicalOutcome {
   signals: Signal[];
@@ -31,8 +31,11 @@ export function lexicalIntelligence(
       }
       continue;
     }
+    // markers conventionally live on any free-text field: a line, the city
+    // ("Paris Cedex 07") or the region all get scanned the same way
+    const texts = matchTexts(input);
     const matched = entry.patterns.some((p) =>
-      input.match_lines.some((line) => new RegExp(p).test(line))
+      texts.some((line) => new RegExp(p).test(line))
     );
     if (!matched) continue;
 

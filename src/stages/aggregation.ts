@@ -28,6 +28,7 @@ export interface AggregateOptions {
     po_box_covered: boolean;
     carrier_covered: boolean;
     provider_covered: boolean;
+    forwarding_covered: boolean;
   };
   formatFinding: FormatFinding;
 }
@@ -39,6 +40,7 @@ const SHAPE_OF: Partial<Record<Signal["name"], keyof Omit<ShapeFindings, "format
   po_box_equivalent: "po_box_equivalent",
   parcel_locker_or_pickup_point: "parcel_locker_or_pickup_point",
   cmra_or_virtual_mailbox: "cmra_or_virtual_mailbox",
+  mail_forwarding_or_reshipping: "mail_forwarding_or_reshipping",
 };
 
 export function aggregate(
@@ -163,6 +165,10 @@ function derive(
       opts.coverage.carrier_covered
     ),
     cmra_or_virtual_mailbox: findingFor("cmra_or_virtual_mailbox", opts.coverage.provider_covered),
+    mail_forwarding_or_reshipping: findingFor(
+      "mail_forwarding_or_reshipping",
+      opts.coverage.forwarding_covered
+    ),
     format_validity: opts.formatFinding,
   };
 
@@ -171,10 +177,18 @@ function derive(
   // catch every box-shaped address (pbsa writes boxes street-style; cmra
   // pmb disclosure is required but compliance varies), and without a
   // carrier validation adapter no external check ran at all.
-  const noneFound =
-    shape_findings.po_box_equivalent === "no_evidence_found" &&
-    shape_findings.parcel_locker_or_pickup_point === "no_evidence_found" &&
-    shape_findings.cmra_or_virtual_mailbox === "no_evidence_found";
+  // every shape class either searched and found nothing, or was never
+  // covered by a seeded table (unknown, honestly uncovered): then the
+  // backbone statement about the search, never about the address, fires
+  const shapeClasses: Array<[ShapeFinding, boolean]> = [
+    [shape_findings.po_box_equivalent, opts.coverage.po_box_covered],
+    [shape_findings.parcel_locker_or_pickup_point, opts.coverage.carrier_covered],
+    [shape_findings.cmra_or_virtual_mailbox, opts.coverage.provider_covered],
+    [shape_findings.mail_forwarding_or_reshipping, opts.coverage.forwarding_covered],
+  ];
+  const noneFound = shapeClasses.every(
+    ([f, covered]) => f === "no_evidence_found" || (f === "unknown" && !covered)
+  );
   const externalCheck = signals.some((s) => s.coverage !== "none");
   if (!externalCheck) {
     limitations.push(
@@ -187,9 +201,10 @@ function derive(
     limitations.push(
       "no box-shaped evidence was found in local analysis; that is a " +
         "statement about the search, not a verification of a street " +
-        "address. po box street addressing writes boxes street-style and " +
-        "us cmra pmb disclosure is required but compliance varies, so " +
-        "local patterns alone cannot catch every box-shaped address" +
+        "address. po box street addressing writes boxes street-style, us " +
+        "cmra pmb disclosure is required but compliance varies, and " +
+        "forwarders and mailbox providers issue ordinary street addresses, " +
+        "so local patterns alone cannot catch every box-shaped address" +
         (externalCheck
           ? "; an external check did run (see signal coverage)"
           : "; see the coverage none note above")

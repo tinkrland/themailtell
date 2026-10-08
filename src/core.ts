@@ -12,9 +12,16 @@ import { providerIntelligence } from "./stages/provider-intelligence.js";
 import { formatIntelligence } from "./stages/format-intelligence.js";
 import { aggregate } from "./stages/aggregation.js";
 import { MARKET_TABLES, MAILBOX_PROVIDERS } from "./markets/index.js";
+import type { MailboxProviderEntry, FacilityAddressEntry } from "./tables.js";
+import { FACILITY_ADDRESSES } from "./markets/facilities.js";
+import { facilityIntelligence } from "./stages/facility-intelligence.js";
 
 export interface Evidence {
   address: PostalAddress;
+  // injectable provider and facility tables, for tests and for consumers
+  // that maintain their own tables; the seeded tables are the default
+  providers?: MailboxProviderEntry[];
+  facilities?: FacilityAddressEntry[];
   // already-gathered adapter signals, converted with provenance
   adapter_signals?: Signal[];
   // adapter outages, reported as limitations; never a fabricated signal
@@ -35,6 +42,7 @@ const UNKNOWN_FINDINGS: ShapeFindings = {
   po_box_equivalent: "unknown",
   parcel_locker_or_pickup_point: "unknown",
   cmra_or_virtual_mailbox: "unknown",
+  mail_forwarding_or_reshipping: "unknown",
   format_validity: "unknown",
 };
 
@@ -84,9 +92,19 @@ export function analyze(
     limitations.push(...carrier.limitations);
   }
 
-  // stage 4: cmra and virtual-mailbox providers (cross-market table)
-  const providerRows = MAILBOX_PROVIDERS.filter((p) => p.markets.includes(input.market!));
-  const provider = providerIntelligence(input, MAILBOX_PROVIDERS);
+  // stage 4: cmra, virtual-mailbox and forwarding providers (cross-market
+  // table). forwarder rows emit their own signal: a reshipping facility is
+  // a distinct commercial class from a virtual mailbox and consumers may
+  // treat the two differently; the component never decides which.
+  const providerTable = evidence.providers ?? MAILBOX_PROVIDERS;
+  const facilityTable = evidence.facilities ?? FACILITY_ADDRESSES;
+  const providerRows = providerTable.filter(
+    (p) => p.kind !== "mail_forwarder" && p.markets.includes(input.market!)
+  );
+  const forwarderRows = providerTable.filter(
+    (p) => p.kind === "mail_forwarder" && p.markets.includes(input.market!)
+  );
+  const provider = providerIntelligence(input, providerTable);
   signals.push(...provider.signals);
   limitations.push(...provider.limitations);
   if (providerRows.length === 0) {
@@ -95,6 +113,22 @@ export function analyze(
         `that finding is unknown, not "no evidence"`
     );
   }
+  if (forwarderRows.length === 0) {
+    limitations.push(
+      `market ${input.market} has no parcel-forwarding or reshipping provider rows ` +
+        `seeded; that finding is unknown, not "no evidence"`
+    );
+  }
+
+  // stage 4b: known facility street addresses (providers and forwarders).
+  // a facility address match catches branded-suite and unbranded-suite
+  // use at a known facility without any adapter; the table is a snapshot
+  // of a moving target, so absence of a match is never evidence of a
+  // private residence.
+  const marketFacilities = facilityTable.filter((f) => f.market === input.market);
+  const facility = facilityIntelligence(input, marketFacilities);
+  signals.push(...facility.signals);
+  limitations.push(...facility.limitations);
 
   // stage 5: format validity from the market's format rules
   const format = formatIntelligence(input, tables);
@@ -119,7 +153,12 @@ export function analyze(
     coverage: {
       po_box_covered: !!tables,
       carrier_covered: !!tables,
-      provider_covered: providerRows.length > 0,
+      provider_covered:
+        providerRows.length > 0 ||
+        marketFacilities.some((f) => f.kind !== "mail_forwarder"),
+      forwarding_covered:
+        forwarderRows.length > 0 ||
+        marketFacilities.some((f) => f.kind === "mail_forwarder"),
     },
     formatFinding: format.finding,
   });

@@ -178,6 +178,56 @@ test("the core is a pure function: same evidence, same result", () => {
   assert.deepEqual(analyze(e), analyze(e));
 });
 
+test("the city and region are folded into the match text like the lines", () => {
+  const cedexCity = analyze({
+    address: { market: "fr", lines: ["1 Rue Exemple"], city: "Paris Cedex 07", postal_code: "75007" },
+    observed_at: T0,
+  });
+  assert.equal(cedexCity.shape_findings.po_box_equivalent, "evidence_found");
+
+  const poBoxCity = analyze({
+    address: { market: "us", lines: ["123 Main St"], city: "PO Box 123", region: "NY", postal_code: "10001" },
+    observed_at: T0,
+  });
+  assert.equal(poBoxCity.shape_findings.po_box_equivalent, "evidence_found");
+
+  // the contrast pair: the same street with a plain city line finds nothing
+  const plainCity = analyze({
+    address: { market: "fr", lines: ["1 Rue Exemple"], city: "Paris", postal_code: "75007" },
+    observed_at: T0,
+  });
+  assert.equal(plainCity.shape_findings.po_box_equivalent, "no_evidence_found");
+});
+
+test("a pmb token is a recognized cmra disclosure marker; a plain suite is not", () => {
+  const pmb = analyze({
+    address: {
+      market: "us",
+      lines: ["123 Main St", "PMB 7"],
+      city: "Anytown",
+      region: "NY",
+      postal_code: "10001",
+    },
+    observed_at: T0,
+  });
+  const marker = pmb.signals.find((s) => s.name === "cmra_or_virtual_mailbox");
+  assert.ok(marker, "the pmb marker must fire");
+  assert.equal(marker!.strength, "recognized");
+
+  const suite = analyze({
+    address: {
+      market: "us",
+      lines: ["123 Main St", "Ste 7"],
+      city: "Anytown",
+      region: "NY",
+      postal_code: "10001",
+    },
+    observed_at: T0,
+  });
+  assert.ok(!suite.signals.some((s) => s.name === "cmra_or_virtual_mailbox"));
+  assert.equal(suite.shape_findings.cmra_or_virtual_mailbox, "no_evidence_found");
+});
+
 test("the result never echoes the address lines", () => {
   const e = ev("us", ["42 Secretlane Grove"], { city: "Anytown", region: "NY", postal_code: "10001" });
   const r = analyze(e);
@@ -226,4 +276,114 @@ test("gatherEvidence runs address_only adapters and reports outages as gaps", as
   assert.ok(failing.adapter_errors?.[0].includes("flaky-validator"));
   const r = analyze(failing);
   assert.ok(r.limitations.some((l) => l.includes("coverage")));
+});
+
+// ---- forwarders and facility addresses: the new shape class ----
+
+test("a mail_forwarder provider row emits its own shape class, never the cmra class", () => {
+  // synthetic rows for the code path only; seeded rows carry citations
+  const rows = [
+    {
+      provider: "Example Forwarder",
+      kind: "mail_forwarder" as const,
+      markets: ["us"],
+      patterns: ["\\bc/o\\s+example\\s+forwarder\\b"],
+      citation: "https://example-forwarder.example",
+      verified_on: "2026-10-08",
+      note: "synthetic test row",
+    },
+    {
+      // a cmra row for the same market so the cmra class is covered and
+      // honestly reports no_evidence_found, not unknown-by-uncoverage
+      provider: "Example CMRA Co",
+      kind: "cmra_chain" as const,
+      markets: ["us"],
+      patterns: ["\\bc/o\\s+example\\s+cmra\\b"],
+      citation: "https://example-cmra.example",
+      verified_on: "2026-10-08",
+    },
+  ];
+  const r = analyze({
+    address: {
+      market: "us",
+      lines: ["123 Main St", "c/o Example Forwarder"],
+      city: "Anytown",
+      region: "NY",
+      postal_code: "10001",
+    },
+    observed_at: T0,
+    providers: rows,
+  });
+  const fwd = r.signals.find((s) => s.name === "mail_forwarding_or_reshipping");
+  assert.ok(fwd, "forwarder signal must fire");
+  assert.equal(fwd!.strength, "recognized");
+  assert.ok(
+    !r.signals.some((s) => s.name === "cmra_or_virtual_mailbox"),
+    "a forwarder must never be reported as cmra"
+  );
+  assert.equal(r.shape_findings.mail_forwarding_or_reshipping, "evidence_found");
+  assert.equal(r.shape_findings.cmra_or_virtual_mailbox, "no_evidence_found");
+});
+
+test("a facility address matches with any suite number; a nearby street does not", () => {
+  const facilities = [
+    {
+      provider: "Example Mailbox Co",
+      kind: "virtual_mailbox" as const,
+      market: "us",
+      street: "140 Broadway",
+      city: "New York",
+      region: "NY",
+      postal_code: "10005",
+      citation: "https://example-mailbox.example/locations",
+      verified_on: "2026-10-08",
+      recheck_cadence_days: 180,
+    },
+  ];
+  const base = {
+    market: "us",
+    city: "New York",
+    region: "NY",
+    postal_code: "10005",
+  };
+
+  const suite = analyze({
+    address: { ...base, lines: ["140 Broadway Suite 20"] },
+    observed_at: T0,
+    facilities,
+  });
+  assert.equal(suite.shape_findings.cmra_or_virtual_mailbox, "evidence_found");
+  assert.ok(suite.signals.some((s) => s.name === "cmra_or_virtual_mailbox"));
+
+  const otherSuite = analyze({
+    address: { ...base, lines: ["140 Broadway", "#3401"] },
+    observed_at: T0,
+    facilities,
+  });
+  assert.equal(otherSuite.shape_findings.cmra_or_virtual_mailbox, "evidence_found");
+
+  const nearby = analyze({
+    address: { ...base, lines: ["150 Broadway"] },
+    observed_at: T0,
+    facilities,
+  });
+  assert.equal(nearby.shape_findings.cmra_or_virtual_mailbox, "no_evidence_found");
+  assert.ok(
+    nearby.limitations.some((l) => l.includes("never evidence of a private residence")),
+    "the snapshot honesty must be reported"
+  );
+
+  const wrongPostal = analyze({
+    address: { ...base, lines: ["140 Broadway Suite 20"], postal_code: "10007" },
+    observed_at: T0,
+    facilities,
+  });
+  assert.equal(wrongPostal.shape_findings.cmra_or_virtual_mailbox, "no_evidence_found");
+
+  const streetSuffix = analyze({
+    address: { ...base, lines: ["140 Broadwayview Ave Suite 20"] },
+    observed_at: T0,
+    facilities,
+  });
+  assert.equal(streetSuffix.shape_findings.cmra_or_virtual_mailbox, "no_evidence_found");
 });

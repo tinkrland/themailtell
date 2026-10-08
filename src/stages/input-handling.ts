@@ -4,6 +4,13 @@
 // the original text is preserved verbatim for the caller. diacritics are
 // never stripped from the stored address; the normalization happens per
 // match in the tables module.
+//
+// every free-text field is folded into the match text: box-shaped markers
+// conventionally live on any line ("PO Box 123" as a line, "Paris Cedex 07"
+// as the city, "Locked Bag 5" as the company field), so the lexical,
+// carrier and provider stages scan lines, city and region alike. the
+// company field keeps its own folded copy because the carrier stage
+// matches carrier customer numbers there under their own patterns.
 
 export interface PostalAddress {
   // iso 3166-1 alpha-2 code, "market" in every user-facing string
@@ -27,6 +34,9 @@ export interface InputHandle {
   market?: string;
   // lowercased, diacritic-folded text of each line, for matching only
   match_lines: string[];
+  // folded city and region, folded the same way as the lines
+  match_city: string;
+  match_region: string;
   match_company: string;
 }
 
@@ -39,6 +49,8 @@ export function handleInput(address: PostalAddress): InputHandle {
     invalid_reason: reason,
     address,
     match_lines: [],
+    match_city: "",
+    match_region: "",
     match_company: "",
   });
 
@@ -89,8 +101,19 @@ export function handleInput(address: PostalAddress): InputHandle {
     address,
     market,
     match_lines: address.lines.map((l) => fold(l)),
+    match_city: fold(address.city),
+    match_region: fold(address.region),
     match_company: fold(address.company),
   };
+}
+
+// the free-text fields the pattern stages scan: every line plus the city
+// and region, folded. the company field is scanned separately by the
+// carrier stage under its own patterns.
+export function matchTexts(input: InputHandle): string[] {
+  return [...input.match_lines, input.match_city, input.match_region].filter(
+    (t) => t.length > 0
+  );
 }
 
 // whether any address content exists beyond whitespace

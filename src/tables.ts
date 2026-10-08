@@ -61,11 +61,21 @@ export interface CarrierPointEntry {
   verified_on: string | null;
 }
 
-// a commercial mail receiving agency, virtual mailbox or virtual office.
+// a commercial mail receiving agency, virtual mailbox, virtual office, or
+// a generic cmra disclosure marker like the us pmb designation (a legal
+// requirement, not a brand: the row carries no provider because any cmra
+// address must use it).
 export interface MailboxProviderEntry {
   // provider brand in its exact case, e.g. "the ups store", "regus"
   provider: string;
-  kind: "cmra_chain" | "virtual_mailbox" | "virtual_office";
+  kind:
+    | "cmra_chain"
+    | "virtual_mailbox"
+    | "virtual_office"
+    | "cmra_marker"
+    // a parcel-forwarding / reshipping facility: emits the
+    // mail_forwarding_or_reshipping signal, never the cmra signal
+    | "mail_forwarder";
   markets: string[];
   // regex sources matched against normalized address lines. empty patterns
   // means the provider's addresses carry no distinctive token (many issue
@@ -111,3 +121,40 @@ export function normalizeForMatch(text: string): string {
 // their own verified_on; this date is the fallback for unverified rows so
 // an unmaintained table still goes stale as a whole.
 export const TABLE_AS_OF = "2026-10-08";
+
+// a known facility street address of a mailbox provider or a parcel
+// forwarder, as the provider publishes it on its own location pages.
+// matched against the full address (street-line prefix plus postal code,
+// suite-insensitive), which catches branded-suite and unbranded-suite use
+// at a known facility without any adapter.
+//
+// the table is an enumerated snapshot of a moving target: providers open
+// and close locations, so a row's absence is never evidence that an
+// address is a private residence, and every row carries its own recheck
+// cadence.
+export interface FacilityAddressEntry {
+  provider: string;
+  // which shape class this facility belongs to: virtual_mailbox,
+  // cmra_chain, virtual_office and cmra_marker emit the
+  // cmra_or_virtual_mailbox signal; mail_forwarder emits
+  // mail_forwarding_or_reshipping
+  kind:
+    | "virtual_mailbox"
+    | "cmra_chain"
+    | "virtual_office"
+    | "cmra_marker"
+    | "mail_forwarder";
+  market: string;
+  // the facility street address exactly as published (street number and
+  // name), matched as a normalized prefix of an address line
+  street: string;
+  city: string;
+  region?: string;
+  postal_code: string;
+  note?: string;
+  citation: string;
+  verified_on: string | null;
+  // facilities open and close; the table must be rechecked on its own
+  // (short) cadence, faster than format rows
+  recheck_cadence_days: number;
+}

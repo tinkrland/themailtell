@@ -214,6 +214,178 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "fr-cedex-as-city",
+    shape: "fr cedex written on the city line, where french addressing puts it",
+    scope: "address",
+    evidence: ev("fr", ["1 Rue Exemple"], { city: "Paris Cedex 07", postal_code: "75007" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "fr-street-plain-city",
+    shape: "fr genuine street address with a plain city line, the contrast pair for cedex",
+    scope: "address",
+    evidence: ev("fr", ["1 Rue Exemple"], { city: "Paris", postal_code: "75007" }),
+    expectations: {
+      forbid_signals: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "no_evidence_found" },
+    },
+  },
+  {
+    id: "us-po-box-as-city",
+    shape: "us po box written in the city field by a checkout that maps it wrong",
+    scope: "address",
+    evidence: ev("us", ["123 Main St"], { city: "PO Box 123", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "ch-case-postale-as-city",
+    shape: "ch case postale written on the city line",
+    scope: "address",
+    evidence: ev("ch", ["Musterstrasse 1"], { city: "Case postale 123", postal_code: "8000" }),
+    expectations: {
+      expect_signals_any_strength: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "evidence_found" },
+    },
+  },
+  {
+    id: "ch-street-plain-city",
+    shape: "ch genuine street address with a plain city line, the contrast pair for case postale",
+    scope: "address",
+    evidence: ev("ch", ["Musterstrasse 1"], { city: "Zürich", postal_code: "8000" }),
+    expectations: {
+      forbid_signals: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "no_evidence_found" },
+    },
+  },
+  {
+    id: "gb-forward2me-c-o",
+    shape: "gb parcel forwarder, brand in a c/o line, the reshipping shape class",
+    scope: "address",
+    evidence: ev("gb", ["c/o Forward2me Ltd", "York House, Green Lane West"], {
+      city: "Preston",
+      postal_code: "PR3 1NJ",
+    }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+      forbid_signals: ["cmra_or_virtual_mailbox"],
+    },
+  },
+  {
+    id: "gb-myukmailbox-unbranded-suite",
+    shape: "gb forwarder facility with no brand token, an unbranded suite at the known facility street",
+    scope: "address",
+    evidence: ev("gb", ["Unit F, Winston Business Park Churchill Way", "Suite 543"], {
+      city: "Sheffield",
+      postal_code: "S35 2PS",
+    }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "gb-sheffield-clean-street",
+    shape: "gb ordinary street a few doors from the forwarder facility, the contrast pair",
+    scope: "address",
+    evidence: ev("gb", ["Winston Business Park Churchill Way 12"], {
+      city: "Sheffield",
+      postal_code: "S35 2PR",
+    }),
+    expectations: {
+      forbid_signals: ["mail_forwarding_or_reshipping", "cmra_or_virtual_mailbox"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "no_evidence_found" },
+      expect_limitation: "never evidence of a private residence",
+    },
+  },
+  {
+    id: "fr-colisexpat-cxp",
+    shape: "fr reshipper, the cxp recipient reference token in the address",
+    scope: "address",
+    evidence: ev("fr", ["CXP0021632", "110bis, Avenue du Général Leclerc"], {
+      city: "Pantin",
+      postal_code: "93500",
+    }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "de-mygermany-facility",
+    shape: "de reshipper facility street with the c/o brand form, forward2me gmbh c/o mygermany",
+    scope: "address",
+    evidence: ev("de", ["Forward2me GmbH c/o myGermany", "Schwedter Allee 23D"], {
+      city: "Schwedt",
+      postal_code: "16303",
+    }),
+    expectations: {
+      expect_signals_any_strength: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-plain-suite-not-forwarder",
+    shape: "us ordinary suite address in a market with a forwarder row, the cmra contrast for the new class",
+    scope: "address",
+    evidence: ev("us", ["123 Main St", "Ste 7"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "no_evidence_found" },
+    },
+  },
+  {
+    id: "us-pmb-marker",
+    shape: "us cmra private mailbox disclosure, the legally mandated pmb token",
+    scope: "address",
+    evidence: ev("us", ["123 Main St", "PMB 7"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-pmb-dot-form",
+    shape: "us cmra disclosure written P.M.B. 7, the dotted form of the same token",
+    scope: "address",
+    evidence: ev("us", ["123 Main St P.M.B. 7"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      expect_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "evidence_found" },
+    },
+  },
+  {
+    id: "us-plain-suite",
+    shape: "us ordinary suite address, the contrast pair for the pmb marker",
+    scope: "address",
+    evidence: ev("us", ["123 Main St", "Ste 7"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["cmra_or_virtual_mailbox"],
+      expect_shape_findings: { cmra_or_virtual_mailbox: "no_evidence_found" },
+    },
+  },
+  {
+    id: "us-pob-not-a-usps-standard",
+    shape:
+      "us pob abbreviation, not a usps standard (pub28 281/283, dmm 602 all standardize PO BOX): " +
+      "the address stays unmatched rather than guessed from an unverified abbreviation",
+    scope: "address",
+    evidence: ev("us", ["POB 55"], { city: "Anytown", region: "NY", postal_code: "10001" }),
+    expectations: {
+      forbid_signals: ["po_box_equivalent"],
+      expect_shape_findings: { po_box_equivalent: "no_evidence_found" },
+    },
+  },
+  {
     id: "it-cp",
     shape: "it casella postale",
     scope: "address",
@@ -365,6 +537,7 @@ export const CORPUS: CorpusCase[] = [
         po_box_equivalent: "unknown",
         parcel_locker_or_pickup_point: "unknown",
         cmra_or_virtual_mailbox: "unknown",
+        mail_forwarding_or_reshipping: "unknown",
         format_validity: "unknown",
       },
       expect_limitation: "no local tables",

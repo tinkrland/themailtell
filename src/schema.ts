@@ -3,15 +3,23 @@
 // street-shape verdict: an address with no box-shaped evidence is reported
 // as no such evidence found, never as a verified street address.
 
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
 
 // the signal kinds. each is independent evidence, never a verdict.
 export type SignalName =
   | "po_box_equivalent" // po box / postfach / locked bag / apartado / cedex and other po box shapes
   | "parcel_locker_or_pickup_point" // a carrier's locker or pickup-point address format
   | "cmra_or_virtual_mailbox" // commercial mail receiving agency, virtual mailbox, virtual office
+  | "mail_forwarding_or_reshipping" // parcel-forwarding / reshipping facility (myus, stackry-style consolidators)
   | "format_issue" // missing or malformed fields against the market's format rules
-  | "street_delivery_point_confirmed"; // an adapter confirmed a deliverable street address (adapter-only)
+  | "street_delivery_point_confirmed" // an adapter confirmed a deliverable street address (adapter-only)
+  // adapter-only: the building at this address is commercial (office,
+  // retail, mixed-use), per a building-use dataset. reported as
+  // independent evidence and deliberately NOT mapped into any shape
+  // finding: commercial buildings can legally hold residences, and
+  // whether business-use buildings are acceptable is a consumer policy
+  // question (residences-only services), never this component's decision
+  | "commercial_building_indicator";
 
 // what the signal is about, not what it proves.
 //   address   — evidence in the given address text itself
@@ -69,6 +77,10 @@ export interface ShapeFindings {
   po_box_equivalent: ShapeFinding;
   parcel_locker_or_pickup_point: ShapeFinding;
   cmra_or_virtual_mailbox: ShapeFinding;
+  // a parcel-forwarding / reshipping facility: a distinct commercial class
+  // from a virtual mailbox, with its own finding because consumers may
+  // treat the two differently. the component never decides which.
+  mail_forwarding_or_reshipping: ShapeFinding;
   format_validity: FormatFinding;
 }
 

@@ -14,7 +14,16 @@ export const US: MarketTables = {
         "\\bp\\.?\\s?o\\.?\\s?box\\b",
         "\\bpost\\s+office\\s+box\\b",
       ],
-      citation: "https://pe.usps.com/cpim/ftp/pubs/pub28/pub28.pdf (pub28 sec. 281: PO BOX ##)",
+      note:
+        "the abbreviation \"pob\" is seen in the wild but is not a usps " +
+        "addressing standard: pub28 sec. 281 standardizes the shape as " +
+        "PO BOX, pub28 sec. 283 converts the caller/firm caller/bin/" +
+        "lockbox/drawer designations to PO BOX, and dmm 602 writes PO BOX. " +
+        "no pattern was added for \"pob\" rather than guessing one the " +
+        "citations do not support; a \"pob\" address stays unmatched " +
+        "rather than firing on an unverified abbreviation",
+      citation:
+        "https://pe.usps.com/text/pub28/28c2_036.htm (pub28 sec. 281: PO BOX ##)",
       verified_on: "2026-10-08",
     },
     {

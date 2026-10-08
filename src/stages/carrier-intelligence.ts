@@ -8,7 +8,7 @@
 import { TABLE_VERSION, TABLE_AS_OF } from "../tables.js";
 import type { MARKET_TABLES } from "../markets/index.js";
 import type { Signal } from "../schema.js";
-import type { InputHandle } from "./input-handling.js";
+import { matchTexts, type InputHandle } from "./input-handling.js";
 
 export interface CarrierOutcome {
   signals: Signal[];
@@ -24,9 +24,8 @@ export function carrierIntelligence(
 
   for (const entry of tables.carrier_points) {
     const patterns = entry.patterns.map((p) => new RegExp(p));
-    const matchedLine = input.match_lines.some((line) =>
-      patterns.some((re) => re.test(line))
-    );
+    const texts = matchTexts(input);
+    const matchedLine = texts.some((line) => patterns.some((re) => re.test(line)));
     if (!matchedLine) continue;
 
     const verified = entry.verified_on !== null;

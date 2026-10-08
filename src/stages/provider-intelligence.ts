@@ -7,7 +7,7 @@
 import { TABLE_VERSION, TABLE_AS_OF } from "../tables.js";
 import type { MailboxProviderEntry } from "../tables.js";
 import type { Signal } from "../schema.js";
-import type { InputHandle } from "./input-handling.js";
+import { matchTexts, type InputHandle } from "./input-handling.js";
 
 export interface ProviderOutcome {
   signals: Signal[];
@@ -31,14 +31,16 @@ export function providerIntelligence(
       }
       continue;
     }
+    const texts = matchTexts(input);
     const matched = entry.patterns.some((p) =>
-      input.match_lines.some((line) => new RegExp(p).test(line))
+      texts.some((line) => new RegExp(p).test(line))
     );
     if (!matched) continue;
 
     const verified = entry.verified_on !== null;
     signals.push({
-      name: "cmra_or_virtual_mailbox",
+      // a forwarder row reports its own shape class, never the cmra class
+      name: entry.kind === "mail_forwarder" ? "mail_forwarding_or_reshipping" : "cmra_or_virtual_mailbox",
       scope: "address",
       source: `builtin-table/${TABLE_VERSION} row:${entry.provider} (citation: ${entry.citation})`,
       observed_at: entry.verified_on ?? TABLE_AS_OF,
