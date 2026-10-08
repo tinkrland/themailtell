@@ -475,23 +475,22 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
-    id: "us-apartment-f-unit-invalid",
-    shape: "us the apartment-f case: a real building whose recognized units are a-e, the given unit is f, a recorded dpv response disconfirms it",
+    id: "us-dakota-apt-f-disconfirmed",
+    shape: "us the apartment-f case, live-recorded: a real building with a valid unit (apt 7) and a given unit f; smarty dpv returns match code S, footnote C1, secondary invalid",
     scope: "address",
     evidence: {
-      address: { market: "us", lines: ["418 W 21st St", "Apt F"], city: "New York", region: "NY", postal_code: "10011" },
+      address: { market: "us", lines: ["1 W 72nd St", "Apt F"], city: "New York", region: "NY", postal_code: "10023" },
       observed_at: T0,
       adapter_signals: [
         {
           name: "delivery_point_validation",
           scope: "address",
-          source: "fixture adapter: recorded usps dpv response (primary confirmed, secondary number not recognized, cm1-style footnote)",
-          observed_at: T0,
+          source: "recorded live response: smarty us street address api, lookup 2026-10-08 (data/recorded/smarty-1-w-72nd-st-apt-f.json)",
+          observed_at: "2026-10-08T15:52:55.697Z",
           strength: "recognized",
           coverage: "full",
           existence: "disconfirmed",
-          detail:
-            "the validation service confirms the primary address exists but the secondary unit is not recognized: the building's recognized units are a-e, f does not exist",
+          detail: "smarty dpv confirmed the primary but reports the given secondary is invalid (footnote C1): the address as given does not exist (dpv_match_code S, dpv footnotes AAC1)",
         },
       ],
     },
@@ -502,22 +501,22 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
-    id: "us-address-confirmed-exists",
-    shape: "us a plain street address with a recorded validation response confirming it as a deliverable point",
+    id: "us-dakota-apt-7-confirmed",
+    shape: "us a real unit on the same building, live-recorded: smarty dpv match code Y, the address as given is a confirmed delivery point",
     scope: "address",
     evidence: {
-      address: { market: "us", lines: ["160 W 80th St"], city: "New York", region: "NY", postal_code: "10024" },
+      address: { market: "us", lines: ["1 W 72nd St", "Apt 7"], city: "New York", region: "NY", postal_code: "10023" },
       observed_at: T0,
       adapter_signals: [
         {
           name: "delivery_point_validation",
           scope: "address",
-          source: "fixture adapter: recorded usps dpv response (delivery point confirmed)",
-          observed_at: T0,
+          source: "recorded live response: smarty us street address api, lookup 2026-10-08 (data/recorded/smarty-1-w-72nd-st-apt-7.json)",
+          observed_at: "2026-10-08T15:52:55.514Z",
           strength: "recognized",
           coverage: "full",
           existence: "confirmed_exists",
-          detail: "the validation service confirms the address exists as a deliverable point",
+          detail: "smarty dpv confirmed the address as given (dpv_match_code Y, dpv footnotes AABB)",
         },
       ],
     },
@@ -527,17 +526,66 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
-    id: "us-existence-evidence-stale",
-    shape: "us a validation response confirming existence, but recorded far past the staleness horizon: the finding must decay to unknown",
+    id: "us-dakota-missing-unit-unknown",
+    shape: "us the same building with no unit given, live-recorded: dpv match code D, footnote N1, highrise missing secondary; the finding must stay unknown, neither confirmed nor disconfirmed",
     scope: "address",
     evidence: {
-      address: { market: "us", lines: ["160 W 80th St"], city: "New York", region: "NY", postal_code: "10024" },
+      address: { market: "us", lines: ["1 W 72nd St"], city: "New York", region: "NY", postal_code: "10023" },
       observed_at: T0,
       adapter_signals: [
         {
           name: "delivery_point_validation",
           scope: "address",
-          source: "fixture adapter: recorded dpv response, old observation",
+          source: "recorded live response: smarty us street address api, lookup 2026-10-08 (data/recorded/smarty-1-w-72nd-st.json)",
+          observed_at: "2026-10-08T15:52:55.343Z",
+          strength: "recognized",
+          coverage: "full",
+          detail: "smarty dpv confirmed the primary only; the secondary was missing or not confirmed, so the delivery point for the address as given is unknown, not confirmed and not disconfirmed (dpv_match_code D, dpv footnotes AAN1)",
+        },
+      ],
+    },
+    expectations: {
+      expect_state: "signals_present",
+      expect_shape_findings: { address_existence: "unknown" },
+    },
+  },
+  {
+    id: "us-bogus-street-disconfirmed",
+    shape: "us a street number that does not exist on a real street, live-recorded: smarty returns no candidates at all",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["9999 W 80th St"], city: "New York", region: "NY", postal_code: "10024" },
+      observed_at: T0,
+      adapter_signals: [
+        {
+          name: "delivery_point_validation",
+          scope: "address",
+          source: "recorded live response: smarty us street address api, lookup 2026-10-08 (data/recorded/smarty-9999-w-80th-st.json)",
+          observed_at: "2026-10-08T15:52:50.664Z",
+          strength: "recognized",
+          coverage: "full",
+          existence: "disconfirmed",
+          detail: "smarty returned no candidates for the address as given (dpv could not confirm it)",
+        },
+      ],
+    },
+    expectations: {
+      expect_state: "signals_present",
+      expect_shape_findings: { address_existence: "disconfirmed" },
+    },
+  },
+  {
+    id: "us-existence-evidence-stale",
+    shape: "us a recorded confirmation, observation re-dated far past the staleness horizon: the finding must decay to unknown",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["1 W 72nd St", "Apt 7"], city: "New York", region: "NY", postal_code: "10023" },
+      observed_at: T0,
+      adapter_signals: [
+        {
+          name: "delivery_point_validation",
+          scope: "address",
+          source: "recorded live response: smarty us street address api, lookup 2026-10-08 (data/recorded/smarty-1-w-72nd-st-apt-7.json), observation re-dated for the staleness fixture",
           observed_at: "2026-01-01T00:00:00Z",
           strength: "recognized",
           coverage: "full",

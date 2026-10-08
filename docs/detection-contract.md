@@ -111,3 +111,25 @@ coverage, and an observation date. the finding is never absolute:
 consumers must not read `unknown` as "the address exists" or
 `confirmed_exists` as a deliverability guarantee, and the component
 never decides what a disconfirmed address means for an order.
+
+### the smarty adapter, recorded live 2026-10-08
+
+scripts/smarty-gather.mjs maps the smarty us street address api
+(us-street.api.smartystreets.com) to the delivery_point_validation
+signal. credentials come from the environment and are never committed.
+raw responses are recorded under data/recorded/ and drive both the
+unit tests and the fixture corpus cases above. the observed mapping:
+
+- dpv_match_code Y: the address as given is a confirmed delivery point
+  -> confirmed_exists
+- dpv_match_code S with footnote C1: the primary is confirmed but the
+  given secondary is invalid -> disconfirmed. this is the apartment-f
+  shape: the same building returns Y for apt 7 and S/C1 for apt f
+- dpv_match_code D with footnote N1: primary confirmed, secondary
+  missing -> no existence claim, the finding stays unknown; a highrise
+  without its unit is neither confirmed nor disconfirmed as given
+- no candidates: dpv could not confirm the address -> disconfirmed at
+  this source's coverage, footnotes preserved verbatim in the detail
+
+every mapped detail carries the raw codes, and every recorded response
+file keeps the lookup inputs so a case can be re-run and diffed.

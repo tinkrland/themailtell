@@ -1,0 +1,10 @@
+{
+  "input": {
+    "street": "9999 W 80th St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10024"
+  },
+  "observed_at": "2026-10-08T15:52:50.664Z",
+  "response": []
+}

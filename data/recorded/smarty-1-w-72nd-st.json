@@ -1,0 +1,58 @@
+{
+  "input": {
+    "street": "1 W 72nd St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10023"
+  },
+  "observed_at": "2026-10-08T15:52:55.343Z",
+  "response": [
+    {
+      "input_index": 0,
+      "candidate_index": 0,
+      "delivery_line_1": "1 W 72nd St",
+      "last_line": "New York NY 10023-3486",
+      "delivery_point_barcode": "100233486995",
+      "components": {
+        "primary_number": "1",
+        "street_predirection": "W",
+        "street_name": "72nd",
+        "street_suffix": "St",
+        "city_name": "New York",
+        "default_city_name": "New York",
+        "state_abbreviation": "NY",
+        "zipcode": "10023",
+        "plus4_code": "3486",
+        "delivery_point": "99",
+        "delivery_point_check_digit": "5"
+      },
+      "metadata": {
+        "record_type": "H",
+        "zip_type": "Standard",
+        "county_fips": "36061",
+        "county_name": "New York",
+        "carrier_route": "C055",
+        "congressional_district": "12",
+        "building_default_indicator": "Y",
+        "rdi": "Residential",
+        "elot_sequence": "0181",
+        "elot_sort": "D",
+        "latitude": 40.7763,
+        "longitude": -73.9759,
+        "precision": "Zip9",
+        "time_zone": "Eastern",
+        "utc_offset": -5,
+        "dst": true
+      },
+      "analysis": {
+        "dpv_match_code": "D",
+        "dpv_footnotes": "AAN1",
+        "dpv_cmra": "N",
+        "dpv_vacant": "N",
+        "dpv_no_stat": "Y",
+        "active": "Y",
+        "footnotes": "H#"
+      }
+    }
+  ]
+}
