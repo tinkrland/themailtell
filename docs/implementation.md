@@ -27,10 +27,33 @@ dns, the clock, the network, or policy. evidence arrives as a plain object;
   that makes no arrangement claim in either direction.
 - `src/stages/address-analysis.ts` — alias syntax facts. the syntax
   observation and the known provider semantics are two separate signals and
-  are never merged.
+  are never merged. declared semantics beyond plus tags exist now as their
+  own `local_part_semantics` signal: google's dot-equivalence (dots ignored
+  for @gmail.com addresses, organization-configured on workspace domains)
+  and consumer microsoft mail's account-level alias product (up to 10
+  alias addresses per account, no syntax marker). both are reported,
+  never applied as rewrites.
+- `src/stages/routing-secondary.ts` — non-mx routing evidence, each kept a
+  separate signal with its own limitation: spf includes and dkim selectors
+  from known forwarding services are send-path configuration (the domain
+  authorized the service to send or sign for it), never proof of a current
+  forwarding arrangement and never flattened into the mx-based forwarding
+  signal; mta-sts and autodiscover/srv are presence-only and distinguish
+  nothing. the dkim probe only accepts dkim-shaped records (v=DKIM1 first
+  per rfc 6376) because wildcard txt records answer any selector name with
+  unrelated values — seen live at migadu.com and yousee.dk, fixed, and
+  regression-tested. this stage exists because some forwarding products
+  (notably spaceship's) publish no mx hosts, so their domains otherwise
+  report unknown; secondary evidence gives them an honest domain-scope
+  signal instead of a guess.
 - `src/stages/aggregation.ts` — collects signals, downgrades stale
   intelligence to unresolved, reports contradictions, derives the state.
-  it never says accept or reject.
+  it never says accept or reject. a listed disposable domain on
+  mailbox-capable infrastructure is contradictory (a list disagrees with
+  live routing); a listed masking/relay domain on mailbox-capable
+  infrastructure is not — relays deliver into mailboxes by design, and
+  apple's relay domain itself runs on icloud mail infrastructure
+  (verified live). both signals are reported together as signals_present.
 - `src/providers.ts` — the intelligence tables. entries verified against
   live dns or official docs are marked; the rest need verified research
   before production use. matching is longest-match-wins, so exact hosts
@@ -69,7 +92,19 @@ dns, the clock, the network, or policy. evidence arrives as a plain object;
   part never leaves the core. provenance is retained on every signal.
 - `src/doh.ts` — mx resolution over dns-over-https, for environments where
   udp/53 is unavailable.
-- `src/eval/` — the evaluation corpus and runner. corpus cases supply
+- `src/eval/` — the evaluation corpus and runner. the corpus now covers the
+  apple relay domains, the icloud.com honest-uncovered case (hide my email
+  aliases share icloud.com with real mailboxes, so domain evidence must
+  report mailbox-capable and never relay there), the secondary evidence
+  signals, the shared-infra entries (ovh, gandi), the legacy ionos hosts,
+  and a consumer-isp representative.
+- `docs/decisions/` — packaging and privacy drafts, proposed for the
+  owner: npm library + cli recommended over hosting (hosting implies
+  uptime and accuracy promises the seed cannot honor), and a privacy
+  design that caches the public-dns evidence keyed by domain, never logs
+  local parts, and treats hashed local parts as still-identifying.
+- `research/sources/` — source log for everything the tables claim:
+  urls, dates, licenses and update terms for each verified fact. corpus cases supply
   fixture evidence so the harness runs offline and deterministically.
   the fixtures and the tables share an author, so fixture passes prove
   consistency, not real-world accuracy — the runner says so on every run
@@ -107,8 +142,21 @@ const result = analyze(evidence); // signals + state, never a verdict
 
 ## still open
 
-- packaging (library, cli, hosted), licensing.
+- packaging and licensing: drafted in `docs/decisions/packaging.md`,
+  awaiting the owner's decision.
+- privacy for caching, hashing and retention: drafted in
+  `docs/decisions/privacy.md`, awaiting the owner's decision.
 - real-world verification of every seed provider entry; ongoing list
-  maintenance.
-- the privacy design for caching, hashing and retention.
-- the authorized real-address corpus to replace the fixture cases.
+  maintenance. the 2026-10-08 batch added and live-verified migadu,
+  purelymail, mxroute, the ionos/1&1 family (including the legacy
+  kundenserver.de and perfora.net hosts), one.com, ovh and gandi (as
+  shared infrastructure: both sell mailboxes and free forwarding), and
+  the consumer-isp platforms for the seeded shipping markets (openwave
+  for bt, atmail for virgin media/iinet/optusnet, open-xchange for
+  talktalk, smx for xtra/spark nz, cloudfilter for eircom/eir, norlys for
+  stofa, proofpoint fronting yousee). hostinger's product hosts are
+  docs-verified only; forward email's dkim selector is unpublished and
+  deliberately absent; spaceship forwarding hosts remain unpublished.
+- the authorized real-address corpus to replace the fixture cases. needs
+  addresses the owner controls; the input file is seeded with the
+  priority pairs.

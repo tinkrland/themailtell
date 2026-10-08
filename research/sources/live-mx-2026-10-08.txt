@@ -1,0 +1,34 @@
+migadu.com -> 10 mx.migadu.com
+purelymail.com -> 50 mailserver.purelymail.com
+mxroute.com -> 10 arrow.mxrouting.net | 20 arrow-relay.mxrouting.net
+ionos.de -> 10 mxint01.1and1.com | 10 mxint02.1and1.com
+1und1.de -> 10 mxint02.1and1.com | 10 mxint01.1and1.com
+ovh.com -> 1 mx1.ovh.net | 5 mx2.ovh.net
+gandi.net -> 10 mail12.gandi.net | 30 mail8.gandi.net
+hostinger.com -> 1 aspmx.l.google.com | 5 alt1.aspmx.l.google.com | 5 alt2.aspmx.l.google.com | 10 aspmx2.googlemail.com | 10 aspmx3.googlemail.com
+one.com -> 10 mx1.pub.mailpod12-cph3.one.com | 10 mx2.pub.mailpod12-cph3.one.com | 10 mx3.pub.mailpod12-cph3.one.com | 10 mx4.pub.mailpod12-cph3.one.com
+btinternet.com -> 1 mx.bt.prod.cloud.openwave.ai
+virginmedia.com -> 10 mx-10.eu-west.atmailcloud.com | 20 mx-20.eu-west.atmailcloud.com
+sky.com -> 1 mx-eu.mail.am0.yahoodns.net
+talktalk.net -> 10 mx002.tt.xion.oxcs.net | 10 mx003.tt.xion.oxcs.net | 10 mx004.tt.xion.oxcs.net | 10 mx001.tt.xion.oxcs.net
+laposte.net -> 10 smtpz4.laposte.net
+orange.fr -> 10 smtp-in.orange.fr | 10 smtp-in2.orange.fr
+sfr.fr -> 10 smtp-in.sfr.fr
+free.fr -> 10 mx1.free.fr | 20 mx2.free.fr
+web.de -> 100 mx-ha02.web.de | 100 mx-ha03.web.de
+t-online.de -> 10 mx02.t-online.de | 10 mx03.t-online.de | 10 mx00.t-online.de | 10 mx01.t-online.de
+freenet.de -> 1 mx.freenet.de
+libero.it -> 10 smtp-in.libero.it
+virgilio.it -> 10 smtp-in.virgilio.it
+tiscali.it -> 10 etb-2.mail.tiscali.it | 10 etb-3.mail.tiscali.it | 10 etb-1.mail.tiscali.it | 10 etb-4.mail.tiscali.it | 50 imp-5.mail.tiscali.it
+ziggo.nl -> 10 mxin5.ziggo.nl | 10 mxin10.ziggo.nl
+kpn.nl -> (no mx)
+telenet.be -> 10 mx2.telenet-ops.be | 10 mx1.telenet-ops.be
+bigpond.com -> 10 extmail.bigpond.com
+iinet.net.au -> 10 mx-10.au-east.atmailcloud.com | 20 mx-20.au-east.atmailcloud.com
+optusnet.com.au -> 10 mx-10.au-east.atmailcloud.com | 20 mx-20.au-east.atmailcloud.com
+xtra.co.nz -> 10 mx.xm.smxcloud.com
+eircom.net -> 20 eir-08.mx.a.cloudfilter.net | 20 eir-07.mx.a.cloudfilter.net
+telia.com -> 1 mail.telia.com
+stofa.dk -> 10 mx10.norlys.dk | 20 mx20.norlys.dk
+yousee.dk -> 10 mxa-00360101.gslb.pphosted.com | 10 mxb-00360101.gslb.pphosted.com

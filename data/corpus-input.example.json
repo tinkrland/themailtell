@@ -64,5 +64,37 @@
     "address": "me@YOUR-SELF-HOSTED-DOMAIN.com",
     "arrangement": "self-hosted-or-unknown",
     "ground_truth_source": "i run the mail server myself"
+  },
+  {
+    "id": "apple-relay-siwa",
+    "address": "YOUR-SIWA-RELAY-ADDRESS@privaterelay.appleid.com",
+    "arrangement": "masked-relay-domain",
+    "ground_truth_source": "sign in with apple screen in YOUR OWN apple account settings",
+    "_example": true,
+    "notes": "apple also issues new siwa addresses at private.icloud.com (verify both if you have one of each). important: icloud+ hide my email aliases stay at icloud.com and can never be classified from domain evidence; see the readme"
+  },
+  {
+    "id": "ovh-shared-pair",
+    "address": "anything@YOUR-OVH-DOMAIN.fr",
+    "arrangement": "self-hosted-or-unknown",
+    "ground_truth_source": "YOUR OWN ovh control panel: record whether this domain has mx plan mailboxes, free redirections, or both",
+    "_example": true,
+    "notes": "ovh sells both; the table classifies ovh infra as shared. label with what your control panel actually shows, and pick dedicated-mailbox/registrar-forwarding accordingly; this pair is the test that shared, not a guess, is the right category"
+  },
+  {
+    "id": "gateway-fronted-domain",
+    "address": "anyone@YOUR-GATEWAY-DOMAIN.com",
+    "arrangement": "self-hosted-or-unknown",
+    "ground_truth_source": "YOUR OWN dns: mx points at a security gateway (mimecast, proofpoint, eop) in front of your real host",
+    "_example": true,
+    "notes": "the gateway case: expectation is gateway_infrastructure with no arrangement claim behind it"
+  },
+  {
+    "id": "consumer-isp-own-mailbox",
+    "address": "YOUR-ISP-MAILBOX@web.de",
+    "arrangement": "dedicated-mailbox",
+    "ground_truth_source": "you log into this mailbox (replace web.de with your actual isp)",
+    "_example": true,
+    "notes": "a consumer-isp mailbox case; several of these are also valid plus-tag contrast cases at providers that support them"
   }
 ]

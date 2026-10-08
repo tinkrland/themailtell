@@ -3,6 +3,26 @@
 // generated, committed module so the core keeps working offline and stays
 // free of runtime network access. rerun periodically; note the snapshot date.
 // usage: npm run sync:lists
+//
+// churn: two failure modes are inherent to a community snapshot, and this
+// script is where both are managed. they are documented in the readme and
+// restated here so the maintainer sees them at the moment of sync.
+//
+// 1. stale entries. domains change hands. a domain that was a disposable
+//    service when the community listed it can be a legitimate business
+//    today, and a stale entry then punishes the new owner. before shipping
+//    a release built on a fresh snapshot:
+//      - spot-check a sample of entries (mx lookup; a parked or for-sale
+//        domain, or one with ordinary business infrastructure, is a
+//        re-verification candidate),
+//      - report entries that clearly no longer belong upstream (the list
+//        accepts removals),
+//      - remember the snapshot date in the generated header is what signal
+//        staleness is computed from: an old entry in a fresh snapshot is
+//        still stamped with the fresh date, so the real check is manual.
+// 2. detection lag. brand-new disposable domains appear faster than
+//    community snapshots update. no snapshot cadence closes that; absence
+//    from the list is not evidence of legitimacy, and the readme says so.
 
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
