@@ -34,6 +34,11 @@ if (!Array.isArray(input)) {
 
 const cases = input.map((row) => {
   const { id, market, shape, expect, ...address } = row;
+  // market stays inside the address object: the fixture corpus carries it
+  // as evidence.address.market, and dropping it left authorized cases
+  // marketless, so no market table ever ran on them. found by the first
+  // operator-published cases (wrong states and findings with no signal)
+  const withMarket = { market, ...address };
   if (!id || !market || !shape) {
     console.error(`case is missing id, market or shape: ${JSON.stringify(row).slice(0, 80)}`);
     process.exit(1);
@@ -73,7 +78,7 @@ const cases = input.map((row) => {
     shape,
     scope: expect.scope ?? "address",
     evidence: {
-      address,
+      address: withMarket,
       observed_at: new Date().toISOString().replace(/\.\d+Z$/, "Z"),
     },
     expectations,

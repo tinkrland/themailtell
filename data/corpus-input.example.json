@@ -1,29 +1,32 @@
 [
   {
-    "id": "example-us-po-box-mine",
+    "id": "operator-published-postscan-phoenix",
     "market": "us",
-    "lines": ["PO Box 12345"],
-    "city": "Anytown",
-    "region": "NY",
-    "postal_code": "10001",
-    "shape": "usps po box",
+    "lines": [
+      "2345 E Thomas Rd Ste 100"
+    ],
+    "city": "Phoenix",
+    "region": "AZ",
+    "postal_code": "85016",
+    "shape": "operator-published example: post scan mail's own phoenix location form; a mail center address the operator publishes openly, not a residence",
     "expect": {
-      "po_box_equivalent": "evidence_found",
+      "cmra_or_virtual_mailbox": "evidence_found",
       "state": "signals_present"
     }
   },
   {
-    "id": "example-us-street-mine-contrast-pair",
+    "id": "operator-published-usgm-houston",
     "market": "us",
-    "lines": ["12 Real Street"],
-    "city": "Anytown",
-    "region": "NY",
-    "postal_code": "10001",
-    "shape": "us street address",
+    "lines": [
+      "1321 Upland Drive"
+    ],
+    "city": "Houston",
+    "region": "TX",
+    "postal_code": "77043",
+    "shape": "operator-published example: us global mail's facility address from the provider's own site footer; the provider's processing facility, not a residence",
     "expect": {
-      "po_box_equivalent": "no_evidence_found",
-      "parcel_locker_or_pickup_point": "no_evidence_found",
-      "cmra_or_virtual_mailbox": "no_evidence_found"
+      "cmra_or_virtual_mailbox": "evidence_found",
+      "state": "signals_present"
     }
   }
 ]
