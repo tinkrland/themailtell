@@ -93,5 +93,9 @@ export interface CarrierEvidence {
   ported?: boolean | null;
   /** the adapter checked and knows the number is not in service */
   not_in_service?: boolean;
+  /** the adapter positively reports the line is live (an hlr active
+   *  check, a carrier lookup that connected); null or absent = not
+   *  checked. absence of in-service knowledge is never confirmation */
+  active?: boolean | null;
   detail?: string;
 }

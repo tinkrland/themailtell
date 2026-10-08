@@ -7,6 +7,7 @@
 
 import type {
   ClassificationResult,
+  ExistenceFinding,
   Finding,
   Limitation,
   Signal,
@@ -55,6 +56,46 @@ export function analyze(evidence: Evidence, options: AggregationOptions): Classi
 
   const np = numberingPlanStage(parse, now, options.max_age_days);
   const ca = carrierStage(parse, carriers, now);
+
+  // line existence: only a positively reporting carrier adapter can say
+  // anything, and its evidence ages like everything else. the freshest
+  // in-date report wins; a stale existence report is skipped with a
+  // limitation rather than silently trusted. absence of a report is
+  // never confirmation of anything
+  let existenceFinding: ExistenceFinding = "unknown";
+  {
+    let reported: ExistenceFinding = "unknown";
+    const inDate = carriers
+      .filter((c) => c.active === true || c.not_in_service === true)
+      .sort((a, b) => Date.parse(b.observed_at ?? "") - Date.parse(a.observed_at ?? ""));
+    for (const c of inDate) {
+      const ageDays =
+        (Date.parse(now) - Date.parse(c.observed_at ?? now)) / 86_400_000;
+      if (Number.isFinite(ageDays) && ageDays > options.max_age_days) {
+        limitations.push({
+          code: "existence_evidence_stale",
+          detail:
+            `an adapter reported on this line's existence ` +
+            `${Math.round(ageDays)} days ago, beyond the ` +
+            `${options.max_age_days}-day horizon; the stale report is ` +
+            "not trusted and line existence stays unknown",
+        });
+        continue;
+      }
+      reported = c.not_in_service === true ? "disconfirmed" : "confirmed_active";
+      break;
+    }
+    existenceFinding = reported;
+    if (reported === "unknown" && carriers.length > 0 && inDate.length === 0) {
+      limitations.push({
+        code: "existence_not_checked",
+        detail:
+          "the adapter evidence reported no in-service check, so line " +
+          "existence stays unknown: range classification says what the " +
+          "range is for, never whether this number is a live line",
+      });
+    }
+  }
   const pr = providerStage(parse, community_lists, now, options.max_age_days);
 
   pushLimit(np.limitation, "numbering_plan");
@@ -71,7 +112,16 @@ export function analyze(evidence: Evidence, options: AggregationOptions): Classi
     non_fixed_voip: "unknown" as Finding,
     virtual_number: "unknown" as Finding,
     format_validity: "unknown" as Finding,
+    line_existence: (parse.valid ? existenceFinding : "unknown") as ExistenceFinding,
   };
+  if (!parse.valid && existenceFinding !== "unknown") {
+    pushLimit(
+      "the number itself does not parse as an assigned number for its " +
+      "market, so an adapter in-service claim about it contradicts the " +
+      "numbering plan; existence is reported as unknown, not asserted",
+      "existence_contradicted_by_parse",
+    );
+  }
 
   if (!parse.valid) {
     // an unparseable input invalidates format validity; every line-type

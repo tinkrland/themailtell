@@ -3,7 +3,7 @@
 // account; it reports line-type and virtual-number evidence with scope,
 // strength, coverage and observed time, and unknown is first-class.
 
-export const SCHEMA_VERSION = "1.0.0" as const;
+export const SCHEMA_VERSION = "1.1.0" as const;
 
 /** where the evidence comes from and what it describes */
 export type SignalScope = "number" | "range" | "provider" | "adapter";
@@ -56,6 +56,16 @@ export interface Signal {
 
 export type Finding = "evidence_found" | "no_evidence_found" | "unknown";
 
+/**
+ * whether the number exists as a live line. strictly adapter territory:
+ * the offline tables say what a RANGE is allocated for, never whether a
+ * specific number has a subscriber, so the core always reports unknown
+ * here. "disconfirmed" means a carrier lookup reported the number is
+ * not in service at that observation date, under that lookup's
+ * coverage; it is not an absolute claim and it ages like all evidence.
+ */
+export type ExistenceFinding = "confirmed_active" | "disconfirmed" | "unknown";
+
 export interface ShapeFindings {
   mobile: Finding;
   landline: Finding;
@@ -63,6 +73,7 @@ export interface ShapeFindings {
   non_fixed_voip: Finding;
   virtual_number: Finding;
   format_validity: Finding;
+  line_existence: ExistenceFinding;
 }
 
 /**

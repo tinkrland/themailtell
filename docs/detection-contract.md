@@ -50,3 +50,26 @@ every signal carries:
 
 "no evidence found" is always a statement about the search, never a
 verification of the number, its line type, or its holder.
+
+## line existence (adapter-only)
+
+the numbering plan says what a RANGE is allocated for; it never says
+whether a specific number has a subscriber. a number can sit in an
+allocated mobile range with no line behind it, and no offline table can
+disprove that, so `line_existence` is its own finding axis and the
+offline core always reports `unknown` for it.
+
+only carrier adapter evidence moves it:
+
+- an adapter that positively reports the line is live (an hlr active
+  check) sets `confirmed_active`;
+- an adapter that checked and knows the number is not in service sets
+  `disconfirmed` (the existing `not_in_service` field);
+- everything else, including adapters that reported a line type but no
+  in-service check, stays `unknown` with a limitation saying existence
+  was never checked. absence of a report is never confirmation.
+
+like every finding it ages: an existence report older than the
+staleness horizon is skipped with a limitation rather than trusted.
+"disconfirmed" means the lookup said so at that date under that
+coverage, not a permanent verdict; numbers are reassigned.

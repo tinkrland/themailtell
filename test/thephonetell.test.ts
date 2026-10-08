@@ -1,4 +1,5 @@
 import test from "node:test";
+import { SCHEMA_VERSION } from "../src/schema.js";
 import assert from "node:assert/strict";
 import { analyze, parseInput, type Evidence } from "../src/index.js";
 import type { ParseEvidence, CarrierEvidence } from "../src/tables.js";
@@ -14,7 +15,7 @@ function evidence(input: string, parse?: Partial<ParseEvidence>, carriers: Carri
 test("results carry the schema version and the input verbatim", () => {
   const raw = "  +44 7400 900123  ";
   const r = analyze(evidence(raw), OPTS);
-  assert.equal(r.schema_version, "1.0.0");
+  assert.equal(r.schema_version, SCHEMA_VERSION);
   assert.equal(r.input, raw); // never rewritten
   assert.ok(r.evaluated_number!.startsWith("+44"));
 });

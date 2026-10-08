@@ -37,6 +37,36 @@ export interface FixtureCase {
 }
 
 export const FIXTURES: FixtureCase[] = [
+  {
+    id: "us-hlr-inactive",
+    input: "+12125550128",
+    carriers: [carrier("non_fixed_voip", "full", { not_in_service: true, active: null })],
+    expectations: {
+      findings: { line_existence: "disconfirmed" },
+    },
+  },
+  {
+    id: "gb-hlr-active",
+    input: "+447400123456",
+    carriers: [carrier("mobile", "full", { active: true })],
+    expectations: {
+      findings: { line_existence: "confirmed_active", mobile: "evidence_found" },
+    },
+  },
+  {
+    id: "us-hlr-stale",
+    input: "+12125550128",
+    carriers: [
+      carrier("non_fixed_voip", "full", {
+        active: true,
+        observed_at: "2025-01-01T00:00:00Z",
+      }),
+    ],
+    expectations: {
+      findings: { line_existence: "unknown" },
+      limitations: ["existence_evidence_stale"],
+    },
+  },
   // ---- contrast pairs: numbering plan, same market ----
   {
     id: "gb-07-mobile-vs-shape",
