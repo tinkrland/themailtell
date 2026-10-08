@@ -13,6 +13,49 @@ of "no evidence found" is a statement about the search, never a
 verification of a number, a line type, or a holder, and unknown is a
 first-class result, not a failure.
 
+## why line type matters
+
+phone numbers can be divided into identifying classes, and the signals
+above exist to report each one honestly:
+
+- mobile and wireless carriers
+- landline providers
+- voip and virtual phone services (fixed voip as a landline replacement,
+  non-fixed voip usable from anywhere)
+- prepaid numbers, where the plan is visible at all (in most numbering
+  plans, including the north american one, prepaid is a carrier-adapter
+  question, never a range question)
+- line type classification, the shape the evidence indicates
+- country and regional routing, which market's numbering plan the number
+  belongs to
+- disposable or high-risk phone infrastructure, only where it is
+  observable: known providers of short-use numbers and community lists.
+  risk itself is a consumer judgment this component never makes
+
+numbers are commonly categorized into a few line types: mobile or
+wireless, landline, voip and virtual services, and prepaid mobile where
+visible. the distinction matters because number types behave differently
+in authentication, onboarding, and fraud-prevention workflows:
+
+- mobile numbers are commonly used for sms verification and two-factor
+  authentication
+- landlines may not support sms messaging at all
+- voip numbers are often used for virtual communication and automated
+  registrations, and voip use is legitimate privacy behavior, not
+  evidence of anything by itself
+- prepaid numbers may carry elevated risk in certain environments, a
+  correlation the consumer weighs, never a fact about the person holding
+  the number
+
+carrier lookup and line-type analysis help a business understand how a
+number may be used before granting access to a platform. but no single
+phone-intelligence signal should be used in isolation: carrier lookup is
+most effective combined with ip reputation, device fingerprinting,
+behavioral analysis, email reputation, and proxy and vpn detection.
+combining those signals is the consumer's job; this component supplies
+its own evidence with coverage semantics on every signal, states its
+limitations, and never merges the rest.
+
 ## install and run
 
 ```
