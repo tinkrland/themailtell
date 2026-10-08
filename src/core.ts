@@ -6,6 +6,7 @@ import { SCHEMA_VERSION, type DetectionResult, type Signal } from "./schema.js";
 import { handleInput } from "./stages/input-handling.js";
 import { domainIntelligence } from "./stages/domain-intelligence.js";
 import { routingIntelligence } from "./stages/routing-intelligence.js";
+import { secondaryRoutingEvidence, type SecondaryEvidence } from "./stages/routing-secondary.js";
 import { addressAnalysis } from "./stages/address-analysis.js";
 import { aggregate } from "./stages/aggregation.js";
 
@@ -15,6 +16,11 @@ export interface Evidence {
   mx_records?: Array<{ exchange: string; priority: number }>;
   // dns-level failure: timeout, servfail, etc. results in unknown, not a guess
   dns_error?: string;
+  // secondary, non-mx routing evidence: raw txt records, dkim records
+  // observed at known selector conventions, an mta-sts policy, and
+  // autodiscover/srv presence. each stays a separate signal; none is ever
+  // flattened into mx-based routing evidence.
+  secondary_evidence?: SecondaryEvidence;
   // already-gathered adapter signals, converted with provenance
   adapter_signals?: Signal[];
   // when this evidence was observed (iso 8601). supplied by the caller,
@@ -75,6 +81,14 @@ export function analyze(
   signals.push(...routing.signals);
   limitations.push(...routing.limitations);
 
+  // stage 3b: secondary routing evidence, kept separate from mx evidence
+  const secondary = secondaryRoutingEvidence(
+    evidence.secondary_evidence ?? {},
+    observedAt
+  );
+  signals.push(...secondary.signals);
+  limitations.push(...secondary.limitations);
+
   // stage 4: address-level syntax facts, kept separate from provider semantics
   const address = addressAnalysis(input, routing.matchedEntries, observedAt);
   signals.push(...address.signals);
@@ -85,10 +99,17 @@ export function analyze(
     signals.push(...evidence.adapter_signals);
   }
 
+  const hasSecondary =
+    evidence.secondary_evidence !== undefined &&
+    (Object.keys(evidence.secondary_evidence).length > 0);
   if (!evidence.mx_records && !evidence.dns_error) {
     limitations.push(
-      "no routing evidence was supplied; forwarding and mailbox claims " +
-        "are limited to list and syntax signals"
+      hasSecondary
+        ? "no mx records were supplied; infrastructure categories are not " +
+          "claimed, and the secondary evidence below is send-path or " +
+          "presence-only, never an arrangement claim"
+        : "no routing evidence was supplied; forwarding and mailbox claims " +
+          "are limited to list and syntax signals"
     );
   }
 
