@@ -1,0 +1,143 @@
+// gh market tables. regulator: NCA. fetched and
+// verified 2026-10-08 where noted; unverified rows are honest seeds.
+
+import type { MarketTables } from "../tables.js";
+
+export const GH: MarketTables = {
+  regulator: "NCA",
+  ranges: [
+    {
+      prefix: "24",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "25",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "26",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "27",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "28",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "29",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "53",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "54",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "55",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "57",
+      line_type: "mobile",
+      official_name: "mobile ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "30",
+      line_type: "landline",
+      official_name: "geographic ranges (accra)",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "31",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "32",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "34",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "35",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "36",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "37",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "38",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+    {
+      prefix: "39",
+      line_type: "landline",
+      official_name: "geographic ranges",
+      citation: "https://www.nca.org.gh",
+      verified_on: null,
+    },
+  ],
+};

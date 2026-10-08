@@ -1,0 +1,41 @@
+{
+  "cases": [
+    {
+      "id": "gb-real-mobile",
+      "number": "+447000000000",
+      "authorization": "confirmed-controlled",
+      "ground_truth": {
+        "line_type": "mobile",
+        "notes": "my own handset, on a gb mobile carrier"
+      },
+      "contrast_with": "gb-google-voice-style"
+    },
+    {
+      "id": "gb-virtual-range",
+      "number": "+445612345678",
+      "authorization": "confirmed-controlled",
+      "ground_truth": {
+        "line_type": "voip",
+        "notes": "a 056 location-independent number i control"
+      },
+      "contrast_with": "gb-real-mobile"
+    },
+    {
+      "id": "us-nonfixed-voip",
+      "number": "+12000000000",
+      "authorization": "confirmed-controlled",
+      "ground_truth": {
+        "line_type": "non_fixed_voip",
+        "notes": "a virtual number i control from a consumer voip app"
+      },
+      "adapter_evidence": [
+        {
+          "source": "recorded twilio lookup result",
+          "observed_at": "2026-10-08T00:00:00Z",
+          "coverage": "full",
+          "line_type": "non_fixed_voip"
+        }
+      ]
+    }
+  ]
+}
