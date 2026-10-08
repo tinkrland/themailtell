@@ -38,7 +38,7 @@ export interface CorpusCase {
   expectations: Expectation;
 }
 
-const T0 = "2026-10-06T00:00:00Z";
+const T0 = "2026-10-08T00:00:00Z";
 
 function ev(address: string, mx?: Array<[string, number]>, dnsError?: string): Evidence {
   return {
@@ -275,6 +275,188 @@ export const CORPUS: CorpusCase[] = [
     expectations: {
       expect_signals: ["mailbox_capable_infrastructure"],
       forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "apple-siwa-relay-legacy",
+    arrangement: "sign in with apple relay address on the legacy domain",
+    scope: "domain",
+    evidence: ev("xp6g2f7x4f@privaterelay.appleid.com"),
+    expectations: {
+      expect_signals: ["masking_relay_service"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "apple-siwa-relay-new-domain",
+    arrangement: "sign in with apple relay address on the new unified domain",
+    scope: "domain",
+    evidence: ev("ab12cd34ef@private.icloud.com", [
+      ["mx01.mail.icloud.com", 10],
+    ]),
+    expectations: {
+      expect_signals: ["masking_relay_service"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "hide-my-email-at-icloud-is-not-classifiable",
+    arrangement: "icloud+ hide my email alias shares icloud.com with real mailboxes",
+    scope: "domain",
+    evidence: ev("someone@icloud.com", [
+      ["mx01.mail.icloud.com", 10],
+    ]),
+    expectations: {
+      // the honest uncovered case: icloud.com hosts both real mailboxes and
+      // hide my email aliases, so domain evidence must not claim relay here.
+      // consumers needing that distinction need an oauth-shaped route.
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["masking_relay_service"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "spf-include-forwarding-no-mx-match",
+    arrangement: "custom domain with a forwarding service's spf include and unrecognized mx",
+    scope: "domain",
+    evidence: {
+      address: "hello@example-spaceship-forwarded.dev",
+      mx_records: [{ exchange: "mx.example-spaceship-forwarded.dev", priority: 10 }],
+      secondary_evidence: {
+        txt_records: ["v=spf1 include:spf.improvmx.com ~all"],
+      },
+      observed_at: T0,
+    },
+    expectations: {
+      // send-path evidence is its own signal; it must never become the
+      // mx-based forwarding signal
+      expect_signals: ["spf_forwarding_include"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+      expect_limitation: "not proof of a current forwarding arrangement",
+    },
+  },
+  {
+    id: "dkim-selector-forwarding",
+    arrangement: "custom domain with a forwarding service's dkim selector",
+    scope: "domain",
+    evidence: {
+      address: "contact@example-idea.dev",
+      mx_records: [{ exchange: "mx.example-idea.dev", priority: 10 }],
+      secondary_evidence: {
+        domainkey_records: [
+          { selector: "dkimprovmx1", value: "v=DKIM1; k=rsa; p=MIGf..." },
+        ],
+      },
+      observed_at: T0,
+    },
+    expectations: {
+      expect_signals: ["dkim_forwarder_selector"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "hosted-domain-mta-sts-autodiscover",
+    arrangement: "self-hosted mail with mta-sts and autodiscover present",
+    scope: "domain",
+    evidence: {
+      address: "ops@example-selfhost.io",
+      mx_records: [{ exchange: "mail.example-selfhost.io", priority: 10 }],
+      secondary_evidence: {
+        mta_sts_policy: "version: STSv1; mode: enforce; mx: mail.example-selfhost.io",
+        autodiscover_srv: true,
+      },
+      observed_at: T0,
+    },
+    expectations: {
+      // presence-only evidence is suggestive and claims no arrangement
+      expect_signals_any_strength: ["mta_sts_policy_present", "autodiscover_present"],
+      forbid_signals: ["mailbox_capable_infrastructure", "forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "migadu-hosted-custom-domain",
+    arrangement: "custom domain hosted at migadu",
+    scope: "provider_infrastructure",
+    evidence: ev("hello@example-migadu.org", [
+      ["aspmx1.migadu.com", 10],
+      ["aspmx2.migadu.com", 20],
+      ["aspmx3.migadu.com", 20],
+    ]),
+    expectations: {
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "ionos-legacy-customer-hosts",
+    arrangement: "custom domain on ionos/1&1 legacy customer hosts",
+    scope: "provider_infrastructure",
+    evidence: ev("kontakt@example-shop.de", [
+      ["mx00.kundenserver.de", 10],
+      ["mx01.kundenserver.de", 10],
+    ]),
+    expectations: {
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "ovh-shared-mail-infrastructure",
+    arrangement: "custom domain at ovh, whose mailbox and redirection products share infra",
+    scope: "provider_infrastructure",
+    evidence: ev("contact@example-ovh.fr", [
+      ["mx1.ovh.net", 1],
+      ["mx2.ovh.net", 5],
+    ]),
+    expectations: {
+      expect_signals: ["shared_mail_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure", "mailbox_capable_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "consumer-isp-webde",
+    arrangement: "consumer isp mailbox (web.de)",
+    scope: "provider_infrastructure",
+    evidence: ev("user@web.de", [
+      ["mx-ha02.web.de", 100],
+      ["mx-ha03.web.de", 100],
+    ]),
+    expectations: {
+      expect_signals: ["mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "gmail-dot-semantics-reported-not-applied",
+    arrangement: "dotted local part at gmail, where dots are ignored at delivery",
+    scope: "provider_infrastructure",
+    evidence: ev("j.o.h.n.doe@gmail.com", [
+      ["gmail-smtp-in.l.google.com", 5],
+    ]),
+    expectations: {
+      expect_signals: ["local_part_semantics", "mailbox_capable_infrastructure"],
+      forbid_signals: ["forwarding_infrastructure"],
+      expect_state: "signals_present",
+      expect_limitation: "the address is never rewritten",
+    },
+  },
+  {
+    id: "outlook-alias-product-semantics",
+    arrangement: "plain local part at consumer microsoft mail, which supports account aliases",
+    scope: "provider_infrastructure",
+    evidence: ev("plainuser@outlook.com", [
+      ["outlook-com.olc.protection.outlook.com", 0],
+    ]),
+    expectations: {
+      expect_signals: ["local_part_semantics", "mailbox_capable_infrastructure"],
       expect_state: "signals_present",
     },
   },

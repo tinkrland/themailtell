@@ -44,15 +44,21 @@ export function aggregate(
   const recognized = fresh.filter((s) => s.strength === "recognized");
   const hasForwarding = recognized.some((s) => s.name === "forwarding_infrastructure");
   const hasMailbox = recognized.some((s) => s.name === "mailbox_capable_infrastructure");
-  const hasDomainVerdict = recognized.some(
-    (s) => s.name === "disposable_service" || s.name === "masking_relay_service"
+  // a listed disposable domain whose mx hosts inboxes is a conflict between
+  // a list and live routing. a listed masking/relay domain whose mx is
+  // mailbox-capable is NOT a conflict: relay services deliver into
+  // mailboxes, and apple's relay domain itself runs on icloud mail
+  // infrastructure (verified live 2026-10-08), so that pair is reported
+  // together as signals_present.
+  const hasDisposableVerdict = recognized.some(
+    (s) => s.name === "disposable_service"
   );
 
   // recognized list evidence contradicting recognized routing evidence
-  if (hasDomainVerdict && hasMailbox) {
+  if (hasDisposableVerdict && hasMailbox) {
     limitations.push(
-      "contradiction: a domain-level list hit disagrees with recognized " +
-        "mailbox-capable routing; both are reported, neither wins"
+      "contradiction: a domain-level disposable list hit disagrees with " +
+        "recognized mailbox-capable routing; both are reported, neither wins"
     );
     return { state: "contradictory", signals: fresh, limitations };
   }

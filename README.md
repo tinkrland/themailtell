@@ -65,6 +65,29 @@ unknown infrastructure is not proof of forwarding. mailbox-capable
 infrastructure is not proof that a particular address has a separate inbox.
 privacy-preserving email use is not by itself evidence of fraud or automation.
 
+apple's hide my email is a coverage limit by design, not an oversight: its
+aliases live at icloud.com, sharing the domain with real icloud mailboxes,
+so an icloud.com address can never be classified as a relay from domain
+evidence. the detector does not guess there; it reports icloud.com as
+mailbox-capable infrastructure. a consuming application that must
+distinguish a hide my email alias from a real icloud mailbox needs an
+oauth-shaped route (sign in with apple exposes the relay address and the
+account behind it), which is outside this component by design.
+
+secondary routing evidence exists and stays in its lane. an spf include or
+dkim selector shows a forwarding service is authorized to send or sign for
+the domain: send-path configuration, never proof of a current forwarding
+arrangement. mta-sts and autodiscover records are presence-only
+observations. none of these is ever flattened into the mx-based forwarding
+signal.
+
+the disposable community snapshot carries two inherent failure modes.
+stale entries: domains change hands, and a former disposable domain can be
+a legitimate business today; entries are claims about their snapshot date,
+not eternal truths. detection lag: new disposable domains appear faster
+than any snapshot updates, so absence from the list is not evidence of
+legitimacy.
+
 the component does not identify the hidden destination mailbox and does not
 prove that one address corresponds to one unique human.
 

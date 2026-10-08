@@ -26,8 +26,8 @@ export type InfrastructureCategory =
 // the date this table's knowledge was last verified. derived signals carry
 // this date as their observed_at so staleness applies to the knowledge,
 // not to the moment of lookup.
-export const PROVIDER_TABLE_AS_OF = "2026-10-06";
-export const PROVIDER_TABLE_VERSION = "seed/0.3.0";
+export const PROVIDER_TABLE_AS_OF = "2026-10-08";
+export const PROVIDER_TABLE_VERSION = "seed/0.4.0";
 
 export interface ProviderEntry {
   // host or parent domain to match mx exchanges against
@@ -37,6 +37,13 @@ export interface ProviderEntry {
   // this provider is known to treat a plus tag as a sub-address convention.
   // reported separately from raw syntax so the two facts never blur.
   plus_tag_semantics?: boolean;
+  // this provider is known to ignore dots in local parts at delivery for at
+  // least some of its address families. reported as declared semantics,
+  // never applied as a rewrite.
+  dots_ignored?: boolean;
+  // declared local-part semantics beyond plus tags, emitted as a
+  // local_part_semantics signal when the provider is matched.
+  alias_semantics_note?: string;
   note?: string;
 }
 
@@ -86,6 +93,26 @@ export const SHARED_INFRASTRUCTURE_ENTRIES: ProviderEntry[] = [
       "the same infrastructure serves mailbox.org mailboxes and forwarding " +
       "family products; routing evidence cannot distinguish them per address",
   },
+  {
+    match: "ovh.net",
+    provider: "ovh mail infrastructure",
+    category: "shared",
+    note:
+      "ovh sells hosted mailboxes (mx plans) and free email redirection " +
+      "under the same infrastructure; per-address arrangement cannot be " +
+      "established from routing alone (verified live 2026-10-08: ovh.com " +
+      "serves mx1/mx2.ovh.net)",
+  },
+  {
+    match: "gandi.net",
+    provider: "gandi mail infrastructure",
+    category: "shared",
+    note:
+      "gandi sells paid mailboxes and free mail forwarding under the same " +
+      "infrastructure; per-address arrangement cannot be established from " +
+      "routing alone (verified live 2026-10-08: gandi.net serves " +
+      "mail8/mail12.gandi.net)",
+  },
 ];
 
 export const MAILBOX_ENTRIES: ProviderEntry[] = [
@@ -96,7 +123,12 @@ export const MAILBOX_ENTRIES: ProviderEntry[] = [
     provider: "google mail infrastructure",
     category: "mailbox_capable",
     plus_tag_semantics: true,
-    note: "covers gmail and google workspace custom domains",
+    dots_ignored: true,
+    note:
+      "covers gmail and google workspace custom domains. dots are ignored " +
+      "for @gmail.com/@googlemail.com addresses; on workspace custom " +
+      "domains dot handling is organization-configured (verified: google " +
+      "support, address 7436150). reported, never applied",
   },
   {
     // current google workspace single-host mx (priority 1 smtp.google.com),
@@ -105,9 +137,11 @@ export const MAILBOX_ENTRIES: ProviderEntry[] = [
     provider: "google mail infrastructure",
     category: "mailbox_capable",
     plus_tag_semantics: true,
+    dots_ignored: true,
     note:
       "workspace domains can use the single-host mx smtp.google.com " +
-      "(verified 2026-10-06: support.google.com/a/answer/174125)",
+      "(verified 2026-10-06: support.google.com/a/answer/174125); see the " +
+      "l.google.com entry for dot semantics",
   },
   // consumer microsoft mail. exact hosts verified live 2026-10-04; they must
   // beat the generic protection.outlook.com gateway suffix below.
@@ -116,12 +150,22 @@ export const MAILBOX_ENTRIES: ProviderEntry[] = [
     provider: "outlook.com (consumer microsoft mail)",
     category: "mailbox_capable",
     plus_tag_semantics: true,
+    alias_semantics_note:
+      "consumer microsoft mail supports account-level alias addresses " +
+      "(up to 10 per account, created in account settings) that share one " +
+      "mailbox and carry no syntax marker; a plain local part can neither " +
+      "confirm nor deny an alias arrangement. plus tags are sub-addresses " +
+      "and dots are significant. reported, never applied",
   },
   {
     match: "hotmail-com.olc.protection.outlook.com",
     provider: "hotmail.com (consumer microsoft mail)",
     category: "mailbox_capable",
     plus_tag_semantics: true,
+    alias_semantics_note:
+      "consumer microsoft mail supports account-level alias addresses that " +
+      "share one mailbox and carry no syntax marker; a plain local part can " +
+      "neither confirm nor deny an alias arrangement. reported, never applied",
   },
   {
     match: "messagingengine.com",
@@ -143,7 +187,12 @@ export const MAILBOX_ENTRIES: ProviderEntry[] = [
   { match: "smtpin.zoho.in", provider: "zoho mail (in)", category: "mailbox_capable" },
   { match: "mx.zoho.com", provider: "zoho mail (legacy)", category: "mailbox_capable" },
   { match: "mx.zohomail.com", provider: "zoho mail", category: "mailbox_capable" },
-  { match: "yahoodns.net", provider: "yahoo mail infrastructure (yahoo, aol)", category: "mailbox_capable" }, // verified live 2026-10-04
+  {
+    match: "yahoodns.net",
+    provider: "yahoo mail infrastructure (yahoo, aol)",
+    category: "mailbox_capable",
+    note: "also fronts sky.com consumer mail (uk), verified live 2026-10-08",
+  }, // verified live 2026-10-04
   { match: "yandex.ru", provider: "yandex mail", category: "mailbox_capable" }, // verified live 2026-10-04
   { match: "yandex.net", provider: "yandex mail", category: "mailbox_capable" },
   { match: "yandex.com", provider: "yandex mail", category: "mailbox_capable" },
@@ -174,6 +223,119 @@ export const MAILBOX_ENTRIES: ProviderEntry[] = [
       "spaceship-forwarded domain reports as unknown infrastructure, and " +
       "that is the honest result until its forwarding hosts are verified",
   }, // verified live 2026-10-06: spaceship.com itself runs mx1/mx2.spacemail.com
+  {
+    match: "migadu.com",
+    provider: "migadu",
+    category: "mailbox_capable",
+    note:
+      "customer domains use aspmx1/aspmx2/aspmx3.migadu.com per migadu's " +
+      "setup guides; migadu.com itself serves mx.migadu.com (verified live " +
+      "2026-10-08)",
+  },
+  { match: "purelymail.com", provider: "purelymail", category: "mailbox_capable" }, // verified live 2026-10-08: mailserver.purelymail.com
+  {
+    match: "mxrouting.net",
+    provider: "mxroute",
+    category: "mailbox_capable",
+    note:
+      "customer domains get per-account subdomains of mxrouting.net " +
+      "(verified live 2026-10-08: mxroute.com itself serves " +
+      "arrow.mxrouting.net)",
+  },
+  {
+    match: "1and1.com",
+    provider: "ionos/1&1 mail infrastructure",
+    category: "mailbox_capable",
+    note:
+      "current ionos and 1&1 brand domains (ionos.de, 1und1.de, " +
+      "kundenserver.de, perfora.net, schlund.de) all serve " +
+      "mxint01/mxint02.1and1.com (verified live 2026-10-08)",
+  },
+  {
+    match: "kundenserver.de",
+    provider: "ionos/1&1 mail infrastructure (legacy customer hosts)",
+    category: "mailbox_capable",
+    note:
+      "the classic 1&1 customer exchange hostnames (mx00/mx01.kundenserver.de); " +
+      "brand family verified live 2026-10-08",
+  },
+  {
+    match: "perfora.net",
+    provider: "ionos/1&1 mail infrastructure (legacy customer hosts)",
+    category: "mailbox_capable",
+    note: "the schlund/partner-era customer exchange hostnames; brand " +
+      "family verified live 2026-10-08",
+  },
+  {
+    match: "one.com",
+    provider: "one.com mail infrastructure",
+    category: "mailbox_capable",
+    note: "hosted mail pods like mx1..4.pub.mailpod12-cph3.one.com (verified live 2026-10-08)",
+  },
+  {
+    match: "hostinger.com",
+    provider: "hostinger mail infrastructure",
+    category: "mailbox_capable",
+    note:
+      "hostinger email serves mx1.hostinger.com (prio 5) and " +
+      "mx2.hostinger.com (prio 10) per hostinger's support docs; " +
+      "hostinger.com itself runs google workspace and cannot serve as the " +
+      "live check (docs-verified 2026-10-08)",
+  },
+  {
+    match: "mx.bt.prod.cloud.openwave.ai",
+    provider: "bt mail infrastructure (btinternet)",
+    category: "mailbox_capable",
+    note: "bt consumer mail moved to the openwave cloud platform (verified live 2026-10-08)",
+  },
+  {
+    match: "atmailcloud.com",
+    provider: "atmail hosted platform",
+    category: "mailbox_capable",
+    note:
+      "the atmail hosted mail platform fronts virgin media (uk/eu-west), " +
+      "iinet and optusnet (au/au-east) consumer mail (verified live " +
+      "2026-10-08)",
+  },
+  {
+    match: "oxcs.net",
+    provider: "open-xchange consumer mail platform",
+    category: "mailbox_capable",
+    note: "fronts talktalk.net consumer mail (verified live 2026-10-08)",
+  },
+  { match: "laposte.net", provider: "laposte.net (la poste, fr)", category: "mailbox_capable" }, // verified live 2026-10-08
+  { match: "orange.fr", provider: "orange.fr (fr)", category: "mailbox_capable" }, // verified live 2026-10-08: smtp-in.orange.fr
+  { match: "sfr.fr", provider: "sfr.fr (fr)", category: "mailbox_capable" }, // verified live 2026-10-08: smtp-in.sfr.fr
+  { match: "free.fr", provider: "free.fr (fr)", category: "mailbox_capable" }, // verified live 2026-10-08: mx1/mx2.free.fr
+  { match: "web.de", provider: "web.de (de)", category: "mailbox_capable" }, // verified live 2026-10-08: mx-ha02/03.web.de
+  { match: "t-online.de", provider: "t-online.de (de)", category: "mailbox_capable" }, // verified live 2026-10-08: mx00..03.t-online.de
+  { match: "freenet.de", provider: "freenet.de (de)", category: "mailbox_capable" }, // verified live 2026-10-08
+  { match: "libero.it", provider: "libero.it (it)", category: "mailbox_capable" }, // verified live 2026-10-08: smtp-in.libero.it
+  { match: "virgilio.it", provider: "virgilio.it (it)", category: "mailbox_capable" }, // verified live 2026-10-08: smtp-in.virgilio.it
+  { match: "tiscali.it", provider: "tiscali.it (it)", category: "mailbox_capable" }, // verified live 2026-10-08: etb/imp.mail.tiscali.it
+  { match: "ziggo.nl", provider: "ziggo.nl consumer mail (nl)", category: "mailbox_capable" }, // verified live 2026-10-08: mxin5/10.ziggo.nl
+  { match: "kpnmail.nl", provider: "kpnmail.nl consumer mail (nl)", category: "mailbox_capable" }, // verified live 2026-10-08: mx.kpnmail.nl
+  { match: "telenet-ops.be", provider: "telenet.be consumer mail (be)", category: "mailbox_capable" }, // verified live 2026-10-08: mx1/2.telenet-ops.be
+  { match: "bigpond.com", provider: "bigpond/telstra consumer mail (au)", category: "mailbox_capable" }, // verified live 2026-10-08: extmail.bigpond.com
+  {
+    match: "smxcloud.com",
+    provider: "smx platform",
+    category: "mailbox_capable",
+    note: "fronts xtra.co.nz (spark nz) consumer mail (verified live 2026-10-08)",
+  },
+  {
+    match: "cloudfilter.net",
+    provider: "cloudfilter platform",
+    category: "mailbox_capable",
+    note: "fronts eircom.net (eir, ie) consumer mail (verified live 2026-10-08)",
+  },
+  { match: "mail.telia.com", provider: "telia consumer mail (se)", category: "mailbox_capable" }, // verified live 2026-10-08
+  {
+    match: "norlys.dk",
+    provider: "norlys consumer mail (stofa, dk)",
+    category: "mailbox_capable",
+    note: "stofa.dk merged into norlys; mx10/20.norlys.dk (verified live 2026-10-08)",
+  },
 ];
 
 // security gateways. a gateway relays to the final host; that is not
@@ -193,7 +355,11 @@ export const GATEWAY_ENTRIES: ProviderEntry[] = [
     match: "pphosted.com",
     provider: "proofpoint",
     category: "gateway",
-    note: "relays to the final host; the final arrangement stays unobserved",
+    note:
+      "relays to the final host; the final arrangement stays unobserved. " +
+      "seen fronting yousee.dk consumer mail, verified live 2026-10-08: " +
+      "yousee's own mx is mxa/mxb-00360101.gslb.pphosted.com, so yousee " +
+      "addresses report as gateway, which is the honest routing answer",
   },
   {
     match: "mimecast.com",
@@ -244,6 +410,17 @@ export function findProvider(host: string): ProviderEntry | undefined {
 // regardless of how professional the local part looks. sources: service
 // docs and faqs; the authoritative current list for each service is its own
 // dashboard/docs (maintenance item).
+//
+// apple, verified against the developer news (see research/sources/):
+// - sign in with apple legacy addresses stay at privaterelay.appleid.com and
+//   keep working (apple developer news update, 2026-08-24)
+// - new sign in with apple addresses move to private.icloud.com
+//   (rollout "later this year" as of that announcement)
+// - icloud+ hide my email addresses stay at icloud.com after apple reversed
+//   the unification plan following user feedback. icloud.com is shared with
+//   real icloud mailboxes, so icloud.com can never be classified as a relay
+//   domain from domain evidence; that case is documented as uncovered in
+//   the readme instead of being guessed at here.
 export const RELAY_DOMAINS: string[] = [
   "mozmail.com", // firefox relay
   "duck.com", // duckduckgo email protection
@@ -259,6 +436,51 @@ export const RELAY_DOMAINS: string[] = [
   "33mail.com", // 33mail
   "inboxbear.com", // inboxbear (also in community list)
   "improvmx.com", // improvmx's own alias domain
+  "privaterelay.appleid.com", // apple sign in with apple relay (legacy, active)
+  "private.icloud.com", // apple sign in with apple relay (new addresses)
+];
+
+// spf include tokens published by forwarding services for their customers'
+// domains. send-path configuration evidence only: an include authorizes
+// the service's servers to send for the domain, which is typical for a
+// forwarding setup but is never proof of a current forwarding arrangement.
+// kept separate from mx-based forwarding evidence, never flattened into it.
+export const SPF_FORWARDING_INCLUDES: Array<{ token: string; provider: string; note?: string }> = [
+  {
+    token: "spf.improvmx.com",
+    provider: "improvmx",
+    note: "verified 2026-10-08: improvmx guide (combining spf records)",
+  },
+  {
+    token: "spf.forwardemail.net",
+    provider: "forward email",
+    note: "verified 2026-10-08: forward email faq setup records",
+  },
+  {
+    token: "_spf.mx.cloudflare.net",
+    provider: "cloudflare email routing",
+    note:
+      "verified 2026-10-08: cloudflare email service postmaster docs state " +
+      "email routing configures this include on the root domain",
+  },
+];
+
+// dkim selector conventions used by forwarding services on their customers'
+// domains. presence of a selector here means the service publishes signing
+// keys for the domain: send-path evidence, not a current-arrangement proof.
+export const DKIM_FORWARDING_SELECTORS: Array<{ selector: string; provider: string; note?: string }> = [
+  {
+    selector: "dkimprovmx1",
+    provider: "improvmx",
+    note: "verified 2026-10-08: improvmx guide (adding dkim records)",
+  },
+  {
+    selector: "dkimprovmx2",
+    provider: "improvmx",
+    note: "verified 2026-10-08: improvmx guide (adding dkim records)",
+  },
+  // forward email's dkim selector is not published in their faq; unverified,
+  // deliberately not added (recorded as a gap, not guessed).
 ];
 
 // curated seed disposable list. the main disposable source is the generated
@@ -284,7 +506,10 @@ export const DISPOSABLE_SEED: string[] = [
 
 // community blocklist snapshot (cc0), generated by scripts/sync-disposable-list.mjs.
 // not verified per-domain; its provenance and snapshot date travel with its
-// signals and it goes stale with everything else.
+// signals and it goes stale with everything else. two failure modes are
+// documented in the sync script and readme: stale entries (domains change
+// hands; a former disposable domain can be a legitimate business today) and
+// detection lag (new disposable domains appear faster than snapshots update).
 export const DISPOSABLE_COMMUNITY: string[] = COMMUNITY_DISPOSABLE_DOMAINS;
 export const DISPOSABLE_COMMUNITY_SNAPSHOT: string = COMMUNITY_LIST_SNAPSHOT;
 
