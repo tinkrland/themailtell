@@ -81,6 +81,49 @@ export const MAILBOX_PROVIDERS: MailboxProviderEntry[] = [
     verified_on: "2026-10-08",
   },
   {
+    provider: "myus",
+    kind: "mail_forwarder",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us reshipper (sarasota fl). its own checkout guide shows the " +
+      "customer address as a suite number in address line 2 at the " +
+      "warehouse street, with no brand token, so this row cannot match " +
+      "locally; the facility row is the evidence path. reships worldwide " +
+      "with consolidation",
+    citation:
+      "https://www.myus.com/blog/how-to-enter-payment-shipping-details-when-shopping-us-sites/ (format), https://www.myus.com/about/ (warehouse)",
+    verified_on: "2026-10-08",
+  },
+  {
+    provider: "planet express",
+    kind: "mail_forwarder",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us reshipper (gardena ca). its own tutorial shows the verbatim " +
+      "customer address '17224 s. figueroa street, suite #b1234' with no " +
+      "brand token, so this row cannot match locally; the facility row is " +
+      "the evidence path. reships worldwide with consolidation",
+    citation:
+      "https://planetexpress.com/tutorials/how-to-activate-your-us-address/ (format and warehouse)",
+    verified_on: "2026-10-08",
+  },
+  {
+    provider: "stackry",
+    kind: "mail_forwarder",
+    markets: ["us"],
+    patterns: [],
+    note:
+      "us reshipper (nashua nh). its own faq states address line 1 is the " +
+      "same for all clients and line 2 is the unique locker/unit number, " +
+      "an unbranded form that cannot match locally; the facility row is " +
+      "the evidence path. reships worldwide with consolidation",
+    citation:
+      "https://www.stackry.com/faq (locker/unit format), https://www.stackry.com/how-it-works (location)",
+    verified_on: "2026-10-08",
+  },
+  {
     provider: "reship",
     kind: "mail_forwarder",
     markets: ["ca", "gb", "us"],

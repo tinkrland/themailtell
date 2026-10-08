@@ -344,6 +344,60 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "us-myus-suite-at-facility",
+    shape: "us forwarder, unbranded suite at the known myus facility street",
+    scope: "address",
+    evidence: ev("us", ["4299 Express Lane", "Suite 1189"], { city: "Sarasota", region: "FL", postal_code: "34249" }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-planet-express-suite-at-facility",
+    shape: "us forwarder, the verbatim planet express customer form, suite #b1234 at the facility street",
+    scope: "address",
+    evidence: ev("us", ["17224 S. Figueroa Street", "Suite #B1234"], { city: "Gardena", region: "CA", postal_code: "90248" }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-stackry-unit-at-facility",
+    shape: "us forwarder, unbranded locker/unit number in line 2 at the known stackry facility street",
+    scope: "address",
+    evidence: ev("us", ["472 Amherst St", "Unit 12345678"], { city: "Nashua", region: "NH", postal_code: "03063" }),
+    expectations: {
+      expect_signals: ["mail_forwarding_or_reshipping"],
+      expect_state: "signals_present",
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-sarasota-clean-street",
+    shape: "us ordinary street on the same block as the myus facility, the near-facility contrast pair",
+    scope: "address",
+    evidence: ev("us", ["4297 Express Lane"], { city: "Sarasota", region: "FL", postal_code: "34249" }),
+    expectations: {
+      forbid_signals: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "no_evidence_found" },
+      expect_limitation: "never evidence of a private residence",
+    },
+  },
+  {
+    id: "us-facility-wrong-postal-code",
+    shape: "us same street text but a different postal code, the postal-code contrast for facility matching",
+    scope: "address",
+    evidence: ev("us", ["4299 Express Lane", "Suite 1189"], { city: "Sarasota", region: "FL", postal_code: "34231" }),
+    expectations: {
+      forbid_signals: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "no_evidence_found" },
+    },
+  },
+  {
     id: "us-pmb-marker",
     shape: "us cmra private mailbox disclosure, the legally mandated pmb token",
     scope: "address",
