@@ -19,6 +19,10 @@ export interface FixtureCase {
   input: string;
   carriers: CarrierEvidence[];
   declared_voip?: boolean | null;
+  // the evaluation instant for this case, when it differs from the default.
+  // harness metadata: it says when staleness math must run, never what the
+  // result should be
+  now?: string;
   expectations: {
     state?: string;
     findings?: Record<string, string>;
@@ -39,10 +43,12 @@ export const FIXTURES: FixtureCase[] = [
     input: "+447400900123",
     carriers: [],
     expectations: {
-      state: "mixed_evidence",
+      // the gb rows are verified against ofcom's numbering data page now,
+      // so this is recognized evidence, not a suggestive seed
+      state: "signals_present",
       findings: { mobile: "evidence_found" },
       forbid_findings: { landline: "evidence_found", virtual_number: "evidence_found" },
-      signals: [{ name: "numbering_plan_range", strength: "suggestive" }],
+      signals: [{ name: "numbering_plan_range", strength: "recognized" }],
       market: "gb",
     },
   },
@@ -51,7 +57,7 @@ export const FIXTURES: FixtureCase[] = [
     input: "+442079460958",
     carriers: [],
     expectations: {
-      state: "mixed_evidence",
+      state: "signals_present",
       findings: { landline: "evidence_found" },
       forbid_findings: { mobile: "evidence_found", virtual_number: "evidence_found" },
       market: "gb",
@@ -305,11 +311,134 @@ export const FIXTURES: FixtureCase[] = [
     id: "staleness-decay-of-verified-row",
     input: "+445612345678",
     carriers: [],
+    now: "2027-10-08T00:00:00Z",
     expectations: {
       findings: { virtual_number: "unknown" },
       forbid_findings: { virtual_number: "evidence_found" },
       signals: [{ name: "numbering_plan_range", strength: "unresolved" }],
     },
-    // evaluated with now far past the verification date: see run-eval
+  },
+
+  // ---- stale community-list evidence stays visible but never asserts ----
+  {
+    id: "stale-community-list-never-asserts",
+    input: "+12125550128",
+    carriers: [],
+    now: "2027-10-08T00:00:00Z",
+    expectations: {
+      // the snapshot (2026-09-01) is more than a year old at this instant:
+      // the signal stays at unresolved strength with its stale detail, and
+      // virtual_number must not flip to evidence_found
+      state: "unknown",
+      findings: { virtual_number: "unknown" },
+      forbid_findings: { virtual_number: "evidence_found" },
+      signals: [{ name: "community_list", strength: "unresolved" }],
+      limitations: ["stale_virtual_evidence"],
+    },
+  },
+
+  // ---- gb 07x split: 070 personal vs 079 mobile, 076 radiopaging ----
+  {
+    id: "gb-070-personal-number",
+    input: "+447090123456",
+    carriers: [],
+    expectations: {
+      // 070 is ofcom's personal numbering range (call-forwarding
+      // services), not a mobile range: virtual-style, never mobile
+      state: "signals_present",
+      findings: { virtual_number: "evidence_found" },
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found" },
+      market: "gb",
+    },
+  },
+  {
+    id: "gb-079-mobile-contrast",
+    input: "+447979123456",
+    carriers: [],
+    expectations: {
+      // the contrast pair: 079 is a mobile services range per ofcom
+      state: "signals_present",
+      findings: { mobile: "evidence_found" },
+      forbid_findings: { virtual_number: "evidence_found" },
+      market: "gb",
+    },
+  },
+  {
+    id: "gb-076-radiopaging-not-withdrawn",
+    input: "+447601234567",
+    carriers: [],
+    expectations: {
+      // 076 is ofcom's radiopaging range and is still allocated: it is
+      // neither mobile nor landline, and unlike ireland's 076 it carries
+      // no withdrawal
+      state: "signals_present",
+      findings: { virtual_number: "evidence_found" },
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found" },
+      signals: [{ name: "numbering_plan_range", strength: "recognized" }],
+      market: "gb",
+    },
+  },
+  // (the 07624 isle of man allocation inside the 076 radiopaging range is
+  // covered in the unit tests: libphonenumber assigns 07624 numbers to the
+  // im market, so through the default parser they land in the unseeded im
+  // market rather than the gb tables, and a corpus case cannot express it)
+
+  // ---- gb derived rows: 0808, 03xx, 055, 09xx ----
+  {
+    id: "gb-0808-freephone",
+    input: "+448088012345",
+    carriers: [],
+    expectations: {
+      // 0808 freephone was invisible when only 0800 had a row
+      state: "signals_present",
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found", virtual_number: "evidence_found" },
+      signals: [{ name: "numbering_plan_range", strength: "recognized" }],
+      market: "gb",
+    },
+  },
+  {
+    id: "gb-03-ngn",
+    input: "+443331231234",
+    carriers: [],
+    expectations: {
+      state: "signals_present",
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found", virtual_number: "evidence_found" },
+      market: "gb",
+    },
+  },
+  {
+    id: "gb-055-corporate",
+    input: "+445512345678",
+    carriers: [],
+    expectations: {
+      state: "signals_present",
+      findings: { virtual_number: "evidence_found" },
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found" },
+      market: "gb",
+    },
+  },
+  {
+    id: "gb-090-premium",
+    input: "+449012345678",
+    carriers: [],
+    expectations: {
+      state: "signals_present",
+      forbid_findings: { mobile: "evidence_found", landline: "evidence_found", virtual_number: "evidence_found" },
+      market: "gb",
+    },
+  },
+
+  // ---- extension exclusion is reported, never silent ----
+  {
+    id: "extension-excluded-noted",
+    input: "+44 7400 900123 ext. 4567",
+    carriers: [],
+    expectations: {
+      state: "signals_present",
+      findings: { mobile: "evidence_found" },
+      limitations: ["extension_excluded"],
+      parse_valid: true,
+      market: "gb",
+    },
   },
 ];

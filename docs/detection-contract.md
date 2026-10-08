@@ -39,7 +39,10 @@ every signal carries:
 ## states
 
 - signals_present: at least one recognized signal
-- mixed_evidence: only suggestive signals
+- mixed_evidence: only suggestive signals were present. the name is
+  historical: it does not mean disagreement (that is the contradictory
+  state). consumers must not read "mixed" as contradiction; a better name
+  would be "suggestive_only", kept for consumer stability
 - contradictory: honest disagreement between stages, for example a ported
   number whose numbering-plan range still maps to its old line type
 - unknown: nothing found. unknown is first-class and routes to human

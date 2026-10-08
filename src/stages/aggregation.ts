@@ -91,6 +91,16 @@ export function analyze(evidence: Evidence, options: AggregationOptions): Classi
     };
   }
   findings.format_validity = "no_evidence_found"; // no format problem found
+  if (parse.extension) {
+    // the parser strips the extension from the e.164 form; the behavior
+    // stays, but the exclusion is reported instead of happening silently
+    pushLimit(
+      `the input carried a phone extension (${parse.extension}); the ` +
+      "extension is not part of the number's line type and was excluded " +
+      "from evaluation",
+      "extension_excluded",
+    );
+  }
 
   // numbering-plan findings
   const np_signal = np.signals[0] ?? null;
@@ -121,11 +131,28 @@ export function analyze(evidence: Evidence, options: AggregationOptions): Classi
     if (s) virtual_evidence.push(s);
     findings.virtual_number = "evidence_found";
   }
+  // unresolved provider evidence (a stale provider row or a stale
+  // community-list snapshot) stays visible in signals[] with its stale
+  // detail, but never asserts: the finding stays unknown, the same rule
+  // the withdrawn-range handling applies. never silently trusted, never
+  // silently dropped.
+  const provider_virtual = signals.filter(
+    (x) => x.name === "known_virtual_provider" || x.name === "community_list",
+  );
   if (pr.virtual_number) {
-    const s = signals.find((x) => x.name === "known_virtual_provider") ??
-      signals.find((x) => x.name === "community_list");
-    if (s) virtual_evidence.push(s);
-    findings.virtual_number = "evidence_found";
+    const asserting = provider_virtual.filter((x) => x.strength !== "unresolved");
+    if (asserting.length > 0) {
+      virtual_evidence.push(...asserting);
+      findings.virtual_number = "evidence_found";
+    } else if (provider_virtual.length > 0) {
+      pushLimit(
+        "stale virtual-number evidence (a community-list snapshot or provider " +
+        "row past its verification window) is reported at unresolved strength " +
+        "and does not assert; virtual_number stays unknown rather than being " +
+        "claimed from stale evidence",
+        "stale_virtual_evidence",
+      );
+    }
   }
 
   // carrier line-type findings. fixed voip and non-fixed voip are distinct.

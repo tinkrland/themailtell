@@ -33,7 +33,13 @@ runtime dependency is libphonenumber-js (offline parsing).
   is a virtual number usable from anywhere
 - virtual number: designated virtual ranges (gb 056 per ofcom, de 032 per
   bnetza, nl 085 per acm, and others), known provider shapes, community
-  lists
+  lists. gb 07x is never one mobile blob: 070 is personal numbers and 076
+  is radiopaging (with 07624 allocated to isle of man mobile operators per
+  ofcom's s7 allocations file), only 071-075 and 077-079 are mobile
+  services ranges, all verified against ofcom's numbering data page. an
+  input carrying a phone extension is evaluated on the number and reports
+  the excluded extension honestly; the extension never influences a
+  finding
 - format validity: with honest machine reasons for invalid inputs
 - declared comparison: if the caller declares a voip flag, a separate
   agree / disagree / unknown comparison signal. verification of the

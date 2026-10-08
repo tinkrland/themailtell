@@ -7,11 +7,12 @@
 // ranges (gb 056, de 032, nl 085, fr 09, ...), carrier adapter line types,
 // and community lists of numbers seen on public sms-receive websites.
 //
-// community lists are crowd-sourced observations: every snapshot carries its
-// date and ages on its own schedule, downgrading to unresolved instead of
-// asserting.
+// every row ages the same way: a provider row ages from its verified_on
+// date like a numbering-plan row, and a community snapshot ages from its
+// snapshot date. both downgrade to unresolved instead of asserting, and
+// aggregation never converts unresolved evidence into a finding.
 
-import type { CommunityListRow, ParseEvidence } from "../tables.js";
+import type { CommunityListRow, ParseEvidence, ProviderRow } from "../tables.js";
 import { PROVIDERS, COMMUNITY_LISTS } from "../providers.js";
 import type { Signal } from "../schema.js";
 
@@ -26,13 +27,15 @@ export function providerStage(
   community_lists: CommunityListRow[],
   observed_at: string,
   max_age_days: number,
+  // injectable for tests; the seeded table is the default
+  providers: ProviderRow[] = PROVIDERS,
 ): ProviderStageOutput {
   const signals: Signal[] = [];
   let virtual_number = false;
   let limitation: string | null = null;
 
   // known providers with distinguishable prefixes, if any ever gain them
-  const market_providers = PROVIDERS.filter(
+  const market_providers = providers.filter(
     (p) => parse.market && p.markets.includes(parse.market),
   );
   const invisible = market_providers.filter((p) => p.prefixes === null);
@@ -47,7 +50,14 @@ export function providerStage(
     if (!provider.prefixes || !parse.national_significant_number) continue;
     const hit = provider.prefixes.find((p) => parse.national_significant_number!.startsWith(p));
     if (!hit) continue;
-    const strength = provider.verified_on ? "recognized" : "suggestive";
+    // the same age math as a numbering-plan row: verified rows age from
+    // verified_on and downgrade to unresolved past the window; unverified
+    // rows stay suggestive
+    const strength: Signal["strength"] = !provider.verified_on
+      ? "suggestive"
+      : ageDays(provider.verified_on, observed_at) > max_age_days
+        ? "unresolved"
+        : "recognized";
     virtual_number = true;
     signals.push({
       name: "known_virtual_provider",
@@ -57,7 +67,11 @@ export function providerStage(
       observed_at,
       strength,
       coverage: "partial",
-      detail: `the national significant number starts with ${hit}, a prefix known to be used by ${provider.provider}`,
+      detail:
+        `the national significant number starts with ${hit}, a prefix known to be used by ${provider.provider}` +
+        (strength === "unresolved"
+          ? "; the provider row is past its verification window, so it downgrades to unresolved rather than asserting"
+          : ""),
       citation: provider.citation,
     });
   }

@@ -63,6 +63,7 @@ export function parseInput(input: string, observed_at: string): ParseEvidence {
     country_code: parsed.countryCallingCode,
     market: parsed.country ? parsed.country.toLowerCase() : null,
     input,
+    extension: parsed.ext ?? null,
     observed_at,
   };
 }

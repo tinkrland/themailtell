@@ -16,22 +16,16 @@ const COMMUNITY_LIST: CommunityListRow = {
   citation: "https://example-sms-site.example",
 };
 
+const DEFAULT_NOW = "2026-10-08T00:00:00Z";
+
 function runCase(c: FixtureCase): { result: ClassificationResult; now: string } {
-  if (c.id === "staleness-decay-of-verified-row") {
-    return {
-      result: analyze(
-        { parse: parseFor(c.input), carriers: c.carriers },
-        { now: "2027-10-08T00:00:00Z", max_age_days: 90, declared_voip: c.declared_voip ?? null, community_lists: [COMMUNITY_LIST] },
-      ),
-      now: "2027-10-08T00:00:00Z",
-    };
-  }
+  const now = c.now ?? DEFAULT_NOW;
   return {
     result: analyze(
       { parse: parseFor(c.input), carriers: c.carriers },
-      { now: "2026-10-08T00:00:00Z", max_age_days: 90, declared_voip: c.declared_voip ?? null, community_lists: [COMMUNITY_LIST] },
+      { now, max_age_days: 90, declared_voip: c.declared_voip ?? null, community_lists: [COMMUNITY_LIST] },
     ),
-    now: "2026-10-08T00:00:00Z",
+    now,
   };
 }
 

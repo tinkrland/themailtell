@@ -65,6 +65,13 @@ export interface ShapeFindings {
   format_validity: Finding;
 }
 
+/**
+ * aggregate state. "mixed_evidence" means only suggestive signals were
+ * present (unverified seed rows, community lists, or partial-coverage
+ * adapter results); it does not mean the evidence contradicts itself.
+ * contradictions are the "contradictory" state, and stale-only evidence
+ * is "unknown". consumers must not read "mixed" as disagreement.
+ */
 export type AggregateState =
   | "signals_present"
   | "mixed_evidence"

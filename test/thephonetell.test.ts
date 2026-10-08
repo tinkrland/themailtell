@@ -19,12 +19,15 @@ test("results carry the schema version and the input verbatim", () => {
   assert.ok(r.evaluated_number!.startsWith("+44"));
 });
 
-test("a gb mobile range produces a mobile finding from an unverified seed row", () => {
+test("a gb mobile range produces a mobile finding, verified against ofcom numbering data", () => {
   const r = analyze(evidence("+447400900123"), OPTS);
   assert.equal(r.shape_findings.mobile, "evidence_found");
   const s = r.signals.find((x) => x.name === "numbering_plan_range");
-  assert.equal(s!.strength, "suggestive", "unverified row, honest strength");
-  assert.equal(r.state, "mixed_evidence");
+  // the gb rows are now verified against the fetched ofcom numbering data
+  // page (071 to 075 and 077 to 079 are mobile services numbers), so a gb
+  // mobile range is recognized, not suggestive
+  assert.equal(s!.strength, "recognized", "verified against ofcom numbering data");
+  assert.equal(r.state, "signals_present");
 });
 
 test("gb 056 (ofcom, verified) is a recognized virtual-number range", () => {
@@ -170,4 +173,80 @@ test("no evidence found carries the honest limitation, never a verdict", () => {
   const r3 = analyze(evidence("+59821234567"), OPTS); // uy: unseeded market
   assert.equal(r3.state, "unknown");
   assert.ok(r3.limitations.some((l) => l.code === "numbering_plan"));
+});
+
+// ---- robustness: provider rows decay like numbering-plan rows ----
+
+test("a stale verified provider row downgrades to unresolved instead of asserting", async () => {
+  const { providerStage } = await import("../src/stages/provider-intelligence.js");
+  const parse = parseInput("+12125550123", NOW);
+  const staleProvider = [
+    {
+      provider: "Example VoIP Ltd",
+      kind: "cpaas" as const,
+      markets: ["us"],
+      prefixes: ["212"],
+      citation: "https://example-voip.example",
+      verified_on: "2026-01-08",
+    },
+  ];
+  // 2026-01-08 is 273 days before NOW, past the 90-day window
+  const out = providerStage(parse, [], NOW, 90, staleProvider);
+  assert.equal(out.virtual_number, true, "evidence exists");
+  assert.equal(out.signals[0].name, "known_virtual_provider");
+  assert.equal(out.signals[0].strength, "unresolved", "stale verified row decays");
+
+  const freshProvider = [{ ...staleProvider[0], verified_on: "2026-09-08" }];
+  const fresh = providerStage(parse, [], NOW, 90, freshProvider);
+  assert.equal(fresh.signals[0].strength, "recognized", "fresh verified row is recognized");
+
+  const seedProvider = [{ ...staleProvider[0], verified_on: null }];
+  const seed = providerStage(parse, [], NOW, 90, seedProvider);
+  assert.equal(seed.signals[0].strength, "suggestive", "unverified row stays suggestive");
+});
+
+test("an unresolved provider signal never asserts virtual_number", () => {
+  // the stale provider signal from the previous test flows through the
+  // same aggregation branch as a stale community-list hit; the corpus
+  // case stale-community-list-never-asserts proves the branch end to end
+  const staleSnapshot = [
+    {
+      list: "example-sms-site",
+      snapshot_date: "2026-09-01",
+      numbers: ["+12125550128"],
+      citation: "https://example-sms-site.example",
+    },
+  ];
+  const r = analyze(evidence("+12125550128"), {
+    now: "2027-10-08T00:00:00Z",
+    max_age_days: 90,
+    community_lists: staleSnapshot,
+  });
+  assert.equal(r.shape_findings.virtual_number, "unknown");
+  assert.ok(!r.signals.every((s) => s.name !== "community_list"), "signal stays visible");
+  assert.ok(r.limitations.some((l) => l.code === "stale_virtual_evidence"));
+});
+
+// ---- robustness: gb 07624 longest-prefix inside the 076 radiopaging range ----
+
+test("a gb-evaluated 07624 number is mobile, not radiopaging", async () => {
+  const { numberingPlanStage } = await import("../src/stages/numbering-plan.js");
+  const parse = parseInput("+447624123456", NOW);
+  // evaluated under gb: a consumer that assigns the number to gb (the
+  // default parser assigns it to im, isle of man)
+  const out = numberingPlanStage({ ...parse, market: "gb" }, NOW, 90);
+  assert.equal(out.line_type, "mobile", "longest prefix wins");
+  assert.equal(out.virtual_range, false, "not the 076 virtual-style row");
+});
+
+// ---- robustness: an extension is reported excluded, never silently dropped ----
+
+test("an input with an extension notes the exclusion and evaluates the number", () => {
+  const r = analyze(evidence("+44 7400 900123 ext. 4567"), OPTS);
+  assert.equal(r.parse.valid, true);
+  assert.equal(r.evaluated_number, "+447400900123");
+  const lim = r.limitations.find((l) => l.code === "extension_excluded");
+  assert.ok(lim, "the exclusion must be reported");
+  assert.ok(lim!.detail.includes("4567"));
+  assert.equal(r.shape_findings.mobile, "evidence_found");
 });

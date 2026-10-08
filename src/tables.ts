@@ -72,6 +72,10 @@ export interface ParseEvidence {
   market: string | null;
   /** the original input, preserved verbatim */
   input: string;
+  /** a phone extension the input carried (libphonenumber parses "ext.",
+   * "x" and rfc3966 ";ext=" forms). kept out of evaluated_number and
+   * reported honestly: it was excluded from evaluation */
+  extension?: string | null;
   observed_at: string;
 }
 
