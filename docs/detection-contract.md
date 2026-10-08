@@ -76,3 +76,38 @@ negative and unknown rates per market and per signal.
 
 never edit an expectation to make a case pass. fixture passes prove
 consistency only. see [the corpus guide](authorized-corpus.md).
+
+## address existence (adapter-only)
+
+the component cannot say "no such thing" offline, and it does not pretend
+to: a local pattern engine has no delivery-point registry, so
+`address_existence` is a distinct finding from `format_validity` and
+from every shape class, and the offline core always reports `unknown`
+for it.
+
+format validity and existence are different claims, and the apartment-f
+case is exactly their separation: someone picks a real building whose
+recognized units are a-e and gives unit f. the address is format-valid,
+every shape class may honestly report no_evidence_found, and the
+existence finding says disconfirmed, all at once.
+
+existence only moves off unknown through a delivery point validation
+adapter (usps delivery point validation, google address validation,
+equivalents), which reports as the adapter-only signal
+`delivery_point_validation` with an `existence` field, the source's own
+coverage, and an observation date. the finding is never absolute:
+
+- "disconfirmed" means the validation source did not recognize the
+  address or its unit, at that source's coverage and date, not a
+  metaphysical claim that the address cannot exist;
+- validation sources lag new construction and renovations, and a
+  building can gain unit f after the check, so the finding ages through
+  the same staleness decay as every other piece of evidence;
+- partial coverage sources set the finding but the result carries a
+  limitation saying the check was weaker than a full-coverage one;
+- with no adapter, the result carries the limitation that existence was
+  never externally checked. unknown stays first-class.
+
+consumers must not read `unknown` as "the address exists" or
+`confirmed_exists` as a deliverability guarantee, and the component
+never decides what a disconfirmed address means for an order.

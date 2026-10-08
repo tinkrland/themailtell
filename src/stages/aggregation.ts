@@ -170,7 +170,41 @@ function derive(
       opts.coverage.forwarding_covered
     ),
     format_validity: opts.formatFinding,
+    address_existence: "unknown",
   };
+
+  // address existence: strictly adapter territory. a validation service
+  // that confirmed or disconfirmed the address (including its secondary
+  // unit) sets the finding; the recognized strength carries its own
+  // coverage and observed_at, so staleness already downgraded it to
+  // unresolved above. suggestive (partial coverage) existence evidence
+  // still sets the finding but never silently: the limitation below
+  // records the partial coverage. no adapter, or only stale/unresolved
+  // adapter signals: unknown, honestly unchecked, never "no such thing"
+  // from a component that never looked
+  const existenceSignals = signals.filter(
+    (s) => s.name === "delivery_point_validation"
+  );
+  if (existenceSignals.some((s) => s.strength === "recognized" && s.existence === "disconfirmed")) {
+    shape_findings.address_existence = "disconfirmed";
+  } else if (existenceSignals.some((s) => s.strength === "recognized" && s.existence === "confirmed_exists")) {
+    shape_findings.address_existence = "confirmed_exists";
+  } else if (existenceSignals.some((s) => s.strength === "suggestive" && s.existence)) {
+    shape_findings.address_existence = existenceSignals.find(
+      (s) => s.strength === "suggestive" && s.existence
+    )!.existence!;
+    limitations.push(
+      "existence evidence came from a validation source with partial " +
+      "coverage; the finding stands but is weaker than a full-coverage check"
+    );
+  }
+  if (existenceSignals.length === 0) {
+    limitations.push(
+      "no delivery point validation adapter ran, so address existence " +
+      "is unknown: the component checked shapes and formats, never " +
+      "whether the address exists as a deliverable point"
+    );
+  }
 
   // the honesty backbone: a clean-looking result is a statement about the
   // search, never a street-address verdict. local pattern detection cannot

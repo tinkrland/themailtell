@@ -44,6 +44,7 @@ const UNKNOWN_FINDINGS: ShapeFindings = {
   cmra_or_virtual_mailbox: "unknown",
   mail_forwarding_or_reshipping: "unknown",
   format_validity: "unknown",
+  address_existence: "unknown",
 };
 
 export function analyze(

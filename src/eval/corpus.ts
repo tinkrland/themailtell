@@ -475,6 +475,83 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "us-apartment-f-unit-invalid",
+    shape: "us the apartment-f case: a real building whose recognized units are a-e, the given unit is f, a recorded dpv response disconfirms it",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["418 W 21st St", "Apt F"], city: "New York", region: "NY", postal_code: "10011" },
+      observed_at: T0,
+      adapter_signals: [
+        {
+          name: "delivery_point_validation",
+          scope: "address",
+          source: "fixture adapter: recorded usps dpv response (primary confirmed, secondary number not recognized, cm1-style footnote)",
+          observed_at: T0,
+          strength: "recognized",
+          coverage: "full",
+          existence: "disconfirmed",
+          detail:
+            "the validation service confirms the primary address exists but the secondary unit is not recognized: the building's recognized units are a-e, f does not exist",
+        },
+      ],
+    },
+    expectations: {
+      expect_signals_any_strength: ["delivery_point_validation"],
+      expect_state: "signals_present",
+      expect_shape_findings: { address_existence: "disconfirmed", cmra_or_virtual_mailbox: "no_evidence_found" },
+    },
+  },
+  {
+    id: "us-address-confirmed-exists",
+    shape: "us a plain street address with a recorded validation response confirming it as a deliverable point",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["160 W 80th St"], city: "New York", region: "NY", postal_code: "10024" },
+      observed_at: T0,
+      adapter_signals: [
+        {
+          name: "delivery_point_validation",
+          scope: "address",
+          source: "fixture adapter: recorded usps dpv response (delivery point confirmed)",
+          observed_at: T0,
+          strength: "recognized",
+          coverage: "full",
+          existence: "confirmed_exists",
+          detail: "the validation service confirms the address exists as a deliverable point",
+        },
+      ],
+    },
+    expectations: {
+      expect_state: "signals_present",
+      expect_shape_findings: { address_existence: "confirmed_exists" },
+    },
+  },
+  {
+    id: "us-existence-evidence-stale",
+    shape: "us a validation response confirming existence, but recorded far past the staleness horizon: the finding must decay to unknown",
+    scope: "address",
+    evidence: {
+      address: { market: "us", lines: ["160 W 80th St"], city: "New York", region: "NY", postal_code: "10024" },
+      observed_at: T0,
+      adapter_signals: [
+        {
+          name: "delivery_point_validation",
+          scope: "address",
+          source: "fixture adapter: recorded dpv response, old observation",
+          observed_at: "2026-01-01T00:00:00Z",
+          strength: "recognized",
+          coverage: "full",
+          existence: "confirmed_exists",
+          detail: "a validation confirmation old enough to be stale intelligence",
+        },
+      ],
+    },
+    expectations: {
+      expect_shape_findings: { address_existence: "unknown" },
+      expect_limitation: "stale intelligence",
+    },
+  },
+  {
     id: "us-pmb-marker",
     shape: "us cmra private mailbox disclosure, the legally mandated pmb token",
     scope: "address",

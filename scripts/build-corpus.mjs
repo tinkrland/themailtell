@@ -63,6 +63,11 @@ const cases = input.map((row) => {
       ...(expectations.expect_shape_findings ?? {}),
       cmra_or_virtual_mailbox: expect.cmra_or_virtual_mailbox,
     };
+  if (expect.address_existence)
+    expectations.expect_shape_findings = {
+      ...(expectations.expect_shape_findings ?? {}),
+      address_existence: expect.address_existence,
+    };
   if (expect.format_validity)
     expectations.expect_shape_findings = {
       ...(expectations.expect_shape_findings ?? {}),
