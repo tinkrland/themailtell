@@ -600,6 +600,45 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "us-myus-facility-suite-unbranded",
+    // stage 4b: the address is the published myus facility, suite only,
+    // no brand token anywhere: the facility table catches it
+    shape: "unbranded suite at the myus sarasota facility",
+    scope: "address",
+    evidence: ev("us", ["4299 Express Lane", "Suite 212"], { city: "Sarasota", region: "FL", postal_code: "34249" }),
+    expectations: {
+      expect_signals_any_strength: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-planet-express-facility-suite",
+    // stage 4b, the provider's own published format verbatim:
+    // street, suite inline, no c/o token
+    shape: "planet express gardena facility, published suite format",
+    scope: "address",
+    evidence: ev("us", ["17224 S. Figueroa Street, Suite #B1234"], { city: "Gardena", region: "CA", postal_code: "90248" }),
+    expectations: {
+      expect_signals_any_strength: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "evidence_found" },
+    },
+  },
+  {
+    id: "us-facility-street-wrong-postal",
+    // contrast pair with the two above: the facility street but a
+    // postal code the provider does not publish: no match, and the
+    // enumerated-snapshot limitation explains why absence is never
+    // evidence of a private residence
+    shape: "facility street with a postal mismatch, no facility claim",
+    scope: "address",
+    evidence: ev("us", ["4299 Express Lane", "Suite 212"], { city: "Sarasota", region: "FL", postal_code: "34238" }),
+    expectations: {
+      forbid_signals: ["mail_forwarding_or_reshipping"],
+      expect_shape_findings: { mail_forwarding_or_reshipping: "no_evidence_found" },
+      expect_limitation: "enumerated snapshot",
+    },
+  },
+  {
     id: "us-pmb-marker",
     shape: "us cmra private mailbox disclosure, the legally mandated pmb token",
     scope: "address",
