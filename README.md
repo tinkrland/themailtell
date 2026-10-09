@@ -1,98 +1,44 @@
-# themailtell
+# scamvspam
 
-a standalone email-detection component for applications that need to understand
-whether an address appears to use a dedicated mailbox, an alias, a forwarding
-service, a masked relay, or a disposable service.
+scam vs spam intelligence, across three channels: email, address, phone.
 
-this repository contains the design brief and a reference implementation of
-the classification core. it makes no accuracy claim; the seed provider table
-and the fixture evaluation corpus both require verified research before any
-production use. see [the implementation notes](docs/implementation.md).
+the distinction this component exists to make:
 
-## the problem
+- **spam** is unsolicited bulk. the harm is volume and consent: mass
+  marketing, newsletter blasts, list-acquired addresses. it is a claim
+  about *how many people got the same thing without asking*.
+- **scam** is deceptive intent. the harm is fraud: credential
+  harvesting, invoice fraud, impersonation, goods never shipped. it is
+  a claim about *what the sender is trying to take from you*.
+- the same artifact can be both, one, or neither, and the two labels
+  never imply each other. a phishing email sent to ten people is a
+  scam and not spam by volume; a newsletter you never signed up for is
+  spam and not a scam.
 
-an address can look like an ordinary business email without having a mailbox
-of its own. domain registrars and other services offer custom-domain forwarding:
-mail sent to `hello@example.com` is delivered to an existing mailbox elsewhere.
+the channels share one discipline:
 
-custom domains are often treated as more credible than free mailbox addresses,
-but buying a domain does not establish that each address has its own inbox.
-conversely, using a free mailbox provider does not establish that an address is
-disposable or abusive.
+- intent is never asserted as fact. a finding is always "the evidence
+  pattern matches known fraud shapes, at this strength, under this
+  coverage, observed on this date", never "this is a scam". people
+  make the verdict; the component organizes the evidence.
+- **unknown is first-class.** absence of evidence is never evidence of
+  absence, and a clean-looking message/address/number is a statement
+  about the search, not a safety guarantee.
+- evidence carries strength, coverage, and observed date, and decays
+  through staleness like every other fact.
+- fixture corpora prove consistency only; accuracy claims require the
+  authorized corpus.
 
-a domain's name, registrar, extension or professional appearance is not the
-verdict. the relevant evidence concerns the mail service and routing behind it.
+## layout
 
-## what themailtell does
+- `email/` — phishing and fraud signals vs bulk-mail signals, built on
+  the base engine in this repo's root (relay/forwarding intel, mx
+  patterns, secondary routing evidence)
+- `address/` — freight-forwarder abuse, mule and money-drop patterns,
+  fabricated addresses; built on the shape intelligence maintained on
+  the `thelocaletell` branch
+- `phone/` — wangiri, spoofed-number fraud, robocall bulk vs fraud
+  scripts; built on the numbering-plan and carrier intelligence on the
+  `thephonetell` branch
 
-- detects known disposable-mail services and known masking/relay services.
-- examines public mail-routing evidence, including mx records and recognized
-  provider infrastructure, to identify custom-domain forwarding where possible.
-- identifies address-syntax features that may indicate aliases, without silently
-  rewriting the address or assuming all providers use the same alias semantics.
-- distinguishes provider-level evidence from address-level evidence.
-- returns uncertainty when the available evidence does not establish an address's
-  arrangement. a successful email delivery is not proof of a dedicated inbox.
-
-forwarding, masking, disposable lifetime and mailbox capability are separate
-properties. a long-lived forwarding address is not necessarily disposable;
-an alias can deliver into a durable mailbox. do not flatten those distinctions
-into an unexplained "fake email" flag.
-
-## decoupled by design
-
-themailtell provides classification signals and supporting evidence. consuming
-applications decide which arrangements they accept and what to do next.
-
-it does not implement signup eligibility, account creation, authentication,
-oauth, messaging integrations, user verification flows, or product-specific
-exceptions. its answer must not depend on a user's login method or on the
-consuming application's admission policy.
-
-the component must remain independently runnable and testable, with no imports
-from any consuming product. reusable core logic and optional provider adapters
-are separate; the exact packaging, runtime, licensing and delivery model remain
-to be selected.
-
-## limits that matter
-
-recognized forwarding infrastructure can expose routing behind an ordinary
-custom domain. this does not imply universal visibility into every individual
-address: mailbox providers can host both inboxes and aliases, forwarding can
-happen after delivery, and gateways can conceal the final mailbox provider.
-
-unknown infrastructure is not proof of forwarding. mailbox-capable
-infrastructure is not proof that a particular address has a separate inbox.
-privacy-preserving email use is not by itself evidence of fraud or automation.
-
-apple's hide my email is a coverage limit by design, not an oversight: its
-aliases live at icloud.com, sharing the domain with real icloud mailboxes,
-so an icloud.com address can never be classified as a relay from domain
-evidence. the detector does not guess there; it reports icloud.com as
-mailbox-capable infrastructure. a consuming application that must
-distinguish a hide my email alias from a real icloud mailbox needs an
-oauth-shaped route (sign in with apple exposes the relay address and the
-account behind it), which is outside this component by design.
-
-secondary routing evidence exists and stays in its lane. an spf include or
-dkim selector shows a forwarding service is authorized to send or sign for
-the domain: send-path configuration, never proof of a current forwarding
-arrangement. mta-sts and autodiscover records are presence-only
-observations. none of these is ever flattened into the mx-based forwarding
-signal.
-
-the disposable community snapshot carries two inherent failure modes.
-stale entries: domains change hands, and a former disposable domain can be
-a legitimate business today; entries are claims about their snapshot date,
-not eternal truths. detection lag: new disposable domains appear faster
-than any snapshot updates, so absence from the list is not evidence of
-legitimacy.
-
-the component does not identify the hidden destination mailbox and does not
-prove that one address corresponds to one unique human.
-
-## next specification
-
-see [the detection contract](docs/detection-contract.md) for evidence boundaries,
-the proposed separation of responsibilities, and the required evaluation cases.
-see [the implementation notes](docs/implementation.md) for how the core is built.
+each channel folder states its own scope and its honest limits.
