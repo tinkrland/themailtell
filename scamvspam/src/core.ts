@@ -1,13 +1,15 @@
 // the pure staged core: no io, no guessing, no intent assertions. it
-// takes an artifact and its evidence and says, per axis, what the
-// evidence supports; the quadrant follows mechanically and refuses to
-// place anything with an unknown on either axis
+// takes an artifact and its evidence, places it on the two axes, and
+// the quadrant follows mechanically. anything unknown on either axis
+// refuses to place
 import {
   SCHEMA_VERSION,
   type Artifact,
-  type Axis,
-  type AxisFinding,
+  type IntentPlacement,
   type Limitation,
+  type OperationPlacement,
+  type Pole,
+  type PoleFinding,
   type Quadrant,
   type Signal,
 } from "./schema.js";
@@ -20,8 +22,12 @@ export interface Options {
 export interface Result {
   schema_version: string;
   artifact: Artifact;
-  spam: AxisFinding;
-  scam: AxisFinding;
+  spam: PoleFinding;
+  scam: PoleFinding;
+  automated: PoleFinding;
+  human: PoleFinding;
+  intent: IntentPlacement;
+  operation: OperationPlacement;
   quadrant: Quadrant;
   limitations: Limitation[];
   // the fresh, in-channel signals the result is based on
@@ -37,13 +43,15 @@ function ageDays(observedAt: string, now: string): number {
   return (b - a) / DAY_MS;
 }
 
-function quadrantFor(spam: AxisFinding, scam: AxisFinding): Quadrant {
-  if (spam === "unknown" || scam === "unknown") return "unplaced";
-  const s = spam === "evidence_found";
-  const c = scam === "evidence_found";
-  if (c && s) return "scam_and_spam";
-  if (c) return "scam_not_spam";
-  if (s) return "spam_not_scam";
+// a two-pole axis places only when both poles are known
+function place(negative: PoleFinding, positive: PoleFinding):
+  "a" | "b" | "both" | "neither" | "unknown" {
+  if (negative === "unknown" || positive === "unknown") return "unknown";
+  const n = negative === "evidence_found";
+  const p = positive === "evidence_found";
+  if (n && p) return "both";
+  if (p) return "b";
+  if (n) return "a";
   return "neither";
 }
 
@@ -94,23 +102,22 @@ export function analyze(
     });
   }
 
-  // infrastructure signals are recorded but never move an axis
-  const hasInfrastructure = fresh.some((s) => s.axis === undefined);
-  if (hasInfrastructure) {
+  // infrastructure signals are recorded but never move a pole
+  if (fresh.some((s) => s.pole === undefined)) {
     limitations.push({
       code: "infrastructure_is_not_intent",
       text:
         "shape/infrastructure signals describe what something IS (a " +
         "relay, a mailbox, a voip range), never what anyone is doing " +
-        "with it; they never move the axes",
+        "with it; they never move the poles",
     });
   }
 
-  const axisFinding = (axis: Axis): { finding: AxisFinding } => {
+  const poleFinding = (pole: Pole): PoleFinding => {
     let positive = false;
     let searchedNothing = false;
     for (const s of fresh) {
-      if (s.axis !== axis) continue;
+      if (s.pole !== pole) continue;
       if (s.coverage === "none") continue; // no visibility, no claim
       if (s.nothing_found === true) {
         searchedNothing = true;
@@ -118,9 +125,9 @@ export function analyze(
       }
       positive = true;
     }
-    if (positive) return { finding: "evidence_found" };
-    if (searchedNothing) return { finding: "no_evidence_found" };
-    return { finding: "unknown" };
+    if (positive) return "evidence_found";
+    if (searchedNothing) return "no_evidence_found";
+    return "unknown";
   };
 
   if (inChannel.length === 0) {
@@ -132,23 +139,73 @@ export function analyze(
     });
   }
 
-  const spam = axisFinding("spam").finding;
-  const scam = axisFinding("scam").finding;
-  const quadrant = quadrantFor(spam, scam);
-  if (quadrant === "neither") {
+  const spam = poleFinding("spam");
+  const scam = poleFinding("scam");
+  const automated = poleFinding("automated");
+  const human = poleFinding("human");
+
+  // intent axis: spam is the left pole, scam the right
+  const intentMap = place(spam, scam);
+  const intent: IntentPlacement =
+    intentMap === "a" ? "spam"
+    : intentMap === "b" ? "scam"
+    : intentMap === "both" ? "spam_and_scam"
+    : intentMap === "neither" ? "neither"
+    : "unknown";
+
+  // operation axis: automated is the bottom pole, human the top
+  const operationMap = place(automated, human);
+  const operation: OperationPlacement =
+    operationMap === "a" ? "automated"
+    : operationMap === "b" ? "human"
+    : operationMap === "both" ? "hybrid"
+    : operationMap === "neither" ? "neither"
+    : "unknown";
+
+  if (intent === "unknown" || operation === "unknown") {
+    return {
+      schema_version: SCHEMA_VERSION,
+      artifact,
+      spam, scam, automated, human,
+      intent, operation,
+      quadrant: "unplaced",
+      limitations,
+      signals: fresh,
+    };
+  }
+
+  // centers are honest placements, not hedges
+  const intentCenter = intent === "spam_and_scam" || intent === "neither";
+  const operationCenter = operation === "hybrid" || operation === "neither";
+  if (intentCenter || operationCenter) {
+    limitations.push({
+      code: "mixed_placement",
+      text:
+        "the evidence places this artifact between poles, not in a " +
+        "corner: mixed is a statement about this evidence, not a hedge",
+    });
+  }
+  if (intentCenter || operationCenter) {
     limitations.push({
       code: "neither_is_about_this_search",
       text:
-        "neither is a statement about this search under this coverage, " +
-        "never a safety guarantee about the artifact or its sender",
+        "any neither or hybrid placement is a statement about this " +
+        "search under this coverage, never a safety guarantee",
     });
   }
+
+  const quadrant: Quadrant =
+    intent === "scam" && operation === "human" ? "scam_human"
+    : intent === "scam" && operation === "automated" ? "scam_automated"
+    : intent === "spam" && operation === "human" ? "spam_human"
+    : intent === "spam" && operation === "automated" ? "spam_automated"
+    : "mixed";
 
   return {
     schema_version: SCHEMA_VERSION,
     artifact,
-    spam,
-    scam,
+    spam, scam, automated, human,
+    intent, operation,
     quadrant,
     limitations,
     signals: fresh,

@@ -54,3 +54,24 @@ never a safety guarantee.
 the map (scamvspam/scripts/quadrant-html.mjs) is a rendering of
 analyze(), never a second analysis: evidence_found places at 0.78,
 no_evidence_found at 0.22, unknown refuses to place.
+
+## schema 0.2.0: the quadrant model
+
+per owner direction, 0.1.0's two-independent-axes model is replaced:
+spam and scam become the two ends of one intent axis, and a second
+operation axis (automated <-> human-operated, where automated covers
+bots and adversarial ai) crosses it. the poles keep the house
+vocabulary: unknown, no_evidence_found (only via an explicit
+nothing_found signal, never by silence), evidence_found.
+
+placement is mechanical and refuses to guess: an axis places only when
+both its poles are known. both-found lands mid-axis (spam_and_scam,
+hybrid), both-searched-empty lands at neither. the quadrant is the
+four corners (scam_human, scam_automated, spam_human, spam_automated)
+plus mixed for any center placement, and unplaced whenever either axis
+is unknown. centers carry the mixed_placement and
+neither_is_about_this_search limitations: they are statements about
+this evidence under this coverage, never safety verdicts.
+
+the map (scamvspam/scripts/quadrant-html.mjs) renders this: x spam to
+scam, y automated to human, poles at 0.22/0.78, centers at 0.5.

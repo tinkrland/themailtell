@@ -8,15 +8,20 @@ let pass = 0;
 const failures: string[] = [];
 for (const c of FIXTURES) {
   const r = analyze(c.artifact, c.signals, { now: c.now ?? T0 });
+  const checks: [string, unknown, unknown][] = [
+    ["spam", c.expectations.spam, r.spam],
+    ["scam", c.expectations.scam, r.scam],
+    ["automated", c.expectations.automated, r.automated],
+    ["human", c.expectations.human, r.human],
+    ["intent", c.expectations.intent, r.intent],
+    ["operation", c.expectations.operation, r.operation],
+    ["quadrant", c.expectations.quadrant, r.quadrant],
+  ];
   const bad: string[] = [];
-  if (c.expectations.spam !== undefined && r.spam !== c.expectations.spam) {
-    bad.push(`spam is ${r.spam}, expected ${c.expectations.spam}`);
-  }
-  if (c.expectations.scam !== undefined && r.scam !== c.expectations.scam) {
-    bad.push(`scam is ${r.scam}, expected ${c.expectations.scam}`);
-  }
-  if (c.expectations.quadrant !== undefined && r.quadrant !== c.expectations.quadrant) {
-    bad.push(`quadrant is ${r.quadrant}, expected ${c.expectations.quadrant}`);
+  for (const [key, want, got] of checks) {
+    if (want !== undefined && got !== want) {
+      bad.push(`${key} is ${got}, expected ${want}`);
+    }
   }
   if (c.expectations.limitations !== undefined) {
     const codes = r.limitations.map((l: Limitation) => l.code);
@@ -32,5 +37,5 @@ for (const c of FIXTURES) {
     console.log(`fail ${c.id}: ${bad.join("; ")}`);
   }
 }
-console.log(`total: ${pass}/${FIXTURES.length} cases pass. the axes never imply each other; unknown is first-class.`);
+console.log(`total: ${pass}/${FIXTURES.length} cases pass. the quadrant is mechanical; unknown refuses to place.`);
 if (failures.length > 0) process.exit(1);

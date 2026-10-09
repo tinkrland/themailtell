@@ -2,18 +2,20 @@
 
 scam vs spam intelligence, across three channels: email, address, phone.
 
-the distinction this component exists to make:
+the quadrant this component exists to place things on:
 
-- **spam** is unsolicited bulk. the harm is volume and consent: mass
-  marketing, newsletter blasts, list-acquired addresses. it is a claim
-  about *how many people got the same thing without asking*.
-- **scam** is deceptive intent. the harm is fraud: credential
-  harvesting, invoice fraud, impersonation, goods never shipped. it is
-  a claim about *what the sender is trying to take from you*.
-- the same artifact can be both, one, or neither, and the two labels
-  never imply each other. a phishing email sent to ten people is a
-  scam and not spam by volume; a newsletter you never signed up for is
-  spam and not a scam.
+- **the intent axis: spam <-> scam.** spam is unsolicited bulk (a
+  volume and consent claim); scam is deceptive intent (a fraud claim).
+  they are the two ends of one axis, and the middle is real: a
+  phishing blast is both, and lands mid-axis honestly.
+- **the operation axis: automated <-> human-operated.** automated
+  covers bots and adversarial ai; human-operated covers live
+  operators, from boiler rooms to solo fraudsters. hybrid is real too:
+  scripted openers adapted by a human land mid-axis.
+- **the four corners:** human fraud (scam x human: bec, spearphishing,
+  romance), bot fraud (scam x automated: ai phish blasts, voice-clone
+  calls), human hustle (spam x human: hand-sent unsolicited outreach),
+  bot spam (spam x automated: robocalls, bulk mail).
 
 the channels share one discipline:
 
@@ -26,6 +28,8 @@ the channels share one discipline:
   about the search, not a safety guarantee.
 - evidence carries strength, coverage, and observed date, and decays
   through staleness like every other fact.
+- anything unknown on either axis refuses to place: unplaced is
+  first-class, and centers are honest placements, not hedges.
 - fixture corpora prove consistency only; accuracy claims require the
   authorized corpus.
 
