@@ -1,0 +1,25 @@
+{
+  "input": {
+    "phone": "+16502530000"
+  },
+  "observed_at": "2026-10-09T11:25:33.999Z",
+  "response": {
+    "status": "success",
+    "phone": "+16502530000",
+    "phone_valid": true,
+    "phone_type": "fixed_line",
+    "phone_region": "Mountain View, CA",
+    "country": "United States",
+    "country_code": "US",
+    "country_prefix": "1",
+    "international_number": "+1 650-253-0000",
+    "local_number": "(650) 253-0000",
+    "e164": "+16502530000",
+    "carrier": "Verizon",
+    "mode": "static",
+    "timezone": [
+      "America/Los_Angeles"
+    ],
+    "geographical": true
+  }
+}

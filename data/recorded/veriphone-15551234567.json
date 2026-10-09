@@ -1,0 +1,24 @@
+{
+  "input": {
+    "phone": "+15551234567"
+  },
+  "observed_at": "2026-10-09T11:25:34.660Z",
+  "response": {
+    "status": "success",
+    "phone": "+15551234567",
+    "phone_valid": false,
+    "phone_type": "unknown",
+    "phone_region": "",
+    "country": "",
+    "country_code": "",
+    "country_prefix": "1",
+    "international_number": "+1 555-123-4567",
+    "local_number": "(555) 123-4567",
+    "e164": "+15551234567",
+    "carrier": "",
+    "mode": "static",
+    "reason": "unrecognized_range",
+    "timezone": [],
+    "geographical": false
+  }
+}

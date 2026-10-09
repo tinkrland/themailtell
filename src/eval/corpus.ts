@@ -38,6 +38,81 @@ export interface FixtureCase {
 
 export const FIXTURES: FixtureCase[] = [
   {
+    id: "us-veriphone-landline-google",
+    // case: us live-recorded    shape: "us live-recorded: veriphone confirms google's mountain view switchboard as a landline on verizon, but performs no in-service check",
+    carriers: [
+      carrier("landline", "full", {
+        source: "recorded live response: veriphone.io v2 verify, lookup 2026-10-09 (data/recorded/veriphone-16502530000.json)",
+        observed_at: "2026-10-09T11:25:33.999Z",
+        carrier_name: "Verizon",
+        active: null,
+        detail:
+          "veriphone reports phone_type fixed_line, carrier Verizon, phone_valid true; no in-service (hlr) check was performed, so line existence is untouched",
+      }),
+    ],
+    input: "+16502530000",
+    expectations: {
+      findings: { landline: "evidence_found", line_existence: "unknown" },
+      limitations: ["existence_not_checked"],
+    },
+  },
+  {
+    id: "gb-veriphone-fixed-line-british-library",
+    // case: gb live-recorded    shape: "gb live-recorded: veriphone confirms the british library switchboard as a fixed line; the carrier field is empty, which is an absence, never a carrier called nothing",
+    carriers: [
+      carrier("landline", "full", {
+        source: "recorded live response: veriphone.io v2 verify, lookup 2026-10-09 (data/recorded/veriphone-442079304832.json)",
+        observed_at: "2026-10-09T11:25:34.218Z",
+        carrier_name: null,
+        active: null,
+        detail:
+          "veriphone reports phone_type fixed_line, phone_valid true, and no carrier name; no in-service (hlr) check was performed, so line existence is untouched",
+      }),
+    ],
+    input: "+442079304832",
+    expectations: {
+      findings: { landline: "evidence_found", line_existence: "unknown" },
+      limitations: ["existence_not_checked"],
+    },
+  },
+  {
+    id: "us-veriphone-toll-free-not-guessed",
+    // case: us live-recorded    shape: "us live-recorded: veriphone reports toll_free, a type the schema cannot express; every line-type finding stays unknown rather than being guessed into a class",
+    carriers: [
+      carrier(null, "full", {
+        source: "recorded live response: veriphone.io v2 verify, lookup 2026-10-09 (data/recorded/veriphone-18004633339.json)",
+        observed_at: "2026-10-09T11:25:34.444Z",
+        carrier_name: null,
+        active: null,
+        detail:
+          "veriphone reports phone_type toll_free, phone_valid true; toll free is not a line type the schema expresses, so no line-type claim is made; no in-service (hlr) check was performed",
+      }),
+    ],
+    input: "+18004633339",
+    expectations: {
+      findings: { mobile: "unknown", landline: "unknown", non_fixed_voip: "unknown", line_existence: "unknown" },
+      limitations: ["existence_not_checked"],
+    },
+  },
+  {
+    id: "us-veriphone-invalid-555",
+    // case: us live-recorded    shape: "us live-recorded: veriphone says phone_valid false for a 555 number, a format-level claim; the local parser is stricter and already rejects it as unassigned, and existence stays unknown either way",
+    carriers: [
+      carrier(null, "full", {
+        source: "recorded live response: veriphone.io v2 verify, lookup 2026-10-09 (data/recorded/veriphone-15551234567.json)",
+        observed_at: "2026-10-09T11:25:34.660Z",
+        carrier_name: null,
+        active: null,
+        detail:
+          "veriphone reports phone_valid false (phone_type unknown): a format-level claim, never an in-service claim",
+      }),
+    ],
+    input: "+15551234567",
+    expectations: {
+      findings: { format_validity: "evidence_found", line_existence: "unknown" },
+    },
+  },
+  {
     id: "us-hlr-inactive",
     input: "+12125550128",
     carriers: [carrier("non_fixed_voip", "full", { not_in_service: true, active: null })],

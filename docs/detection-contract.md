@@ -73,3 +73,30 @@ like every finding it ages: an existence report older than the
 staleness horizon is skipped with a limitation rather than trusted.
 "disconfirmed" means the lookup said so at that date under that
 coverage, not a permanent verdict; numbers are reassigned.
+
+### the veriphone adapter, recorded live 2026-10-09
+
+scripts/veriphone-gather.mjs converts live veriphone.io v2 verify
+lookups into carrier evidence. the api key comes from the environment
+(VERIPHONE_API_KEY; the api parameter is named `key`) and is never
+committed. raw responses are recorded under data/recorded/ and drive
+the unit tests and the fixture corpus. the observed mapping:
+
+- phone types arrive lowercase: mobile, fixed_line, voip, toll_free,
+  unknown. mobile -> mobile, fixed_line -> landline, voip ->
+  non_fixed_voip. every other type maps to null with the raw type kept
+  verbatim in the detail: toll free is not a line type the schema
+  expresses, and guessing it into a class is what the component
+  refuses to do
+- veriphone uses the literal string "unknown" both as a phone type and
+  as a carrier name when it has neither; both are absences and map to
+  null, never a carrier called unknown
+- phone_valid false is a format-level claim, not an in-service claim:
+  it sets no existence finding. the local parser is stricter in
+  practice: it already rejects 555 numbers as unassigned where
+  veriphone accepts some
+- veriphone performs no hlr check: active stays null and
+  line_existence stays unknown with an existence_not_checked
+  limitation, every time. a live-line verdict needs an hlr service,
+  and pretending a carrier lookup proved a number live would be the
+  guessing this component exists to prevent

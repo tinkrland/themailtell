@@ -1,0 +1,25 @@
+{
+  "input": {
+    "phone": "+442079304832"
+  },
+  "observed_at": "2026-10-09T11:25:34.218Z",
+  "response": {
+    "status": "success",
+    "phone": "+442079304832",
+    "phone_valid": true,
+    "phone_type": "fixed_line",
+    "phone_region": "London",
+    "country": "United Kingdom",
+    "country_code": "GB",
+    "country_prefix": "44",
+    "international_number": "+44 20 7930 4832",
+    "local_number": "020 7930 4832",
+    "e164": "+442079304832",
+    "carrier": "",
+    "mode": "static",
+    "timezone": [
+      "Europe/London"
+    ],
+    "geographical": true
+  }
+}

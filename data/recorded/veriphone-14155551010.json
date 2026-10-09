@@ -1,0 +1,25 @@
+{
+  "input": {
+    "phone": "+14155551010"
+  },
+  "observed_at": "2026-10-09T11:25:34.886Z",
+  "response": {
+    "status": "success",
+    "phone": "+14155551010",
+    "phone_valid": true,
+    "phone_type": "unknown",
+    "phone_region": "San Francisco, CA",
+    "country": "United States",
+    "country_code": "US",
+    "country_prefix": "1",
+    "international_number": "+1 415-555-1010",
+    "local_number": "(415) 555-1010",
+    "e164": "+14155551010",
+    "carrier": "unknown",
+    "mode": "static",
+    "timezone": [
+      "America/Los_Angeles"
+    ],
+    "geographical": true
+  }
+}
