@@ -35,3 +35,22 @@ outcomes, as is "neither" and, always, "unknown".
 
 see `email/README.md`, `address/README.md`, `phone/README.md`. each
 channel states its inherited evidence base and its honest limits.
+
+## schema 0.1.0: the engine and the quadrant map
+
+the engine lives in scamvspam/ (its own package: the base email engine
+at the repo root stays untouched). per axis the vocabulary is the
+house vocabulary: unknown (nothing was evaluated), no_evidence_found
+(the axis was searched at real coverage and nothing was found; it is
+reached only through a nothing_found signal, never by silence), and
+evidence_found.
+
+the quadrant is mechanical, never a judgment: scam_and_spam,
+scam_not_spam, spam_not_scam, neither, and unplaced whenever either
+axis is unknown. 'neither' always carries the neither_is_about_this_search
+limitation: it is a statement about this search under this coverage,
+never a safety guarantee.
+
+the map (scamvspam/scripts/quadrant-html.mjs) is a rendering of
+analyze(), never a second analysis: evidence_found places at 0.78,
+no_evidence_found at 0.22, unknown refuses to place.
