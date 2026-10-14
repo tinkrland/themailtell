@@ -2,7 +2,11 @@
 // registry: an abuse band traced to a dataset snapshot, plus price
 // observations traced to named registrars with their own dates.
 // unknown is first-class; snapshots are never timeless facts
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
+// 0.2.0: bands defined against a named dataset snapshot (interisle
+// phishing per-100k rates, feb-apr 2026): high >= 100, elevated 40-100,
+// moderate 15-40, low < 15 per 100k domains. spam rates carried in
+// honest_notes. a band is a snapshot reading, never a tld property
 
 // relative band under a dataset's coverage, traced to a snapshot.
 // high/elevated/moderate/low describe abuse share, never raw counts
