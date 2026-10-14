@@ -2,7 +2,11 @@
 // registry: attributes about a provider's published architecture and
 // posture, each of which a row must cite. unknown is first-class and
 // recorded with its reason, never guessed
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
+// 0.2.0: content_access gains public_inboxes_by_design, because
+// mailinator's own documentation says its inboxes are in the public
+// domain, readable by anyone: which is a different fact from
+// provider-accessible, and conflating them would be a lie
 
 export type ProviderKind =
   | "privacy_provider"
@@ -18,6 +22,9 @@ export type ContentAccess =
   | "e2e_available_optional"
   // mail content is accessible to the provider by default
   | "provider_accessible_by_default"
+  // inboxes are public: readable by anyone, per the provider's own
+  // documentation, not just by the provider
+  | "public_inboxes_by_design"
   | "unknown";
 
 export type TransparencyPosture =
