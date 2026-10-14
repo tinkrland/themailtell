@@ -1,98 +1,43 @@
-# themailtell
+# theproviderradar
 
-a standalone email-detection component for applications that need to understand
-whether an address appears to use a dedicated mailbox, an alias, a forwarding
-service, a masked relay, or a disposable service.
+a risk registry of email providers. themailtell classifies a single
+email; the radar classifies the provider landscape: one row per
+provider, every attribute cited, every row dated, decay built in.
 
-this repository contains the design brief and a reference implementation of
-the classification core. it makes no accuracy claim; the seed provider table
-and the fixture evaluation corpus both require verified research before any
-production use. see [the implementation notes](docs/implementation.md).
+the radar rows are bands of cited facts, never verdicts about the
+people using a provider. proton and tuta sit at the privacy end of the
+radar because their published architecture is zero-access encryption,
+not because their users are angels; disposables sit at the abuse end
+because their inboxes are public or short-lived, not because every
+sender on them is a scammer. infrastructure is not intent.
 
-## the problem
+## what each row carries
 
-an address can look like an ordinary business email without having a mailbox
-of its own. domain registrars and other services offer custom-domain forwarding:
-mail sent to `hello@example.com` is delivered to an existing mailbox elsewhere.
+- content access posture: whether mail is zero-access or end-to-end
+  encrypted by default, e2e available optionally, or accessible to
+  the provider by default
+- transparency posture: whether the provider publishes a transparency
+  report with legal-order statistics
+- abuse posture: disposable by design vs a mainstream provider with
+  an abuse desk
+- jurisdiction, as the provider publishes it
+- citations, verification dates, recheck cadences, honest notes
 
-custom domains are often treated as more credible than free mailbox addresses,
-but buying a domain does not establish that each address has its own inbox.
-conversely, using a free mailbox provider does not establish that an address is
-disposable or abusive.
+verified rows were read from the cited pages on the date recorded.
+unverified seeds are marked verified_on: null and say so, and no
+consumer of this registry should rely on one before verifying it
+against its citation.
 
-a domain's name, registrar, extension or professional appearance is not the
-verdict. the relevant evidence concerns the mail service and routing behind it.
+## honest limits
 
-## what themailtell does
-
-- detects known disposable-mail services and known masking/relay services.
-- examines public mail-routing evidence, including mx records and recognized
-  provider infrastructure, to identify custom-domain forwarding where possible.
-- identifies address-syntax features that may indicate aliases, without silently
-  rewriting the address or assuming all providers use the same alias semantics.
-- distinguishes provider-level evidence from address-level evidence.
-- returns uncertainty when the available evidence does not establish an address's
-  arrangement. a successful email delivery is not proof of a dedicated inbox.
-
-forwarding, masking, disposable lifetime and mailbox capability are separate
-properties. a long-lived forwarding address is not necessarily disposable;
-an alias can deliver into a durable mailbox. do not flatten those distinctions
-into an unexplained "fake email" flag.
-
-## decoupled by design
-
-themailtell provides classification signals and supporting evidence. consuming
-applications decide which arrangements they accept and what to do next.
-
-it does not implement signup eligibility, account creation, authentication,
-oauth, messaging integrations, user verification flows, or product-specific
-exceptions. its answer must not depend on a user's login method or on the
-consuming application's admission policy.
-
-the component must remain independently runnable and testable, with no imports
-from any consuming product. reusable core logic and optional provider adapters
-are separate; the exact packaging, runtime, licensing and delivery model remain
-to be selected.
-
-## limits that matter
-
-recognized forwarding infrastructure can expose routing behind an ordinary
-custom domain. this does not imply universal visibility into every individual
-address: mailbox providers can host both inboxes and aliases, forwarding can
-happen after delivery, and gateways can conceal the final mailbox provider.
-
-unknown infrastructure is not proof of forwarding. mailbox-capable
-infrastructure is not proof that a particular address has a separate inbox.
-privacy-preserving email use is not by itself evidence of fraud or automation.
-
-apple's hide my email is a coverage limit by design, not an oversight: its
-aliases live at icloud.com, sharing the domain with real icloud mailboxes,
-so an icloud.com address can never be classified as a relay from domain
-evidence. the detector does not guess there; it reports icloud.com as
-mailbox-capable infrastructure. a consuming application that must
-distinguish a hide my email alias from a real icloud mailbox needs an
-oauth-shaped route (sign in with apple exposes the relay address and the
-account behind it), which is outside this component by design.
-
-secondary routing evidence exists and stays in its lane. an spf include or
-dkim selector shows a forwarding service is authorized to send or sign for
-the domain: send-path configuration, never proof of a current forwarding
-arrangement. mta-sts and autodiscover records are presence-only
-observations. none of these is ever flattened into the mx-based forwarding
-signal.
-
-the disposable community snapshot carries two inherent failure modes.
-stale entries: domains change hands, and a former disposable domain can be
-a legitimate business today; entries are claims about their snapshot date,
-not eternal truths. detection lag: new disposable domains appear faster
-than any snapshot updates, so absence from the list is not evidence of
-legitimacy.
-
-the component does not identify the hidden destination mailbox and does not
-prove that one address corresponds to one unique human.
-
-## next specification
-
-see [the detection contract](docs/detection-contract.md) for evidence boundaries,
-the proposed separation of responsibilities, and the required evaluation cases.
-see [the implementation notes](docs/implementation.md) for how the core is built.
+- a privacy-focused provider protects its users from surveillance;
+  it does not make them trustworthy. a disposable provider makes abuse
+  cheap; it does not prove any particular sender abusive. the row is
+  about the provider, never the person.
+- relay and forwarding infrastructure (improvmx, porkbun, forward
+  email, simplelogin and peers) is classified by mx pattern in
+  themailtell itself; the radar cross-references it instead of
+  duplicating it.
+- tiers are relative bands under each citation's coverage, not
+  timeless ranks. providers change architecture, jurisdictions, and
+  policies on their own schedule.
