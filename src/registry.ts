@@ -199,4 +199,58 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
       "of the service but was not re-verified from the site in this " +
       "pass",
   },
+  {
+    provider: "Disroot",
+    kind: "privacy_provider",
+    content_access: "unknown",
+    transparency: "unknown",
+    abuse_posture: "unknown",
+    jurisdiction: "unknown",
+    account_age_signal: "not researched in this pass",
+    citation:
+      "community roundups (r/degoogle staples surfaced via community " +
+      "and roundup sources read 2026-10-15), own pages to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: the community-run free provider of the degoogle crowd, named in " +
+      "degoogle roundups rather than seo. verify against the " +
+      "provider's own pages before relying on any field of this row",
+  },
+  {
+    provider: "mailbox.org",
+    kind: "privacy_provider",
+    content_access: "unknown",
+    transparency: "unknown",
+    abuse_posture: "unknown",
+    jurisdiction: "unknown",
+    account_age_signal: "not researched in this pass",
+    citation:
+      "community roundups (r/degoogle staples surfaced via community " +
+      "and roundup sources read 2026-10-15), own pages to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: the berlin provider, long-standing degoogle staple, named in " +
+      "degoogle roundups rather than seo. verify against the " +
+      "provider's own pages before relying on any field of this row",
+  },
+  {
+    provider: "Posteo",
+    kind: "privacy_provider",
+    content_access: "unknown",
+    transparency: "unknown",
+    abuse_posture: "unknown",
+    jurisdiction: "unknown",
+    account_age_signal: "not researched in this pass",
+    citation:
+      "community roundups (r/degoogle staples surfaced via community " +
+      "and roundup sources read 2026-10-15), own pages to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: the german privacy mailbox, degoogle staple, named in " +
+      "degoogle roundups rather than seo. verify against the " +
+      "provider's own pages before relying on any field of this row",
+  },,
 ];
