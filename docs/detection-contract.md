@@ -51,3 +51,16 @@ breaking a law, and what the saas side already does about it. the
 rows record capability and counter-capability, never accusation, and
 the composite decision layer reads this radar alongside the provider,
 voip and tld radars, never in a vacuum.
+
+## the perspective rule
+
+no row is written from the state's posture. law enforcement responds
+to crime, and crime is out of scope here by design: financial
+authorities reach issuers when real harm is in play, and $8 trial
+abuse will never clear that bar, proportionally and correctly. the
+perspective is the bootstrapped saas operator's: the harm recorded is
+unit-economics scale, the defense has to live in the onboarding form,
+and the radar's job is to make that defense describable, cheap and
+honest. no legal claims about anyone, no moral judgment about anyone,
+and the consumer in the exchange is recorded as a capability, never
+as a criminal.

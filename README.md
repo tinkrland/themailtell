@@ -14,6 +14,21 @@ the card behind a payment tells you what identity stands behind the
 money, and that runs from a billing zip to a full bank tether. the
 radar reads the tether, never the spender.
 
+## whose side the radar is on
+
+the state's posture is proportional and this radar does not argue
+with it: if a card were moving money to sanctioned actors, the
+financial authorities would have privacy.com complying in no time, and
+nobody gets subpoenaed because someone abused $8 of saas trials,
+which is fair. bigger fish exist. the harmed party in this radar's
+scope has no subpoena and never will: a bootstrapped saas creator,
+for whom the $8 at a time is inconsequential in the grand scheme and
+material to them. the defense therefore has to live in the onboarding
+form itself, be cheap enough for one person to run, and be honest
+about what it can and cannot verify. that is the seat this radar
+occupies: instrument facts and counters for the small operator, never
+legal claims, never moral judgment.
+
 the scale, anchored by the rows:
 
 - **no kyc by design**: cash-adjacent instruments, retail gift cards
