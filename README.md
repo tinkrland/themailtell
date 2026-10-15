@@ -1,98 +1,44 @@
-# themailtell
+# thevoipradar
 
-a standalone email-detection component for applications that need to understand
-whether an address appears to use a dedicated mailbox, an alias, a forwarding
-service, a masked relay, or a disposable service.
+a risk registry of voip providers. thephonetell reports a number's line
+type as voip, flatly, and that is correct and blind: it says nothing
+about which shop sold the number or what that shop verified about the
+buyer. this radar differentiates inside the voip class, the way
+theproviderradar differentiates inside email providers.
 
-this repository contains the design brief and a reference implementation of
-the classification core. it makes no accuracy claim; the seed provider table
-and the fixture evaluation corpus both require verified research before any
-production use. see [the implementation notes](docs/implementation.md).
+the axes:
 
-## the problem
+- **tier**: upstream carrier (twilio, bandwidth: the pipes others
+  resell), retail front (fanytel and peers: consumer storefronts that
+  sell numbers, often riding those same pipes), consumer app (textnow,
+  google voice, burner: end-user products with an app in front)
+- **kyc posture**: what the shop actually verifies about the buyer
+  before handing over a number: full kyc, identity-light (an account
+  and a payment method, no documents), or no kyc observed
+- **kyc scope**: kyc claims are tiered and jurisdictional. twilio's
+  verification is real but product-tiered: toll-free verification
+  before messaging, country-specific regulatory bundles, australia's
+  scam prevention framework kyc, while a bare us local number purchase
+  is lighter. reading "twilio" as uniformly kyced would overstate, and
+  the registry carries the scope, not just the label
 
-an address can look like an ordinary business email without having a mailbox
-of its own. domain registrars and other services offer custom-domain forwarding:
-mail sent to `hello@example.com` is delivered to an existing mailbox elsewhere.
+## the resale reality
 
-custom domains are often treated as more credible than free mailbox addresses,
-but buying a domain does not establish that each address has its own inbox.
-conversely, using a free mailbox provider does not establish that an address is
-disposable or abusive.
+retail fronts often resell the same upstream carriers without adding
+any verification of their own. the same underlying carrier network can
+sit behind a kyced front and an anonymous one, so the upstream's
+compliance posture and the front's are two different facts, and this
+registry records both.
 
-a domain's name, registrar, extension or professional appearance is not the
-verdict. the relevant evidence concerns the mail service and routing behind it.
+## honest limits
 
-## what themailtell does
-
-- detects known disposable-mail services and known masking/relay services.
-- examines public mail-routing evidence, including mx records and recognized
-  provider infrastructure, to identify custom-domain forwarding where possible.
-- identifies address-syntax features that may indicate aliases, without silently
-  rewriting the address or assuming all providers use the same alias semantics.
-- distinguishes provider-level evidence from address-level evidence.
-- returns uncertainty when the available evidence does not establish an address's
-  arrangement. a successful email delivery is not proof of a dedicated inbox.
-
-forwarding, masking, disposable lifetime and mailbox capability are separate
-properties. a long-lived forwarding address is not necessarily disposable;
-an alias can deliver into a durable mailbox. do not flatten those distinctions
-into an unexplained "fake email" flag.
-
-## decoupled by design
-
-themailtell provides classification signals and supporting evidence. consuming
-applications decide which arrangements they accept and what to do next.
-
-it does not implement signup eligibility, account creation, authentication,
-oauth, messaging integrations, user verification flows, or product-specific
-exceptions. its answer must not depend on a user's login method or on the
-consuming application's admission policy.
-
-the component must remain independently runnable and testable, with no imports
-from any consuming product. reusable core logic and optional provider adapters
-are separate; the exact packaging, runtime, licensing and delivery model remain
-to be selected.
-
-## limits that matter
-
-recognized forwarding infrastructure can expose routing behind an ordinary
-custom domain. this does not imply universal visibility into every individual
-address: mailbox providers can host both inboxes and aliases, forwarding can
-happen after delivery, and gateways can conceal the final mailbox provider.
-
-unknown infrastructure is not proof of forwarding. mailbox-capable
-infrastructure is not proof that a particular address has a separate inbox.
-privacy-preserving email use is not by itself evidence of fraud or automation.
-
-apple's hide my email is a coverage limit by design, not an oversight: its
-aliases live at icloud.com, sharing the domain with real icloud mailboxes,
-so an icloud.com address can never be classified as a relay from domain
-evidence. the detector does not guess there; it reports icloud.com as
-mailbox-capable infrastructure. a consuming application that must
-distinguish a hide my email alias from a real icloud mailbox needs an
-oauth-shaped route (sign in with apple exposes the relay address and the
-account behind it), which is outside this component by design.
-
-secondary routing evidence exists and stays in its lane. an spf include or
-dkim selector shows a forwarding service is authorized to send or sign for
-the domain: send-path configuration, never proof of a current forwarding
-arrangement. mta-sts and autodiscover records are presence-only
-observations. none of these is ever flattened into the mx-based forwarding
-signal.
-
-the disposable community snapshot carries two inherent failure modes.
-stale entries: domains change hands, and a former disposable domain can be
-a legitimate business today; entries are claims about their snapshot date,
-not eternal truths. detection lag: new disposable domains appear faster
-than any snapshot updates, so absence from the list is not evidence of
-legitimacy.
-
-the component does not identify the hidden destination mailbox and does not
-prove that one address corresponds to one unique human.
-
-## next specification
-
-see [the detection contract](docs/detection-contract.md) for evidence boundaries,
-the proposed separation of responsibilities, and the required evaluation cases.
-see [the implementation notes](docs/implementation.md) for how the core is built.
+- a kyc posture is a fact about the shop, never about any caller. a
+  verified twilio buyer can be nefarious; an anonymous fanytel caller
+  can be someone's grandmother wanting a second line. infrastructure
+  is not intent.
+- "no kyc observed" means no verification was found in the pass that
+  read the provider's own pages. it is observed absence, recorded with
+  its date, not proof that no check exists anywhere in their flow.
+- anonymous numbers are also a privacy tool: dissidents, whistleblowers
+  and domestic-abuse survivors use them for the same architecture that
+  abusers do. the row records the architecture, never the user.
