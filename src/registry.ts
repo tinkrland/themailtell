@@ -1,0 +1,137 @@
+// theccradar registry table 0.1.0. one row per payment instrument:
+// kind, kyc posture, kyc scope, funding anonymity, caps, each cited
+// and dated. a row is a fact about the tether behind the money,
+// never a verdict about the spender.
+//
+// row provenance: rows with verified_on were read from their cited
+// sources on that date. rows with null are unverified seeds and say
+// so in honest_notes.
+
+import type { PaymentInstrumentEntry } from "./schema.js";
+
+export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
+  {
+    instrument: "Visa gift card",
+    provider: "giftcards.com",
+    kind: "retail_gift_card",
+    kyc_posture: "registration_only",
+    kyc_scope:
+      "card registration asks for a billing address or zip to enable " +
+      "online use (giftcards.com's own FAQ: 'how do I register my Visa " +
+      "or Mastercard gift card'); no identity documents for the card's " +
+      "user, and the card is transferable by design, it is a gift",
+    jurisdiction: "us",
+    funding_anonymity:
+      "bought online with a payment method, so the buyer leaves a " +
+      "purchase trail with the issuer site, or bought at retail with " +
+      "cash; the user of the card at the merchant is not the " +
+      "necessarily the buyer, and nothing ties the user to an identity",
+    caps: "fixed face value, spend down to zero; reloadability varies by product line (verify per card)",
+    citation:
+      "https://www.giftcards.com/us/en/trust/faq and " +
+      "https://www.giftcards.com/us/en/blog/how-to-activate-giftcards " +
+      "(issuer's own pages, read via research pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 180,
+    honest_notes:
+      "activation and registration are friction, not kyc: a zip code " +
+      "is not an identity. the instrument is anonymous for its user by " +
+      "design, which is a fact about the tether. gift cards are among " +
+      "the most-gifted objects in the world; the row is not a verdict " +
+      "about anyone holding one",
+  },
+  {
+    instrument: "Privacy virtual card",
+    provider: "Privacy.com",
+    kind: "bank_linked_virtual_card",
+    kyc_posture: "full_kyc",
+    kyc_scope:
+      "issuer's own page: 'some personal information is required for a " +
+      "mandatory bank verification procedure called Know Your Customer " +
+      "(KYC) that must be conducted before our customers can start " +
+      "using our Privacy virtual cards'; the same page states privacy " +
+      "never conducts credit pulls",
+    jurisdiction: "us",
+    funding_anonymity:
+      "tethered to a us bank account: the virtual number shields the " +
+      "merchant from the real card, not the bank from the customer. the " +
+      "instrument is privacy against merchant-side leaks, with a " +
+      "verified identity behind it",
+    caps: "not read in this pass",
+    citation:
+      "https://www.privacy.com/ (issuer's own pages, read via research " +
+      "pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 180,
+    honest_notes:
+      "the row that proves kyc and privacy are not opposites: privacy.com " +
+      "is a privacy tool that runs on full kyc, protecting card numbers " +
+      "from merchants while the bank knows the customer. a different " +
+      "point on the radar from an anonymous instrument, and both are " +
+      "legitimate",
+  },
+  {
+    instrument: "Pockets prepaid wallet",
+    provider: "ICICI Bank (Pockets)",
+    kind: "regulated_prepaid_wallet",
+    kyc_posture: "limited_kyc_ladder",
+    kyc_scope:
+      "RBI master directions on prepaid payment instruments govern the " +
+      "instrument: minimum-detail PPIs carry small caps, and ICICI's " +
+      "own pages distinguish limited-kyc from full-kyc prepaid cards " +
+      "with a ladder between them. the 2018 kyc deadline (hindustan " +
+      "times, feb 2018) forced existing wallet users to complete kyc " +
+      "or lose wallet use",
+    jurisdiction: "india",
+    funding_anonymity:
+      "a bank-issued wallet reachable with less identity than a bank " +
+      "account at the minimum-detail tier, funded from cards, bank and " +
+      "upi; the app also carries upi send/collect via a virtual " +
+      "payment address",
+    caps:
+      "loadable up to rs 10,000 in a month under minimum details, per " +
+      "ICICI's own Pockets pages read 2026-10-15; full-kyc tiers above " +
+      "that (verify current caps against RBI's directions)",
+    citation:
+      "https://www.icicibank.com/personal-banking/bank-wallet/pockets/ " +
+      "(own pages, read via research pass 2026-10-15), " +
+      "https://www.icici.bank.in/personal-banking/cards/prepaid-card/prepaid-card-faqs " +
+      "(limited vs full kyc), https://www.hindustantimes.com/business-news/ " +
+      "kyc-for-mobile-wallets coverage (feb 2018), " +
+      "https://www.pwc.in/industries/financial-services/fintech/payments/ppi-interoperability " +
+      "(on the master directions)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the regulator built the ladder into law: anonymity priced in " +
+      "caps, with full kyc above. RBI directions move, so this row " +
+      "carries a fast recheck cadence. a pockets wallet is many " +
+      "people's first banking product; the row describes the tether " +
+      "the regulator designed, never the holder",
+  },
+  {
+    instrument: "direct crypto payment",
+    provider: "public blockchains",
+    kind: "web3_direct_payment",
+    kyc_posture: "no_kyc_by_design",
+    kyc_scope:
+      "on-chain transfers carry no instrument-level identity by " +
+      "protocol design; the kyc lives at the fiat on-ramps and " +
+      "off-ramps, not in the payment itself. chain analysis can " +
+      "link addresses, which is a different fact from kyc",
+    jurisdiction: "global",
+    funding_anonymity:
+      "self-custodied funds move with no issuer in the middle; " +
+      "caveat: buying crypto with a card or bank passes through " +
+      "kyc'd on-ramps, so the anonymous tier starts after the ramp",
+    caps: "none at protocol level",
+    citation: "to verify: blockchain protocol documentation and on-ramp KYC policies",
+    verified_on: null,
+    recheck_cadence_days: 180,
+    honest_notes:
+      "unverified seed: the protocol-level claim is well-known but " +
+      "was not verified from primary documentation in this pass. " +
+      "verify the on-ramp and off-ramp kyc claims before relying. " +
+      "included as the far end of the scale the other rows anchor",
+  },
+];

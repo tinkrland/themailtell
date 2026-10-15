@@ -1,98 +1,44 @@
-# themailtell
+# theccradar
 
-a standalone email-detection component for applications that need to understand
-whether an address appears to use a dedicated mailbox, an alias, a forwarding
-service, a masked relay, or a disposable service.
+a risk registry of payment instruments. the card behind a payment
+tells you what identity stands behind the money, and that runs from
+nothing at all to a full bank tether. the radar reads the tether,
+never the spender.
 
-this repository contains the design brief and a reference implementation of
-the classification core. it makes no accuracy claim; the seed provider table
-and the fixture evaluation corpus both require verified research before any
-production use. see [the implementation notes](docs/implementation.md).
+the scale, anchored by the rows:
 
-## the problem
+- **no kyc by design**: cash-adjacent instruments, retail gift cards
+  bought for cash or as gifts, transferable, no identity for the user
+- **registration only**: a billing zip to make online use work, which
+  is friction, not an identity
+- **limited-kyc ladder**: regulator-capped anonymous-ish tiers with a
+  documented ladder above them, like RBI's minimum-detail prepaid
+  instruments in india
+- **full kyc**: bank-linked instruments whose issuer verified the
+  account holder before the first charge
 
-an address can look like an ordinary business email without having a mailbox
-of its own. domain registrars and other services offer custom-domain forwarding:
-mail sent to `hello@example.com` is delivered to an existing mailbox elsewhere.
+## the india case
 
-custom domains are often treated as more credible than free mailbox addresses,
-but buying a domain does not establish that each address has its own inbox.
-conversely, using a free mailbox provider does not establish that an address is
-disposable or abusive.
+RBI's master directions on prepaid payment instruments built the
+ladder into regulation: minimum-detail instruments carry small load
+caps (ICICI's own Pockets pages: loadable up to rs 10,000 a month
+under minimum details), and full-kyc instruments unlock the rest.
+the regulator priced anonymity in caps, and the 2018 kyc deadline
+forced existing wallet users up the ladder. regulation snapshots
+decay: RBI directions move, and rows carry recheck cadences.
 
-a domain's name, registrar, extension or professional appearance is not the
-verdict. the relevant evidence concerns the mail service and routing behind it.
+## honest limits
 
-## what themailtell does
-
-- detects known disposable-mail services and known masking/relay services.
-- examines public mail-routing evidence, including mx records and recognized
-  provider infrastructure, to identify custom-domain forwarding where possible.
-- identifies address-syntax features that may indicate aliases, without silently
-  rewriting the address or assuming all providers use the same alias semantics.
-- distinguishes provider-level evidence from address-level evidence.
-- returns uncertainty when the available evidence does not establish an address's
-  arrangement. a successful email delivery is not proof of a dedicated inbox.
-
-forwarding, masking, disposable lifetime and mailbox capability are separate
-properties. a long-lived forwarding address is not necessarily disposable;
-an alias can deliver into a durable mailbox. do not flatten those distinctions
-into an unexplained "fake email" flag.
-
-## decoupled by design
-
-themailtell provides classification signals and supporting evidence. consuming
-applications decide which arrangements they accept and what to do next.
-
-it does not implement signup eligibility, account creation, authentication,
-oauth, messaging integrations, user verification flows, or product-specific
-exceptions. its answer must not depend on a user's login method or on the
-consuming application's admission policy.
-
-the component must remain independently runnable and testable, with no imports
-from any consuming product. reusable core logic and optional provider adapters
-are separate; the exact packaging, runtime, licensing and delivery model remain
-to be selected.
-
-## limits that matter
-
-recognized forwarding infrastructure can expose routing behind an ordinary
-custom domain. this does not imply universal visibility into every individual
-address: mailbox providers can host both inboxes and aliases, forwarding can
-happen after delivery, and gateways can conceal the final mailbox provider.
-
-unknown infrastructure is not proof of forwarding. mailbox-capable
-infrastructure is not proof that a particular address has a separate inbox.
-privacy-preserving email use is not by itself evidence of fraud or automation.
-
-apple's hide my email is a coverage limit by design, not an oversight: its
-aliases live at icloud.com, sharing the domain with real icloud mailboxes,
-so an icloud.com address can never be classified as a relay from domain
-evidence. the detector does not guess there; it reports icloud.com as
-mailbox-capable infrastructure. a consuming application that must
-distinguish a hide my email alias from a real icloud mailbox needs an
-oauth-shaped route (sign in with apple exposes the relay address and the
-account behind it), which is outside this component by design.
-
-secondary routing evidence exists and stays in its lane. an spf include or
-dkim selector shows a forwarding service is authorized to send or sign for
-the domain: send-path configuration, never proof of a current forwarding
-arrangement. mta-sts and autodiscover records are presence-only
-observations. none of these is ever flattened into the mx-based forwarding
-signal.
-
-the disposable community snapshot carries two inherent failure modes.
-stale entries: domains change hands, and a former disposable domain can be
-a legitimate business today; entries are claims about their snapshot date,
-not eternal truths. detection lag: new disposable domains appear faster
-than any snapshot updates, so absence from the list is not evidence of
-legitimacy.
-
-the component does not identify the hidden destination mailbox and does not
-prove that one address corresponds to one unique human.
-
-## next specification
-
-see [the detection contract](docs/detection-contract.md) for evidence boundaries,
-the proposed separation of responsibilities, and the required evaluation cases.
-see [the implementation notes](docs/implementation.md) for how the core is built.
+- kyc posture is a fact about the instrument, never about the person
+  paying with it. gift cards are among the most-gifted objects in the
+  world; privacy.com shields ordinary shoppers from merchant data
+  leaks; a pockets wallet is someone's first bank. the row records
+  the tether, not a verdict about the spender.
+- registration is not kyc. a zip code is not an identity, and an
+  activation step is not a document check. the rows say which one
+  each instrument actually requires.
+- paying with the instrument your bank issued says nothing about your
+  honesty, and paying with the most anonymous instrument on the scale
+  says nothing either. the decision layer combines signals from
+  multiple radars, never in a vacuum: a theccradar row joins the
+  voip, tld and provider rows as evidence, never as a verdict.
