@@ -1,7 +1,10 @@
 // theccradar schema 0.1.0. the entry shape for the payment instrument
 // registry: what identity stands behind the money, cited and dated.
 // unknown is first-class; registration is never conflated with kyc
-export const SCHEMA_VERSION = "0.4.0";
+export const SCHEMA_VERSION = "0.5.0";
+// 0.5.0: topup_voucher kind. voucher-rail instruments: bought at
+// partner sites with a wide range of payment methods, redeemed for
+// e-wallet top-ups or virtual cards, cash-adjacent and borderless
 // 0.4.0: issuance_scope and the prepaid_card_platform kind. the
 // capability privacy.com cannot serve: a us-issued card available to
 // a non-us person, which is how global users reach us-card-only
@@ -31,6 +34,9 @@ export type InstrumentKind =
   // balance-funded virtual card platforms with their own identity
   // check: privacy.com-like issuers, some global
   | "prepaid_card_platform"
+  // vouchers bought at partner sites, redeemed for wallet top-ups
+  // or virtual cards
+  | "topup_voucher"
   | "unknown";
 
 export type CardNetwork =

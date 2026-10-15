@@ -340,5 +340,84 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "own crypto-payments description; no-kyc is the issuer's " +
       "claim, recorded as observed on its site with the date. " +
       "recheck at every cadence tick, this ecosystem churns fast",
+  },  {
+    instrument: "Vanilla Visa gift card",
+    provider: "Vanilla (vanillagift.com)",
+    kind: "retail_gift_card",
+    card_network: "visa",
+    number_rotation: "static",
+    kyc_posture: "registration_only",
+    kyc_scope:
+      "activation on the issuer's site with card number, expiration, " +
+      "cvv and billing zip per third-party activation guides; the " +
+      "zip-registration step for online use was once a real " +
+      "requirement (michaelryanmoney guide, read 2026-10-15) and " +
+      "current behavior varies by card and merchant. no identity " +
+      "documents for the user of the card",
+    jurisdiction: "us",
+    issuance_scope: "unknown",
+    funding_anonymity:
+      "the most cash-adjacent card in the registry's retail tier: " +
+      "bought at us drugstores and grocery registers with cash, " +
+      "fixed face value, transferable by hand like its giftcards.com " +
+      "sibling. nothing ties the user at a merchant to the buyer",
+    caps: "fixed face value, non-reloadable; inactivity fees after extended non-use per third-party guides",
+    citation:
+      "https://michaelryanmoney.com/vanilla-gift-card-zip-code/ and " +
+      "https://joingerald.com/learn/money-basics/vanillagift-com-guide " +
+      "(third-party guides, read 2026-10-15), " +
+      "https://www.vanillagift.com/ (returned an app shell in this " +
+      "pass, not read)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the biggest retail cash-adjacent visa brand, owner-named with " +
+      "the gift-card group. recorded at the third-party-guide " +
+      "ceiling: the official site served a shell to this pass, so " +
+      "verified_on stays null until it is read directly. the guides " +
+      "also carry the ecosystem's honest texture: a phishing magnet " +
+      "(fake login pages target cardholders exactly because balances " +
+      "are cash-like) and thin support. the row records retail " +
+      "facts, never the holder",
+  },
+  {
+    instrument: "Rewarble voucher",
+    provider: "Rewarble",
+    kind: "topup_voucher",
+    card_network: "unknown",
+    number_rotation: "unknown",
+    kyc_posture: "unknown",
+    kyc_scope:
+      "not read in this pass: the redemption flow's identity " +
+      "requirements are unverified; the voucher is bought at partner " +
+      "sites using a wide range of payment methods per the " +
+      "provider's own pages",
+    jurisdiction: "global service, uk-adjacent operator (to verify)",
+    issuance_scope: "global",
+    funding_anonymity:
+      "vouchers are the cash-adjacency rail: bought at partner sites " +
+      "with payment methods that include crypto (the provider's own " +
+      "insight pages cover paying with crypto), redeemed for " +
+      "e-wallet top-ups like paypal in multiple currencies, or for " +
+      "virtual debit cards. the tether sits at the voucher seller, " +
+      "not at the wallet being topped up",
+    caps: "voucher face values per brand and currency (partner listings show 5 to 250 unit ranges)",
+    citation:
+      "https://www.rewarble.com/ and https://rewarble.com/brands/paypal " +
+      "(own pages, read via research pass 2026-10-15: 'instantly " +
+      "recharge your e-wallet, send gifts around the world and create " +
+      "virtual debit cards'), https://topgift.io/paypal-gift-card-gbp/ " +
+      "(partner listing). direct homepage read blocked by a bot " +
+      "checkpoint, itself recorded",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named, and a genuinely different instrument: the voucher " +
+      "rail that stands between payment and wallet. a top-up voucher " +
+      "bought with crypto and redeemed into paypal is a two-hop " +
+      "cash-adjacent path, and the row records the hops, not the " +
+      "people walking them: remittances and gifts are the ordinary " +
+      "use. own pages read via search cache with the bot checkpoint " +
+      "recorded; re-verify in a browser at the next cadence tick",
   },
 ];
