@@ -42,3 +42,14 @@ registry records both.
 - anonymous numbers are also a privacy tool: dissidents, whistleblowers
   and domestic-abuse survivors use them for the same architecture that
   abusers do. the row records the architecture, never the user.
+
+## the posture, stated plainly
+
+this radar reads adversarially, not morally. the rows were named by an
+owner who is a paying user of this exact class of services, proton on
+the mail side and a no-kyc voip number on the phone side, for ordinary
+privacy: that is the point. the same architecture that serves a
+legitimate privacy user is what an adversary would choose too, and a
+radar that cannot describe the architecture without judging the user
+would be worthless. infrastructure is not intent, in every row, by
+construction.

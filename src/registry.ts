@@ -21,6 +21,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "bundles apply per country; a bare us local number purchase is " +
       "lighter than the messaging products",
     market: "global",
+    payment_privacy: "standard business billing, cards and ach; no crypto found in this pass",
     citation:
       "https://help.twilio.com/articles/49291010297883 (kyc in australia), " +
       "https://www.twilio.com/blog/developers/tutorials/product/self-service-kyc-toll-free-verif " +
@@ -43,6 +44,11 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "marketing targets multiple WhatsApp and Telegram accounts and " +
       "privacy use",
     market: "global retail",
+    payment_privacy:
+      "owner-reported crypto acceptance (2026-10-15), not found on the " +
+      "homepage, pricing, or terms pages read today; verify at checkout " +
+      "before relying. terms page mentions card chargebacks, so card " +
+      "billing exists alongside whatever the checkout accepts",
     citation:
       "https://fanytel.com/blog/virtual-number-for-whatsapp-2025 and " +
       "https://fanytel.com/blog/f/virtual-number-for-telegram (read " +
@@ -50,10 +56,13 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     verified_on: "2026-10-15",
     recheck_cadence_days: 90,
     honest_notes:
-      "no kyc observed on the provider's own pages read today; the tos " +
-      "and checkout flow were not read line by line, so this is " +
-      "observed absence with a date, not proof. verify at the next " +
-      "cadence tick before relying on it as a strong claim",
+      "the terms and conditions page was read line by line today: no " +
+      "identity verification requirements anywhere in it, purchase to " +
+      "invoice to instant delivery, which strengthens the no_kyc " +
+      "reading from a primary source. crypto acceptance is " +
+      "owner-reported and stays marked as such until verified at " +
+      "checkout. observed absence with dates, never proof of absence " +
+      "everywhere in the flow",
   },
   {
     provider: "TextNow",
@@ -64,6 +73,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "coverage read 2026-10-15; major platforms treat its numbers as " +
       "voip and some reject them for verification",
     market: "us, canada",
+    payment_privacy: "not verified in this pass",
     citation:
       "https://mail.pvacodes.com/textnow-free-virtual-number-what-it-does-where-it-fails-and-better-al " +
       "(third-party coverage, read 2026-10-15), own signup flow not read",
@@ -82,6 +92,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "requires a google account; us-only availability; porting in " +
       "requires an active us mobile number; no document kyc",
     market: "us",
+    payment_privacy: "google payments rails; not verified for crypto in this pass",
     citation:
       "https://support.google.com/voice/answer/1065667 (porting " +
       "requirements read 2026-10-15), " +
@@ -100,6 +111,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "us",
+    payment_privacy: "not verified in this pass",
     citation: "https://www.bandwidth.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -115,6 +127,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "global retail",
+    payment_privacy: "not verified in this pass",
     citation: "https://hushed.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -128,6 +141,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "us",
+    payment_privacy: "not verified in this pass",
     citation: "https://www.burnerapp.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,

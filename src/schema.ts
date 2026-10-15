@@ -2,7 +2,10 @@
 // registry: tier, kyc posture, kyc scope, market, cited and dated.
 // unknown is first-class; observed absence is recorded as observed
 // absence, never as proof
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
+// 0.2.0: payment_privacy joins the axes, because the payment rail is
+// part of the anonymity path: crypto buys with no card trail are a
+// different fact from card billing, whatever the kyc posture says
 
 export type ProviderTier =
   // the pipes: carries numbers others resell (twilio, bandwidth)
@@ -29,6 +32,9 @@ export interface VoipProviderEntry {
   // what is verified, for which product, in which jurisdiction
   kyc_scope: string;
   market: string;
+  // payment rails as the provider's own pages or reporting carry them;
+  // owner-reported facts are marked owner-reported until verified
+  payment_privacy: string;
   citation: string;
   // null = unverified seed: flagged for verification, never relied on
   verified_on: string | null;
