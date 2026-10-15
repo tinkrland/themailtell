@@ -22,6 +22,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "lighter than the messaging products",
     market: "global",
     payment_privacy: "standard business billing, cards and ach; no crypto found in this pass",
+    us_sms_capability: "sms_supported",
     citation:
       "https://help.twilio.com/articles/49291010297883 (kyc in australia), " +
       "https://www.twilio.com/blog/developers/tutorials/product/self-service-kyc-toll-free-verif " +
@@ -50,6 +51,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "cards. the homepage, pricing, and terms pages read the same day " +
       "do not mention it, which is its own honest note: the payment " +
       "rail is visible at the register, not in the marketing",
+    us_sms_capability: "unknown",
     citation:
       "https://fanytel.com/blog/virtual-number-for-whatsapp-2025 and " +
       "https://fanytel.com/blog/f/virtual-number-for-telegram (read " +
@@ -75,6 +77,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "voip and some reject them for verification",
     market: "us, canada",
     payment_privacy: "not verified in this pass",
+    us_sms_capability: "sms_supported",
     citation:
       "https://mail.pvacodes.com/textnow-free-virtual-number-what-it-does-where-it-fails-and-better-al " +
       "(third-party coverage, read 2026-10-15), own signup flow not read",
@@ -94,6 +97,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "requires an active us mobile number; no document kyc",
     market: "us",
     payment_privacy: "google payments rails; not verified for crypto in this pass",
+    us_sms_capability: "sms_supported",
     citation:
       "https://support.google.com/voice/answer/1065667 (porting " +
       "requirements read 2026-10-15), " +
@@ -113,6 +117,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_scope: "not researched in this pass",
     market: "us",
     payment_privacy: "not verified in this pass",
+    us_sms_capability: "sms_supported",
     citation: "https://www.bandwidth.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -129,6 +134,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_scope: "not researched in this pass",
     market: "global retail",
     payment_privacy: "not verified in this pass",
+    us_sms_capability: "unknown",
     citation: "https://hushed.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -143,6 +149,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     kyc_scope: "not researched in this pass",
     market: "us",
     payment_privacy: "not verified in this pass",
+    us_sms_capability: "unknown",
     citation: "https://www.burnerapp.com/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -159,6 +166,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "by its own claim",
     market: "global web",
     payment_privacy: "not applicable: free tier with no payment at all",
+    us_sms_capability: "receive_only",
     citation:
       "https://quackr.io/ (own site, read via research pass " +
       "2026-10-15 through a search cache), " +
@@ -183,6 +191,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "2026-10-15); own site not read in this pass",
     market: "global retail",
     payment_privacy: "crypto-paid per the community comparison",
+    us_sms_capability: "unknown",
     citation:
       "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
       "https://crypton.sh/ (to verify)",
@@ -203,6 +212,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "own site not read in this pass",
     market: "global retail",
     payment_privacy: "crypto-paid per the community comparison",
+    us_sms_capability: "unknown",
     citation:
       "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
       "https://silent.link/ (to verify)",
@@ -222,6 +232,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "xmpp-based number service; own docs not read in this pass",
     market: "global retail",
     payment_privacy: "crypto-paid per the community comparison",
+    us_sms_capability: "unknown",
     citation:
       "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
       "https://jmp.chat/ (to verify)",

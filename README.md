@@ -43,6 +43,23 @@ registry records both.
   and domestic-abuse survivors use them for the same architecture that
   abusers do. the row records the architecture, never the user.
 
+## the us sms wall and the voice otp fallback
+
+an owner-reported capability wall, carried with its verified
+anchors: many voip stacks sell us numbers for calls but cannot
+deliver sms to them at all, a2p compliance being the wall (livekit's
+own docs describe its us numbers as for voice applications; no sms
+product surfaced in the pass that looked). platforms that offer
+voice-call otp as a fallback let a voice-only number complete
+verification anyway: voice otp is a standard channel, delivered by
+automated call (secureauth documents delivery via twilio, vonage and
+teleseign; otp.dev calls it the most universally accessible
+verification channel, no smartphone needed), and voip numbers
+commonly cannot receive otp sms in the first place (zuper warns its
+own voip users about it). the axis records capability per provider,
+never accusation: people call the otp to themselves for reasons as
+ordinary as a broken sim slot.
+
 ## the posture, stated plainly
 
 this radar reads adversarially, not morally. the rows were named by an
