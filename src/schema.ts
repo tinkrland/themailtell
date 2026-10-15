@@ -1,7 +1,12 @@
 // theccradar schema 0.1.0. the entry shape for the payment instrument
 // registry: what identity stands behind the money, cited and dated.
 // unknown is first-class; registration is never conflated with kyc
-export const SCHEMA_VERSION = "0.5.0";
+export const SCHEMA_VERSION = "0.6.0";
+// 0.6.0: open_loop_prepaid_card kind, a taxonomy correction. what
+// the market calls a 'visa gift card' is not a gift card: it is
+// open-loop prepaid debit, spendable anywhere the network is
+// accepted (visa's own pages). a true gift card is closed-loop,
+// merchant-locked. the row says which one it is
 // 0.5.0: topup_voucher kind. voucher-rail instruments: bought at
 // partner sites with a wide range of payment methods, redeemed for
 // e-wallet top-ups or virtual cards, cash-adjacent and borderless
@@ -20,9 +25,13 @@ export const SCHEMA_VERSION = "0.5.0";
 // fresh number, which is what recycles free trials
 
 export type InstrumentKind =
-  // retail gift cards: fixed face value, transferable, no identity
-  // for the user
+  // closed-loop merchant-locked gift cards: value spendable only at
+  // the issuing retailer or merchant group
   | "retail_gift_card"
+  // open-loop network prepaid debit: visa or mastercard branded,
+  // spendable anywhere the network is accepted. what the market
+  // calls a 'visa gift card' lives here, not in retail_gift_card
+  | "open_loop_prepaid_card"
   // issuer-verified virtual cards tethered to a bank account
   | "bank_linked_virtual_card"
   // regulator-governed prepaid wallets, often with a kyc ladder

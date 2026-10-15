@@ -11,9 +11,9 @@ import type { PaymentInstrumentEntry } from "./schema.js";
 
 export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
   {
-    instrument: "Visa gift card",
+    instrument: "giftcards.com Visa card (open-loop prepaid debit)",
     provider: "giftcards.com",
-    kind: "retail_gift_card",
+    kind: "open_loop_prepaid_card",
     card_network: "visa",
     number_rotation: "static",
     kyc_posture: "registration_only",
@@ -38,9 +38,15 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     recheck_cadence_days: 180,
     honest_notes:
       "activation and registration are friction, not kyc: a zip code " +
-      "is not an identity. the instrument is anonymous for its user by " +
-      "design, which is a fact about the tether. gift cards are among " +
-      "the most-gifted objects in the world; the row is not a verdict " +
+      "is not an identity. taxonomy corrected per owner direction " +
+      "2026-10-15: the visa product is open-loop prepaid debit, " +
+      "spendable anywhere visa debit is accepted (visa's own pages), " +
+      "not a merchant-locked gift card (the closed-loop vs open-loop " +
+      "distinction carried by giftbit's guide); giftcards.com also " +
+      "sells merchant-locked cards, which are a different instrument " +
+      "and not this row. the instrument is anonymous for its user by " +
+      "design, which is a fact about the tether, and it is among the " +
+      "most-gifted objects in the world; the row is not a verdict " +
       "about anyone holding one",
   },
   {
@@ -341,9 +347,9 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "claim, recorded as observed on its site with the date. " +
       "recheck at every cadence tick, this ecosystem churns fast",
   },  {
-    instrument: "Vanilla Visa gift card",
+    instrument: "Vanilla Visa card (open-loop prepaid debit)",
     provider: "Vanilla (vanillagift.com)",
-    kind: "retail_gift_card",
+    kind: "open_loop_prepaid_card",
     card_network: "visa",
     number_rotation: "static",
     kyc_posture: "registration_only",
@@ -372,7 +378,8 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     recheck_cadence_days: 90,
     honest_notes:
       "the biggest retail cash-adjacent visa brand, owner-named with " +
-      "the gift-card group. recorded at the third-party-guide " +
+      "the prepaid group, and open-loop like its giftcards.com sibling: " +
+      "open-loop prepaid debit, spendable anywhere visa is accepted. recorded at the third-party-guide " +
       "ceiling: the official site served a shell to this pass, so " +
       "verified_on stays null until it is read directly. the guides " +
       "also carry the ecosystem's honest texture: a phishing magnet " +

@@ -38,8 +38,10 @@ to.
 
 the scale, anchored by the rows:
 
-- **no kyc by design**: cash-adjacent instruments, retail gift cards
-  bought for cash or as gifts, transferable, no identity for the user
+- **no kyc by design**: cash-adjacent instruments, transferable, no
+  identity for the user: open-loop prepaid debit (what the market
+  calls a visa gift card, spendable anywhere the network is accepted)
+  and merchant-locked retail gift cards
 - **registration only**: a billing zip to make online use work, which
   is friction, not an identity
 - **limited-kyc ladder**: regulator-capped anonymous-ish tiers with a
