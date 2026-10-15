@@ -1,17 +1,13 @@
 {
-  "name": "themailtell",
+  "name": "thevoipradar",
   "version": "0.1.0",
-  "description": "email arrangement detection: signals and evidence, not verdicts",
+  "description": "voip provider registry: tier, client model, kyc posture, cited and dated",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test dist/test/*.test.js",
-    "sync:lists": "node scripts/sync-disposable-list.mjs",
-    "eval": "npm run build && node dist/src/eval/run-eval.js",
-    "corpus": "node scripts/build-corpus.mjs",
-    "start": "npm run build && node dist/src/eval/cli.js"
+    "test": "npm run build && node --test dist/test/*.test.js"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",

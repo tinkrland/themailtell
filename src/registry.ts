@@ -13,6 +13,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Twilio",
     tier: "upstream_carrier",
+    client_model: "api_trunk",
     kyc_posture: "kyc_required",
     kyc_scope:
       "tiered by product and jurisdiction: toll-free verification is " +
@@ -38,6 +39,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Fanytel",
     tier: "retail_front",
+    client_model: "turnkey_web",
     kyc_posture: "no_kyc_observed",
     kyc_scope:
       "no identity verification found in the pass that read the " +
@@ -70,6 +72,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "TextNow",
     tier: "consumer_app",
+    client_model: "turnkey_app",
     kyc_posture: "identity_light",
     kyc_scope:
       "free signup without document verification, per third-party " +
@@ -91,6 +94,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Google Voice",
     tier: "consumer_app",
+    client_model: "turnkey_app",
     kyc_posture: "identity_light",
     kyc_scope:
       "requires a google account; us-only availability; porting in " +
@@ -113,6 +117,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Bandwidth",
     tier: "upstream_carrier",
+    client_model: "api_trunk",
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "us",
@@ -130,6 +135,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Hushed",
     tier: "retail_front",
+    client_model: "turnkey_app",
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "global retail",
@@ -145,6 +151,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Burner",
     tier: "consumer_app",
+    client_model: "turnkey_app",
     kyc_posture: "unknown",
     kyc_scope: "not researched in this pass",
     market: "us",
@@ -159,6 +166,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   },  {
     provider: "Quackr",
     tier: "public_sms_receiver",
+    client_model: "turnkey_web",
     kyc_posture: "no_kyc_observed",
     kyc_scope:
       "no account or payment observed in this pass: free public " +
@@ -184,6 +192,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Crypton.sh",
     tier: "retail_front",
+    client_model: "sip_credentials",
     kyc_posture: "no_kyc_observed",
     kyc_scope:
       "listed among the leading no-kyc crypto-paid phone number " +
@@ -205,6 +214,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "Silent.link",
     tier: "retail_front",
+    client_model: "esim",
     kyc_posture: "no_kyc_observed",
     kyc_scope:
       "listed among the leading no-kyc crypto-paid phone number " +
@@ -225,6 +235,7 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
   {
     provider: "JMP.chat",
     tier: "retail_front",
+    client_model: "xmpp",
     kyc_posture: "no_kyc_observed",
     kyc_scope:
       "listed among the leading no-kyc crypto-paid phone number " +
@@ -243,5 +254,152 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "in the f-droid and mobile-linux crowd, which is exactly why " +
       "community sources surface names seo misses. verify against its " +
       "own pages before relying",
+  },  {
+    provider: "VoIP.ms",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "us and canada",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://www.voip.ms/ (byod sip model, own pages not read in " +
+      "this pass; third-party integrations and softphone guides " +
+      "reference sip credentials), read 2026-10-15",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named with the byod class: the store that hands you sip " +
+      "credentials and expects you to configure linphone or an ata. " +
+      "unverified seed: read the provider's own pages before relying " +
+      "on any field of this row",
+  },
+  {
+    provider: "CallCentric",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "us",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://www.callcentric.com/features/bring_your_own_device " +
+      "(the provider's own byod feature page, read 2026-10-15)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the classic byod storefront, advertising bring-your-own-device " +
+      "on its own feature page: the client_model is verified from " +
+      "the provider's own site; the rest of the row is an unverified " +
+      "seed until kyc and payment rails are read",
+  },
+  {
+    provider: "Zadarma",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "global",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://zadarma.com/en/support/instructions/asterisk/ and " +
+      "https://zadarma.com/en/support/instructions/windows/expresstalk/ " +
+      "(the provider's own setup manuals: sip number and sip password " +
+      "from the personal account, read 2026-10-15)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the provider's own manuals walk the full trunking path: " +
+      "asterisk with the sip credentials from the personal account, " +
+      "or a windows softphone. client_model verified from own pages; " +
+      "kyc and payment rails unread, so the row stays a seed",
+  },
+  {
+    provider: "Sipgate",
+    tier: "retail_front",
+    client_model: "turnkey_app",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass; a german provider under " +
+      "german telecommunication law, so assume real obligations and " +
+      "verify",
+    market: "germany",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://help.sipgate.de/cloud-telefonanlage/en/getting-started/ " +
+      "and the sipgate softphone (homebrew cask sipgate-softphone), " +
+      "read 2026-10-15",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the hybrid case that proves the axis: sipgate ships its own " +
+      "softphone app (turnkey) while its own help pages document sip " +
+      "device configuration for byod users. recorded as turnkey_app " +
+      "with the hybrid noted here, never guessed",
+  },
+  {
+    provider: "LocalPhone",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "global",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://www.localphone.com/services/voip (the provider's own " +
+      "page: sign up, get your sip id and sip password from the " +
+      "advanced users section, read 2026-10-15)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "own page is explicit about the consumption model: the sip info " +
+      "lives in the advanced users section, the exact trunking-and-" +
+      "client shape the owner named. kyc and payment rails unread: " +
+      "seed until verified",
+  },
+  {
+    provider: "Anveo",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "us",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://anveo.com/faq.asp?code=faq_sip_config (the provider's " +
+      "own sip configuration index: 3cx, asterisk, bria, cisco " +
+      "desk phones, trixbox, read 2026-10-15)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the configuration index is the client_model evidence: a whole " +
+      "catalog of clients to point at their sip credentials, from " +
+      "softphones to asterisk. kyc and payment rails unread: seed",
+  },
+  {
+    provider: "FlyNumber",
+    tier: "retail_front",
+    client_model: "sip_credentials",
+    kyc_posture: "unknown",
+    kyc_scope: "not researched in this pass",
+    market: "global",
+    payment_privacy: "not researched in this pass",
+    us_sms_capability: "unknown",
+    citation:
+      "https://www.flynumber.com/ (the provider's own page: your own " +
+      "sip credentials, register any sip app, desk phone or pbx, up " +
+      "to 5 devices, read 2026-10-15)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "a forwarding-number marketplace: numbers from many countries " +
+      "that forward to your sip endpoint. a different animal from a " +
+      "dialer provider, and the row records the difference via the " +
+      "client_model axis. kyc and payment rails unread: seed",
   },
 ];

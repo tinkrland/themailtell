@@ -1,17 +1,4 @@
-// the public surface: a pure core plus an evidence gatherer.
-
-export { analyze } from "./core.js";
-export type { Evidence, AnalyzeOptions } from "./core.js";
-export { gatherEvidence } from "./evidence.js";
-export { makeDohResolver } from "./doh.js";
-export { findingToSignal } from "./adapters.js";
-export type { IntelligenceAdapter, AdapterFinding } from "./adapters.js";
+// the public surface: the registry component, nothing inherited
 export { SCHEMA_VERSION } from "./schema.js";
-export type {
-  DetectionResult,
-  Signal,
-  SignalName,
-  SignalScope,
-  EvidenceStrength,
-  ResultState,
-} from "./schema.js";
+export { VOIP_REGISTRY } from "./registry.js";
+export type { VoipProviderEntry } from "./schema.js";

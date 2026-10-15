@@ -2,7 +2,14 @@
 // registry: tier, kyc posture, kyc scope, market, cited and dated.
 // unknown is first-class; observed absence is recorded as observed
 // absence, never as proof
-export const SCHEMA_VERSION = "0.4.0";
+export const SCHEMA_VERSION = "0.5.0";
+// 0.5.0: client_model. voip providers differ in how you consume the
+// number: turnkey providers ship the dialer (an app, or a web client
+// like fanytel's), while byod storefronts hand you sip credentials
+// and you bring your own client: linphone, zoiper, 3cx, asterisk,
+// an ata. the axis is the technical barrier, a capability fact: a
+// web dialer is minutes from signup to call, a sip trunk is a
+// configuration step that self-selects for technical users
 // 0.4.0: us_sms_capability. many cpaaS and voip stacks cannot deliver
 // sms to us numbers at all (a2p compliance) while calls work fine,
 // and platforms that offer voice-call otp let a voice-only number
@@ -42,10 +49,28 @@ export type KycPosture =
   | "no_kyc_observed"
   | "unknown";
 
+export type ClientModel =
+  // provider ships the client: a phone app, signup to call in minutes
+  | "turnkey_app"
+  // provider ships a web dialer, no install at all
+  | "turnkey_web"
+  // sip credentials and the user brings a client: linphone, zoiper,
+  // 3cx, asterisk, an ata. the trunking-and-client class
+  | "sip_credentials"
+  // consumed programmatically: api and trunking, developer-facing
+  | "api_trunk"
+  // the number arrives as an esim profile, no client at all
+  | "esim"
+  // rides an xmpp jabber client
+  | "xmpp"
+  | "unknown";
+
 export interface VoipProviderEntry {
   // external names keep exact case
   provider: string;
   tier: ProviderTier;
+  // how the number is consumed: the technical barrier axis
+  client_model: ClientModel;
   kyc_posture: KycPosture;
   // what is verified, for which product, in which jurisdiction
   kyc_scope: string;
