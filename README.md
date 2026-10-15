@@ -27,7 +27,14 @@ material to them. the defense therefore has to live in the onboarding
 form itself, be cheap enough for one person to run, and be honest
 about what it can and cannot verify. that is the seat this radar
 occupies: instrument facts and counters for the small operator, never
-legal claims, never moral judgment.
+legal claims, never moral judgment. and the ambition is stated just as
+plainly: this is self protection, not protecting the world. no cyber
+superhero posturing. we are not salty that no authority rides for
+this, because fair enough, bigger fish to fry, and the fish that
+would justify an authority are by and large not the ones recycling
+free trials on a solo dev's saas anyway. the radar protects one
+operator's unit economics, claims nothing grander, and never needed
+to.
 
 the scale, anchored by the rows:
 

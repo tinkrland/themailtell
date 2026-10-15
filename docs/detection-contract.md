@@ -63,4 +63,6 @@ unit-economics scale, the defense has to live in the onboarding form,
 and the radar's job is to make that defense describable, cheap and
 honest. no legal claims about anyone, no moral judgment about anyone,
 and the consumer in the exchange is recorded as a capability, never
-as a criminal.
+as a criminal. the ambition is calibrated to match: self protection
+for one solo operator's unit economics, not protecting the world, and
+no superhero claims either way.
