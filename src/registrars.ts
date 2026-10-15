@@ -288,5 +288,27 @@ export const REGISTRAR_REGISTRY: BoutiqueRegistrarEntry[] = [
       "unverified seed from the community pass: the iceland privacy " +
       "registrar named by the privacytools crowd. verify against its " +
       "own pages before relying on any field of this row",
+  },  {
+    registrar: "Hover",
+    kind: "consumer_boutique",
+    sale_pattern: "unknown",
+    payment_privacy: "not verified in this pass",
+    ownership_note:
+      "subsidiary of tucows inc., one of the oldest and third-largest " +
+      "icann-accredited registrars (third-party reviews, read " +
+      "2026-10-15); launched 2009, toronto",
+    citation:
+      "https://support.hover.com/support/solutions/articles/201000064738 " +
+      "(own support: gdpr redaction of registration data for " +
+      "applicable domains, read via research pass 2026-10-15), " +
+      "https://www.traffictsunami.com/?p=3839 and " +
+      "https://pricingsaas.com/companies/hover (third-party profiles)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named, community-familiar consumer registrar under a " +
+      "large icann parent. read via own support page plus third-party " +
+      "profiles, not a full pricing read: verify pricing and payment " +
+      "rails before relying. records architecture, never the user",
   },
 ];
