@@ -252,5 +252,5 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
       "unverified seed from the community pass: the german privacy mailbox, degoogle staple, named in " +
       "degoogle roundups rather than seo. verify against the " +
       "provider's own pages before relying on any field of this row",
-  },,
+  },
 ];
