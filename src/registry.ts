@@ -178,5 +178,39 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "network logo is never the tether, which is the point. pockit's " +
       "whole legitimate market is the underbanked and the thin-file, " +
       "and the row records the tether, never the cardholder",
+  },  {
+    instrument: "fixed-balance crypto-funded prepaid card",
+    provider: "Ezzocard",
+    kind: "crypto_funded_prepaid_card",
+    card_network: "unknown",
+    number_rotation: "static",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "per third-party reporting (izipay comparison, read 2026-10-15): " +
+      "selling prepaid virtual cards since 2016 with no kyc at all, " +
+      "bought with crypto, fixed balance with the fee in the price. " +
+      "the provider's own site was not read in this pass",
+    jurisdiction: "unknown",
+    funding_anonymity:
+      "crypto-funded by design: the card is bought with crypto and " +
+      "spent down, so the tether sits at the crypto on-ramp, not at " +
+      "the card issuer",
+    caps: "fixed face value per card, spend down to zero",
+    citation:
+      "https://izipay.me/blog/best-crypto-card-no-kyc-2026 (read " +
+      "2026-10-15), https://www.ucardcrypto.com/best-crypto-cards-with-no-kyc-2026/ " +
+      "(second comparison), https://discuss.grapheneos.org/d/36096 " +
+      "(community thread asking the grapheneos forum exactly about " +
+      "these cards: experiences, fees, vpn policies), provider site to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "community-sourced row: the instrument the privacy forums " +
+      "actually discuss for everyday no-kyc spending, surfaced by " +
+      "scanning grapheneos and no-kyc roundups rather than seo. " +
+      "recorded from reporting, not from the provider's own pages, so " +
+      "the honest ceiling is what reporting says, and this no-kyc " +
+      "card ecosystem churns fast: recheck at every cadence tick. the " +
+      "row is the tether, never the spender",
   },
 ];

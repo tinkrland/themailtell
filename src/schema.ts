@@ -1,7 +1,10 @@
 // theccradar schema 0.1.0. the entry shape for the payment instrument
 // registry: what identity stands behind the money, cited and dated.
 // unknown is first-class; registration is never conflated with kyc
-export const SCHEMA_VERSION = "0.2.0";
+export const SCHEMA_VERSION = "0.3.0";
+// 0.3.0: crypto_funded_prepaid_card kind. fixed-balance virtual cards
+// bought with crypto and no kyc: the community's no-kyc spending
+// instrument, distinct from gift cards and bank-tethered masking
 // 0.2.0: card_network and number_rotation. an instrument can ride the
 // visa/mastercard rails while the tether behind it is an e-money
 // issuer with light friction: the network logo is never the tether.
@@ -19,6 +22,8 @@ export type InstrumentKind =
   | "regulated_prepaid_wallet"
   // on-chain payment rails with no instrument-level identity
   | "web3_direct_payment"
+  // fixed-balance virtual cards bought with crypto, no issuer kyc
+  | "crypto_funded_prepaid_card"
   | "unknown";
 
 export type CardNetwork =
@@ -45,6 +50,8 @@ export type KycPosture =
   | "registration_only"
   // no verification at all for the user of the instrument
   | "no_kyc_by_design"
+  // no verification found in the pass that read the sources
+  | "no_kyc_observed"
   | "unknown";
 
 export interface PaymentInstrumentEntry {
