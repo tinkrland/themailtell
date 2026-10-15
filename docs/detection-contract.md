@@ -20,3 +20,22 @@ the rules:
    reason applies.
 7. when an engine lands on this branch, fixture passes prove
    consistency only; accuracy claims require the authorized corpus.
+
+## schema 0.2.0: networks, rotation, and where kyc actually sits
+
+card_network records the rails an instrument rides, and the rule is
+explicit: a network logo is a rail, never a tether. the same
+mastercard mark sits on a bank card and on a light-friction e-money
+prepaid account, and the row says which one.
+
+number_rotation records whether the holder can mint fresh numbers at
+will. that is the free-trial-recycling axis: the industry names it
+trial abuse, a form of first-party fraud, but in practice it is mostly
+a terms-of-service violation rather than a crime, and the row records
+capability, never an accusation. merchants counter with BIN-level
+blocking, so the capability is also merchant-visible.
+
+the scale itself is restated: essentially no instrument in payment
+rails is truly no-kyc, because AML reaches card programs, e-money
+issuers and on-ramps almost everywhere. what varies is where the
+identity sits. the rows record that.

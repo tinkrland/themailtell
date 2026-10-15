@@ -1,7 +1,13 @@
 // theccradar schema 0.1.0. the entry shape for the payment instrument
 // registry: what identity stands behind the money, cited and dated.
 // unknown is first-class; registration is never conflated with kyc
-export const SCHEMA_VERSION = "0.1.0";
+export const SCHEMA_VERSION = "0.2.0";
+// 0.2.0: card_network and number_rotation. an instrument can ride the
+// visa/mastercard rails while the tether behind it is an e-money
+// issuer with light friction: the network logo is never the tether.
+// and the consumer-abuse axis is not "no kyc" (aml reaches nearly
+// every payment rail) but number rotation: can the holder mint a
+// fresh number, which is what recycles free trials
 
 export type InstrumentKind =
   // retail gift cards: fixed face value, transferable, no identity
@@ -13,6 +19,21 @@ export type InstrumentKind =
   | "regulated_prepaid_wallet"
   // on-chain payment rails with no instrument-level identity
   | "web3_direct_payment"
+  | "unknown";
+
+export type CardNetwork =
+  | "visa"
+  | "mastercard"
+  | "none"
+  | "unknown";
+
+export type NumberRotation =
+  // the holder can mint fresh numbers at will (per website, pausable)
+  | "on_demand"
+  // one fixed number for the life of the instrument
+  | "static"
+  // no card number at all
+  | "none"
   | "unknown";
 
 export type KycPosture =
@@ -31,6 +52,10 @@ export interface PaymentInstrumentEntry {
   instrument: string;
   provider: string;
   kind: InstrumentKind;
+  // the network the instrument rides: the logo is not the tether
+  card_network: CardNetwork;
+  // can the holder mint fresh numbers: the free-trial-recycling axis
+  number_rotation: NumberRotation;
   kyc_posture: KycPosture;
   // what is verified, by whom, under which regulation
   kyc_scope: string;

@@ -27,6 +27,22 @@ the regulator priced anonymity in caps, and the 2018 kyc deadline
 forced existing wallet users up the ladder. regulation snapshots
 decay: RBI directions move, and rows carry recheck cadences.
 
+## masked numbers and free trials
+
+essentially nothing in payment rails is truly no-kyc: AML reaches card
+programs, e-money issuers and on-ramps almost everywhere. what varies
+is where the identity sits, and what the number can do. the
+consumer-abuse axis is number rotation: a service whose cards can be
+minted per website and paused lets one person recycle free trials
+indefinitely. the industry calls this trial abuse, first-party fraud
+(cardflo's payments glossary); in practice it is mostly a terms-of-
+service violation, not a crime, and the rows record the capability,
+never an accusation. the ecosystem reads these instruments too:
+merchants block virtual-card BINs (fraudlabs pro documents how) and
+issuers like microsoft azure reject unsupported BINs, so a radar that
+describes the instrument is describing both sides of a live
+adversarial exchange.
+
 ## honest limits
 
 - kyc posture is a fact about the instrument, never about the person
@@ -39,6 +55,10 @@ decay: RBI directions move, and rows carry recheck cadences.
   each instrument actually requires.
 - paying with the instrument your bank issued says nothing about your
   honesty, and paying with the most anonymous instrument on the scale
-  says nothing either. the decision layer combines signals from
+  says nothing either. no instrument on this table is anonymous to its
+  issuer: the scale is where the identity sits and what the number can
+  do. a network logo (mastercard, visa) is a rail, not a tether: the
+  same logo sits on a bank card and on a light-friction e-money
+  prepaid account, and the rows say which one. the decision layer combines signals from
   multiple radars, never in a vacuum: a theccradar row joins the
   voip, tld and provider rows as evidence, never as a verdict.

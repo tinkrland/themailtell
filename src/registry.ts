@@ -14,6 +14,8 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     instrument: "Visa gift card",
     provider: "giftcards.com",
     kind: "retail_gift_card",
+    card_network: "visa",
+    number_rotation: "static",
     kyc_posture: "registration_only",
     kyc_scope:
       "card registration asks for a billing address or zip to enable " +
@@ -44,6 +46,8 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     instrument: "Privacy virtual card",
     provider: "Privacy.com",
     kind: "bank_linked_virtual_card",
+    card_network: "unknown",
+    number_rotation: "on_demand",
     kyc_posture: "full_kyc",
     kyc_scope:
       "issuer's own page: 'some personal information is required for a " +
@@ -56,7 +60,10 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "tethered to a us bank account: the virtual number shields the " +
       "merchant from the real card, not the bank from the customer. the " +
       "instrument is privacy against merchant-side leaks, with a " +
-      "verified identity behind it",
+      "verified identity behind it. the holder can mint a fresh number " +
+      "per website and pause or close cards at will (the issuer's own " +
+      "marketing: 'get a new card number for every website you shop " +
+      "with'), which is also the free-trial-recycling capability",
     caps: "not read in this pass",
     citation:
       "https://www.privacy.com/ (issuer's own pages, read via research " +
@@ -74,6 +81,8 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     instrument: "Pockets prepaid wallet",
     provider: "ICICI Bank (Pockets)",
     kind: "regulated_prepaid_wallet",
+    card_network: "unknown",
+    number_rotation: "static",
     kyc_posture: "limited_kyc_ladder",
     kyc_scope:
       "RBI master directions on prepaid payment instruments govern the " +
@@ -113,6 +122,8 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
     instrument: "direct crypto payment",
     provider: "public blockchains",
     kind: "web3_direct_payment",
+    card_network: "none",
+    number_rotation: "none",
     kyc_posture: "no_kyc_by_design",
     kyc_scope:
       "on-chain transfers carry no instrument-level identity by " +
@@ -133,5 +144,39 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "was not verified from primary documentation in this pass. " +
       "verify the on-ramp and off-ramp kyc claims before relying. " +
       "included as the far end of the scale the other rows anchor",
+  },  {
+    instrument: "Pockit prepaid account and card",
+    provider: "Pockit",
+    kind: "regulated_prepaid_wallet",
+    card_network: "mastercard",
+    number_rotation: "static",
+    kyc_posture: "full_kyc",
+    kyc_scope:
+      "uk e-money account under uk AML rules: identity checks exist, " +
+      "but registration requires little personal information (finder " +
+      "review, read 2026-10-15), there is no credit check ('get your " +
+      "card no matter your credit history', the provider's own site), " +
+      "and the account is marketed to people banks decline, including " +
+      "a dedicated youth card",
+    jurisdiction: "uk",
+    funding_anonymity:
+      "bank-transfer, card and cash-adjacent funding at a uk e-money " +
+      "issuer; the tether is lighter-friction than a bank account but " +
+      "is a real uk-regulated tether, not an anonymous instrument",
+    caps: "up to gbp 10,000 on the account (the provider's play store listing, read 2026-10-15)",
+    citation:
+      "https://hello.pockit.com/card/everyday (own site, read via " +
+      "research pass 2026-10-15), https://www.finder.com/uk/digital-banking/pockit-review, " +
+      "https://play.google.com/store/apps/details?id=com.pockit.mobile.android",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the technically-mastercard row the scale needed: the card rides " +
+      "the mastercard network and is accepted 'wherever you see the " +
+      "mastercard sign' (own site), so the merchant sees mastercard " +
+      "while the issuer holds a light-friction e-money tether. the " +
+      "network logo is never the tether, which is the point. pockit's " +
+      "whole legitimate market is the underbanked and the thin-file, " +
+      "and the row records the tether, never the cardholder",
   },
 ];
