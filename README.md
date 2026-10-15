@@ -4,16 +4,25 @@ a domain reputation risk radar for top-level domains. .com and .dev
 sit at the safe end; .xyz, .top, .click and peers sit at the abused
 end; and none of it is timeless.
 
-the twist this radar exists for: big tech risk radars rank tlds by
-abuse share alone and stop there. but abuse share is partly a pricing
-phenomenon. interisle's phishing landscape work documents it plainly:
-phishers exploit cheap, the top 27 tlds with the highest proportions
-of abuse were priced at us$2 or less, and malicious actors purchased
-at least 10 percent of all new gtld domains registered in 2025. when
-boutique registrars (spaceship, porkbun and peers) drop a tld to $4
-first-year against a $25 renewal, they move registration economics,
-and the abuse follows the cheap year. the radar therefore carries
-two axes per tld:
+the differentiation this radar exists for: we are not remaking what
+already exists. interisle, spamhaus, google and microsoft all measure
+aggregate abuse telemetry, and those feeds are dominated by api-scale
+bulk purchase: scammers buying domains by the dozens, programmatically.
+big tech radars score what lands in their feeds. the human path is the
+blind spot: one or two domains bought at a polished consumer
+storefront, at a sale price, with a card or bitcoin, sometimes through
+a privacy buffer that owns the domain for them. no bulk, no api, no
+feed footprint until the domain is used. that is the path this radar
+enumerates.
+
+the twist that makes it measurable: abuse is partly a pricing
+phenomenon, and interisle documents it plainly: phishers exploit
+cheap, the top 27 tlds with the highest proportions of abuse were
+priced at us$2 or less, and malicious actors purchased at least 10
+percent of all new gtld domains registered in 2025. when boutique
+registrars drop a tld to a sale price against a steep renewal, they
+move registration economics for humans and bots alike. the radar
+therefore carries two axes per tld:
 
 - **abuse band**: where a cited dataset (spamhaus worst tld lists,
   interisle phishing landscape) places this tld, with the snapshot
@@ -31,6 +40,27 @@ two axes per tld:
 
 verified rows were read from the cited sources on the date recorded.
 unverified seeds are marked verified_on: null and say so.
+
+## the registrar landscape carried here
+
+six storefronts, each a different point on the human path:
+
+- **Spaceship**: the boutique storefront of Namecheap, Inc (its own
+  2024 press release), not a small operator; first-year sales
+- **Porkbun**: the clearest sale-churn pattern on its own live pricing
+  page: .top $1.63, .click $1.54, .xyz $2.04 first year against
+  struck-through renewals (read 2026-10-15)
+- **Namecheap**: monthly rotating coupons plus bitcoin acceptance;
+  the same organization behind Spaceship
+- **Dynadot**: many payment rails; announced identity digital
+  registry price changes for 227 tlds effective october 6, 2026
+- **Cloudflare Registrar**: at-cost, no sales, the control row that
+  shows the price-pressure signal absent
+- **Njalla**: the extreme privacy path, a buffer that owns the domain
+  for the registrant, bitcoin-friendly
+
+a registrar row records architecture and economics, never a verdict
+about its customers.
 
 ## honest limits
 

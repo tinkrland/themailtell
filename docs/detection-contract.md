@@ -26,3 +26,26 @@ reputation. the rules carry over and gain two of their own:
    abuse_band: unknown with its reason, not a guess.
 7. when an engine lands on this branch, fixture passes prove
    consistency only; accuracy claims require the authorized corpus.
+
+## schema 0.3.0: the human path is the factor
+
+per owner direction: this radar does not remake the aggregate abuse
+telemetry that already exists (interisle, spamhaus, big tech feeds),
+because that telemetry is dominated by api-scale bulk purchase. the
+registry's factor is the human path: sale-priced one-off purchases at
+consumer boutique storefronts, invisible to feed-based radars until
+the domain is used.
+
+the registrar table (src/registrars.ts) carries that landscape:
+registrar kind (consumer_boutique, at_cost, privacy_buffer), sale
+pattern, payment privacy, ownership notes, each cited and dated with
+its own recheck cadence. the control case is explicit: cloudflare
+registrar sells at cost with no sales, so the price-pressure signal
+is recorded as absent there rather than assumed everywhere. a
+registrar row is architecture and economics, never a verdict about
+customers: sales and privacy shields serve dissidents and abusers
+alike.
+
+price observations continue to decay on their own fast cadence, and
+the interisle us$2-or-less abuse-price zone stays the reference for
+reading them.
