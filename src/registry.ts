@@ -20,6 +20,9 @@ import type { TldRiskEntry } from "./schema.js";
 export const TLD_REGISTRY: TldRiskEntry[] = [
   {
     tld: ".com",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "low",
     abuse_citation:
       "interisle/cybercrimeinfocenter phishing activity in tlds, " +
@@ -49,6 +52,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".top",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "interisle/cybercrimeinfocenter phishing activity in tlds, " +
@@ -88,6 +94,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".icu",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "interisle/cybercrimeinfocenter phishing activity in tlds, " +
@@ -116,6 +125,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".click",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "interisle/cybercrimeinfocenter phishing activity in tlds, " +
@@ -145,6 +157,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".xyz",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "moderate",
     abuse_citation:
       "interisle/cybercrimeinfocenter phishing activity in tlds, " +
@@ -178,6 +193,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".ltd",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "unknown",
     abuse_citation:
       "not ranked in the interisle/cybercrimeinfocenter phishing table " +
@@ -219,13 +237,21 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "highest-abuse tlds priced at us$2 or less; 51% of abusive " +
       "registrations in the new gtlds). the pattern holds across " +
       "storefronts: porkbun runs the same cliff, $5.66 first year " +
-      "against $34.50 (2026-10-15). price pressure raises a prior " +
-      "about economics; the abuse band stays unknown because the " +
-      "current datasets do not rank it, and a cheap promo alone proves " +
+      "against $34.50 (2026-10-15). and the renewal is where they get " +
+      "you: a $4 .ltd registered two years ago has paid $25.04 twice, " +
+      "and each paid renewal weakens the sale-price prior, because " +
+      "keeping the domain now costs real money. registration age is " +
+      "per-domain evidence read at engine time (whois creation date), " +
+      "never a class verdict. price pressure raises a prior about " +
+      "economics; the abuse band stays unknown because the current " +
+      "datasets do not rank it, and a cheap promo alone proves " +
       "nothing about abuse",
   },
   {
     tld: ".party",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "spamhaus top-10 worst tlds snapshot via cisco community blocking " +
@@ -242,6 +268,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".accountant",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "spamhaus top-10 worst tlds snapshot via cisco community blocking " +
@@ -256,6 +285,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".ml",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "high",
     abuse_citation:
       "spamhaus top-10 worst tlds snapshot via cisco community blocking " +
@@ -270,6 +302,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
   },
   {
     tld: ".dev",
+    registration_barrier: "open",
+    barrier_citation: "no eligibility policy exists: the gtld program registers to any buyer",
+    barrier_verified_on: "2026-10-15",
     abuse_band: "unknown",
     abuse_citation:
       "not ranked in the interisle/cybercrimeinfocenter tables for the " +
@@ -285,5 +320,101 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "seo.domains' sourced .dev/.app guide. the preload fact is about " +
       "protocol, not registrants; the abuse band stays unknown until a " +
       "dataset ranks it",
+  },  {
+    tld: ".us",
+    registration_barrier: "nexus_required",
+    barrier_citation:
+      "usTLD Nexus Requirements (ntia.gov usTLD policy PDF): a " +
+      "registrant must be a us citizen, permanent resident, or a us " +
+      "business/organization with a us nexus; cloudflare's registrar " +
+      "docs confirm registrants identify their qualifying category. " +
+      "read 2026-10-15",
+    barrier_verified_on: "2026-10-15",
+    abuse_band: "unknown",
+    abuse_citation:
+      "not ranked in the interisle top tables read 2026-10-14: the " +
+      "tables are top-20 by count and rate and .us did not make the " +
+      "cut, which is a coverage statement, never a safety claim",
+    abuse_verified_on: "2026-10-14",
+    price_observations: [],
+    recheck_cadence_days: 180,
+    honest_notes:
+      "premierity: no sale price changes the barrier. a cheap .us " +
+      "promo still runs through an attested us nexus, so the human " +
+      "path here is shaped by eligibility, not economics. the honest " +
+      "nuance: the nexus is attested by the registrant at most " +
+      "registrars, an attestation is a raised cost of entry, not a " +
+      "document check; what each registrar actually verifies is a " +
+      "per-registrar fact for the registrar table",
+  },
+  {
+    tld: ".ie",
+    registration_barrier: "claim_required",
+    barrier_citation:
+      "IEDR registration and naming policy (iedr.ie policy PDF): a " +
+      "documented claim of a real and substantive connection to " +
+      "ireland, with supporting documentation whose expiry must be in " +
+      "the future; the 2018 liberalisation removed the claim to the " +
+      "name but kept the documented connection claim. read 2026-10-15",
+    barrier_verified_on: "2026-10-15",
+    abuse_band: "unknown",
+    abuse_citation:
+      "not ranked in the interisle top tables read 2026-10-14 " +
+      "(coverage statement, never a safety claim)",
+    abuse_verified_on: "2026-10-14",
+    price_observations: [],
+    recheck_cadence_days: 180,
+    honest_notes:
+      "the barrier is a document-checked claim, stronger than an " +
+      "attestation: the registry checks the paperwork before the " +
+      "domain goes live. cheap .ie promos, where they exist, still " +
+      "require the claim, so price pressure alone cannot inflate " +
+      "registrations here the way it can on an open tld",
+  },
+  {
+    tld: ".de",
+    registration_barrier: "presence_verified",
+    barrier_citation:
+      "DENIC verification for .de domains (denic.de: verification by " +
+      "letter or email from DENIC); germany implemented the EU NIS2 " +
+      "directive into national law effective 2025-12-06, imposing new " +
+      "holder verification requirements on registration and " +
+      "management of .de domains (IONOS help center, read 2026-10-15)",
+    barrier_verified_on: "2026-10-15",
+    abuse_band: "unknown",
+    abuse_citation:
+      "not ranked in the interisle top tables read 2026-10-14 " +
+      "(coverage statement, never a safety claim)",
+    abuse_verified_on: "2026-10-14",
+    price_observations: [],
+    recheck_cadence_days: 180,
+    honest_notes:
+      "the barrier is holder address verification under NIS2: the " +
+      "registry verifies the registrant, not just takes an " +
+      "attestation. the newest barrier in the registry (effective " +
+      "2025-12-06) and the one most likely to keep changing; recheck " +
+      "the policy at every cadence tick",
+  },
+  {
+    tld: ".eu",
+    registration_barrier: "residency_required",
+    barrier_citation:
+      "EURid eligibility (eurid help pages; gov.uk guidance): only " +
+      "an eu/eea resident, citizen, or an organization established in " +
+      "the eu/eea may register or renew .eu domains. read 2026-10-15",
+    barrier_verified_on: "2026-10-15",
+    abuse_band: "unknown",
+    abuse_citation:
+      "not ranked in the interisle top tables read 2026-10-14 " +
+      "(coverage statement, never a safety claim)",
+    abuse_verified_on: "2026-10-14",
+    price_observations: [],
+    recheck_cadence_days: 180,
+    honest_notes:
+      "the barrier is residency itself: no price opens it to a buyer " +
+      "outside the eu/eea. residency restrictions shape who can " +
+      "register at all, which is a different fact from whether " +
+      "residents are more or less trustworthy; the row records the " +
+      "gate, never a verdict about who is behind it",
   },
 ];

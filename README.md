@@ -62,6 +62,27 @@ six storefronts, each a different point on the human path:
 a registrar row records architecture and economics, never a verdict
 about its customers.
 
+## premierity: the barrier axis
+
+not every tld can be bought, at any price. .us requires an attested
+us nexus, .ie a document-checked claim of connection to ireland, .de
+holder verification under NIS2 (effective 2025-12-06), .eu eu/eea
+residency itself. every row now carries its registration barrier,
+because a cheap promo behind a gate is a different fact from a cheap
+promo on an open tld: price pressure cannot inflate registrations
+past a gate the registry operates.
+
+## registration age: the renewal is where they get you
+
+sale prices apply to the first year. a $4 .ltd two years past its
+promo has paid $25.04 twice, and each paid renewal weakens the
+sale-price prior: keeping the domain now costs real money. age is
+per-domain evidence read at engine time from whois creation dates,
+jointly with every other axis, never in a vacuum: aged does not mean
+clean, fresh does not mean dirty, and moneyed registrants can be
+nefarious too. the radar records economics and gates, never verdicts
+about people.
+
 ## honest limits
 
 - an abuse band is a snapshot of a dataset's coverage, not a property

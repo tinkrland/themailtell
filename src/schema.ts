@@ -2,7 +2,7 @@
 // registry: an abuse band traced to a dataset snapshot, plus price
 // observations traced to named registrars with their own dates.
 // unknown is first-class; snapshots are never timeless facts
-export const SCHEMA_VERSION = "0.3.0";
+export const SCHEMA_VERSION = "0.4.0";
 // 0.2.0: bands defined against a named dataset snapshot (interisle
 // phishing per-100k rates, feb-apr 2026): high >= 100, elevated 40-100,
 // moderate 15-40, low < 15 per 100k domains. spam rates carried in
@@ -27,8 +27,29 @@ export interface PriceObservation {
   citation: string;
 }
 
+// 0.4.0: the premierity axis. some tlds cannot just be bought, no
+// matter how cheap: a price requires a path through eligibility first.
+// the barrier changes what a cheap promo even means: a sale on a
+// nexus-attested tld still runs through the attestation
+export type RegistrationBarrier =
+  // anyone with a payment method
+  | "open"
+  // attested qualifying connection, e.g. .us usTLD nexus policy
+  | "nexus_required"
+  // documented claim checked by the registry, e.g. .ie connection claim
+  | "claim_required"
+  // holder address verification under registry rules, e.g. .de NIS2
+  | "presence_verified"
+  // eu/eea residency or an established organization, e.g. .eu
+  | "residency_required"
+  | "unknown";
+
 export interface TldRiskEntry {
   tld: string;
+  registration_barrier: RegistrationBarrier;
+  barrier_citation: string;
+  // null = unverified seed: flagged for verification, never relied on
+  barrier_verified_on: string | null;
   abuse_band: AbuseBand;
   // dataset + snapshot date the band was read from
   abuse_citation: string;

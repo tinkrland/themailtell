@@ -49,3 +49,26 @@ alike.
 price observations continue to decay on their own fast cadence, and
 the interisle us$2-or-less abuse-price zone stays the reference for
 reading them.
+
+## schema 0.4.0: premierity and registration age
+
+premierity: some tlds cannot just be bought, no matter how cheap.
+every row now carries a registration barrier: open, nexus attestation
+(.us), a document-checked claim (.ie), holder verification under NIS2
+(.de), or eu/eea residency (.eu). the barrier changes what a cheap
+promo even means: a sale on a barriered tld still runs through the
+gate, so price pressure alone cannot inflate registrations there the
+way it can on an open tld. and the barriers are not equal: an
+attested nexus is a raised cost of lying, a document-checked claim is
+a gate the registry operates. the row carries which one it is.
+
+registration age and renewal economics: the renewal is where they
+get you. a $4 .ltd two years past its promo has paid $25.04 twice, and
+each paid renewal at list price weakens the sale-price prior, because
+keeping the domain now costs real money. age is per-domain evidence
+read at engine time (whois creation date), and it is read jointly
+with every other axis: an aged sale-tld domain is not clean by age, a
+fresh .com is not dirty by novelty, and moneyed registrants can be
+nefarious too. no axis is read in a vacuum, and none of this is class
+profiling: the radar records economics and gates, never verdicts
+about people.
