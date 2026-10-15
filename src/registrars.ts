@@ -169,5 +169,90 @@ export const REGISTRAR_REGISTRY: BoutiqueRegistrarEntry[] = [
       "claim. standard .xyz sales are open registration: no content " +
       "requirements, no mandatory audits, standard gtld policy, per " +
       "tld-list's verified reading today",
+  },  {
+    registrar: "get.tech",
+    kind: "registry_storefront",
+    sale_pattern: "unknown",
+    payment_privacy: "not verified in this pass",
+    ownership_note:
+      "radix registry's direct storefront for .tech: radix markets " +
+      "itself as one of the world's largest portfolio registries, " +
+      "and get.tech answers 'how do I get a .tech domain' with " +
+      "'you can get it right here'",
+    citation:
+      "https://get.tech/ and https://radix.website/ (read via " +
+      "research pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "a second registry storefront beside gen.xyz: the registry that " +
+      "sets .tech wholesale pricing also retails it directly. sale " +
+      "pattern not characterized in this pass; read get.tech's own " +
+      "pricing before relying",
+  },
+  {
+    registrar: "Gandi",
+    kind: "consumer_boutique",
+    sale_pattern: "unknown",
+    payment_privacy: "not verified in this pass",
+    ownership_note: "long-standing french registrar (not verified in this pass)",
+    citation:
+      "https://www.gandi.net/en-GB/domain/tld (own pricing page read " +
+      "via research pass 2026-10-15: per-tld creation, transfer, " +
+      "renewal, owner-change and restore prices in five transparent " +
+      "columns, promo marks on some creation prices)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the transparent-pricing end of the boutique spectrum: renewal " +
+      "prices are published per tld rather than discovered at the " +
+      "renewal charge, which lowers the churn-cliff signal even where " +
+      "promo creation prices exist. verify ownership and crypto " +
+      "acceptance at the next cadence tick",
+  },
+  {
+    registrar: "Sav",
+    kind: "consumer_boutique",
+    sale_pattern: "first_year_sales",
+    payment_privacy: "not verified in this pass",
+    ownership_note: "not verified in this pass",
+    citation:
+      "https://tld-list.com/registrars/sav (read 2026-10-15: " +
+      "'extensions on sav prices from $0.65' across 527 tlds), " +
+      "https://www.whtop.com/review/sav.com (third-party review, " +
+      "2fa required for sign-in and key actions)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the deepest discount rack found in this pass: some extensions " +
+      "from $0.65, well under the interisle us$2-or-less abuse-price " +
+      "zone's floor. read from a third-party price aggregator, not " +
+      "sav's own pages; verify at the registrar before relying on " +
+      "specific prices. named by the owner as a registrar to carry",
+  },
+  {
+    registrar: "Unstoppable Domains",
+    kind: "web3_naming",
+    sale_pattern: "none",
+    payment_privacy: "not verified in this pass; web3 rails imply crypto payment",
+    ownership_note:
+      "'the #1 provider of nft domains' (its own github org readme, " +
+      "read 2026-10-15)",
+    citation:
+      "https://github.com/unstoppabledomains (own readme), " +
+      "https://support.unstoppabledomains.com/support/solutions/articles/48001283098 " +
+      "(own support: expired domains not renewed during the grace " +
+      "period may be listed in its expired auctions marketplace)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "web3 naming is a different instrument from dns: nft domains " +
+      "minted on-chain, one-time purchase, no renewal cliff, so the " +
+      "sale-churn economics of this table do not apply. the honest " +
+      "tension is carried verbatim: the marketing says own-forever, " +
+      "while its own support describes expired-domain auctions with " +
+      "grace periods. resolution is not dns: web3 names need browser " +
+      "or extension support, so their abuse path runs through where " +
+      "they do resolve",
   },
 ];

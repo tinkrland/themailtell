@@ -62,6 +62,14 @@ six storefronts, each a different point on the human path:
   integrated on both sides of the wholesale/retail line ($15/yr flat
   default, via research pass 2026-10-15; cloudflare-gated to direct
   reads)
+- **get.tech**: radix registry's direct storefront for .tech, the
+  second registry storefront
+- **Gandi**: the transparent-pricing end: five published price columns
+  per tld, renewals not hidden until the charge
+- **Sav**: the discount rack, some extensions from $0.65 via a
+  third-party price aggregator (2026-10-15)
+- **Unstoppable Domains**: web3 naming, nft domains, one-time mint
+  with no renewal cliff: a different instrument entirely
 
 a registrar row records architecture and economics, never a verdict
 about its customers.
