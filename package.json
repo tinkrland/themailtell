@@ -1,0 +1,10 @@
+{
+  "name": "thecomposer",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "snapshots": "node scripts/import-snapshots.mjs",
+    "test": "tsc && node --test dist/engine.test.js"
+  }
+}
