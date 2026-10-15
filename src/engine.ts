@@ -8,6 +8,7 @@ import {
   type EvidenceReading,
   type FieldReading,
   type FieldType,
+  type AgeReading,
   type OnboardingInput,
   type OnboardingObservation,
   type SurfaceReading,
@@ -253,6 +254,8 @@ function readField(obs: OnboardingObservation, observedAt: string): FieldReading
   let rotation = "unknown";
   let evidence: EvidenceReading = { age_days: null, cadence_days: 90, verified_on: null, confidence: 0 };
   let candidates: string[] = [];
+  let age: AgeReading = { source: null, created_on: null, age_days: null, coverage: "unknown" };
+  let issuanceScope: string | undefined = undefined;
   let radar = "";
   let name = "";
   let commit = "";
@@ -269,6 +272,10 @@ function readField(obs: OnboardingObservation, observedAt: string): FieldReading
         tether = kind === "disposable_provider" || kind === "public_inbox" ? "none" : "registration_only";
         rotation = tether === "none" ? "on_demand" : "unknown";
         evidence = evidenceFor(row, observedAt);
+        // era bounds are carried verbatim, never parsed: "cannot
+        // predate the 2022 domain launch" is advisory text, not a date
+        const sig = str(row, "account_age_signal");
+        age = { source: null, created_on: null, age_days: null, coverage: "unknown", age_signal_notes: sig ? [sig] : [] };
         commit = SNAPSHOTS.theproviderradar.commit;
       }
       break;
@@ -301,8 +308,7 @@ function readField(obs: OnboardingObservation, observedAt: string): FieldReading
         kind = str(row, "kind") ?? "unknown";
         tether = tetherFromPosture(str(row, "kyc_posture"));
         rotation = str(row, "number_rotation") ?? "unknown";
-        const scope = str(row, "issuance_scope");
-        if (scope && scope !== "unknown") unknowns.push("issuance_scope " + scope + ": context factor in v0.1.0, composed in v0.2.0");
+        issuanceScope = str(row, "issuance_scope");
         evidence = evidenceFor(row, observedAt);
         commit = SNAPSHOTS.theccradar.commit;
       }
@@ -338,8 +344,19 @@ function readField(obs: OnboardingObservation, observedAt: string): FieldReading
     }
   }
 
+  if (obs.age_finding) {
+    age = {
+      source: obs.age_finding.source,
+      created_on: obs.age_finding.created_on,
+      age_days: obs.age_finding.created_on
+        ? daysBetween(obs.age_finding.created_on, observedAt)
+        : null,
+      coverage: obs.age_finding.coverage,
+      coverage_note: obs.age_finding.coverage_note,
+    };
+  }
   const instrument = row && radar ? { radar, name, kind, row_snapshot_commit: commit } : null;
-  return { field: obs.field, value: obs.value, normalized: n, instrument, tether, rotation, evidence, candidates, unknowns };
+  return { field: obs.field, value: obs.value, normalized: n, instrument, tether, rotation, evidence, candidates, age, issuance_scope: issuanceScope, unknowns };
 }
 
 export function readOnboarding(input: OnboardingInput): SurfaceReading {

@@ -53,13 +53,25 @@ integrator: even this engine is a block someone else will plug in.
    and the engine is built so it cannot produce one: there is no
    fraud score, no account verdict, no branding. instruments and
    freshness only.
+9. **age and era bounds (v0.2.0).** domain age composes from rdap
+   adapter findings: structured registration dates with coverage
+   semantics, verified live (njalla.com reads 1999-09-27; example.xyz
+   reads honestly unknown because the bootstrap served no date, and
+   no date served is never evidence of a young domain). email inbox
+   age has no public timestamp anywhere: the provider rows' era
+   bounds ("@proton.me cannot predate the 2022 domain launch") are
+   carried verbatim in the reading, advisory text, never parsed into
+   numbers the source does not give. the adapter lives outside the
+   pure core (scripts/rdap-lookup.mjs), the parser is pure and
+   fixture-tested, and rdap.org serves 403 to headerless clients,
+   which the adapter handles by identifying itself.
 
 ## cross-field coherence, deliberately absent
 
-v0.1.0 does not correlate fields (same-instrument reuse, mixed-tether
+v0.2.0 does not correlate fields (same-instrument reuse, mixed-tether
 stacks, velocity). coherence needs account-history evidence this
 component does not have, and premature coherence is how verdicts
-sneak in. it is named here as the v0.2.0 factor so it is a designed
+sneak in. it is named here as the v0.3.0 factor so it is a designed
 absence, not a forgotten one.
 
 ## pipeline

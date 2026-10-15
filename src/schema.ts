@@ -1,4 +1,8 @@
-export const ENGINE_VERSION = "0.1.0";
+export const ENGINE_VERSION = "0.2.0";
+// 0.2.0: age and era bounds. domain age composes from rdap adapter
+// findings (structured dates, coverage semantics); email era bounds
+// surface verbatim from the provider rows, never parsed into
+// numbers. issuance_scope is now composed as structured context
 
 export type FieldType = "email" | "phone" | "payment" | "domain";
 
@@ -8,6 +12,33 @@ export interface OnboardingObservation {
   // optional upstream classification (adapter contract with coverage
   // semantics): the engine binds the hint if it cannot bind the raw
   instrument_hint?: string;
+  // optional age finding from a network adapter (rdap): the pure
+  // core never touches the network, it composes what is handed in
+  age_finding?: AgeFinding;
+}
+
+// a structured age observation about a field's instrument. adapters
+// produce these outside the pure core, with coverage semantics
+export interface AgeFinding {
+  source: string;
+  // ISO date from the registry event, or null when the registry did
+  // not serve one. null is a coverage fact, never "young"
+  created_on: string | null;
+  fetched_at: string;
+  coverage: "read" | "unknown";
+  coverage_note?: string;
+}
+
+export interface AgeReading {
+  source: string | null;
+  created_on: string | null;
+  age_days: number | null;
+  coverage: "read" | "unknown";
+  coverage_note?: string;
+  // era-bound text from the provider rows, carried verbatim:
+  // advisory bounds like "cannot predate the 2022 domain launch",
+  // never parsed into numbers the source does not give
+  age_signal_notes?: string[];
 }
 
 export interface OnboardingInput {
@@ -55,6 +86,10 @@ export interface FieldReading {
   evidence: EvidenceReading;
   // ambiguous bindings list their candidates instead of guessing
   candidates: string[];
+  // age: composed from adapter findings for domains, era bounds
+  // verbatim for email inboxes, unknown when nothing is known
+  age: AgeReading;
+  issuance_scope?: string;
   unknowns: string[];
 }
 

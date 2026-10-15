@@ -3,7 +3,16 @@
 // make a case pass; fix the underlying table or code.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { readOnboarding } from "./engine.js";
+import { parseRdapRegistration } from "./rdap.js";
+
+const here = dirname(fileURLToPath(import.meta.url));
+function fixture(name: string): unknown {
+  return JSON.parse(readFileSync(join(here, "..", "fixtures", "rdap", name), "utf8"));
+}
 
 test("the author's own stack: instruments read, nobody accused", () => {
   const reading = readOnboarding({
@@ -134,4 +143,71 @@ test("snapshots carry provenance into the reading", () => {
   });
   const payment = reading.fields[0];
   assert.match(payment.instrument?.row_snapshot_commit ?? "", /^[0-9a-f]{40}$/);
+});
+
+test("rdap parser reads a recorded registry response", () => {
+  const finding = parseRdapRegistration(fixture("njalla.com.json"), "2026-10-15T08:00:00Z");
+  assert.equal(finding.coverage, "read");
+  assert.equal(finding.created_on, "1999-09-27T15:04:14Z");
+  assert.equal(finding.source, "rdap");
+});
+
+test("rdap parser carries coverage unknown when the registry serves no date", () => {
+  // example.xyz via the bootstrap: an error object, recorded live
+  // 2026-10-15. no date served is a coverage fact, never "young"
+  const finding = parseRdapRegistration(fixture("example.xyz.json"), "2026-10-15T08:00:00Z");
+  assert.equal(finding.coverage, "unknown");
+  assert.equal(finding.created_on, null);
+  assert.match(finding.coverage_note ?? "", /not evidence of a young domain/);
+});
+
+test("domain age composes from an adapter finding", () => {
+  const reading = readOnboarding({
+    observed_at: "2026-10-15T08:00:00Z",
+    observations: [
+      {
+        field: "domain",
+        value: "njalla.com",
+        age_finding: parseRdapRegistration(fixture("njalla.com.json"), "2026-10-15T08:00:00Z"),
+      },
+    ],
+  });
+  const domain = reading.fields[0];
+  assert.equal(domain.age.coverage, "read");
+  assert.equal(domain.age.created_on, "1999-09-27T15:04:14Z");
+  assert.ok((domain.age.age_days ?? 0) > 9000 && (domain.age.age_days ?? 0) < 10000);
+});
+
+test("domain without a finding reads age unknown, never young", () => {
+  const reading = readOnboarding({
+    observed_at: "2026-10-15T08:00:00Z",
+    observations: [{ field: "domain", value: "shop.xyz" }],
+  });
+  const domain = reading.fields[0];
+  assert.equal(domain.age.coverage, "unknown");
+  assert.equal(domain.age.created_on, null);
+  assert.equal(domain.age.age_days, null);
+});
+
+test("email era bounds are carried verbatim, never parsed into dates", () => {
+  const reading = readOnboarding({
+    observed_at: "2026-10-15T08:00:00Z",
+    observations: [{ field: "email", value: "owner@protonmail.com" }],
+  });
+  const email = reading.fields[0];
+  assert.ok(email.age.age_signal_notes?.length);
+  assert.match(email.age.age_signal_notes![0], /proton\.me domain introduction/);
+  assert.match(email.age.age_signal_notes![0], /bounds,\s*never dates/);
+  assert.equal(email.age.created_on, null);
+  assert.equal(email.age.age_days, null);
+});
+
+test("issuance scope is composed as structured context on payment readings", () => {
+  const reading = readOnboarding({
+    observed_at: "2026-10-15T08:00:00Z",
+    observations: [{ field: "payment", value: "4111111111111111", instrument_hint: "Halocard" }],
+  });
+  const payment = reading.fields[0];
+  assert.ok(payment.issuance_scope);
+  assert.notEqual(payment.issuance_scope, "unknown");
 });
