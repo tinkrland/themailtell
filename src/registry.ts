@@ -56,12 +56,35 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "malicious phishing domains of 6,299,448, rate 197.6 per 100k. " +
       "spam table: rank 2, 468,529 domains, 794.9 per 100k",
     abuse_verified_on: "2026-10-14",
-    price_observations: [],
+    price_observations: [
+      {
+        registrar: "Porkbun",
+        first_year_price_usd: 1.63,
+        renewal_price_usd: 4.63,
+        observed_at: "2026-10-15",
+        citation:
+          "porkbun.com/products/domains, live pricing page read " +
+          "2026-10-15: $1.63 sale registration against a struck-through " +
+          "$4.63 renewal",
+      },
+      {
+        registrar: "Spaceship",
+        first_year_price_usd: 2.90,
+        renewal_price_usd: 9.98,
+        observed_at: "2026-10-14",
+        citation:
+          "https://www.spaceship.com/domains/ plus tldbee.com/registrars/spaceship " +
+          "and tabswire.com/spaceship-review (promo range 2.90-9 first year, " +
+          "renewal ~9.98-10.18)",
+      },
+    ],
     recheck_cadence_days: 180,
     honest_notes:
       "seventeen times the .com phishing rate on a tld one twenty-sixth " +
-      "its size. one of the canonical cheap-and-abused tlds the interisle " +
-      "cheap-price finding points at",
+      "its size, and porkbun sells it at $1.63 first year (own pricing " +
+      "page, 2026-10-15): inside the interisle us$2-or-less abuse-price " +
+      "zone, the exact economics their finding describes, at a polished " +
+      "human checkout no bot api is needed to reach",
   },
   {
     tld: ".icu",
@@ -72,12 +95,24 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "(465,381 domains, 14,196 malicious). spam table: 937.9 per 100k, " +
       "the highest spam rate in the ranked tables",
     abuse_verified_on: "2026-10-14",
-    price_observations: [],
+    price_observations: [
+      {
+        registrar: "Porkbun",
+        first_year_price_usd: 3.59,
+        renewal_price_usd: 15.96,
+        observed_at: "2026-10-15",
+        citation:
+          "porkbun.com/products/domains, live pricing page read " +
+          "2026-10-15: $3.59 sale registration against a struck-through " +
+          "$15.96 renewal",
+      },
+    ],
     recheck_cadence_days: 180,
     honest_notes:
       "the worst spam rate in the current tables and a phishing rate in " +
       "the top band, on a small cheap tld: the interisle price-abuse " +
-      "pattern in one row",
+      "pattern in one row, sold to humans at $3.59 first year against " +
+      "a $15.96 renewal",
   },
   {
     tld: ".click",
@@ -88,11 +123,25 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "malicious phishing domains, rate 143.6 per 100k. spam table: " +
       "39,799 domains, 578.7 per 100k",
     abuse_verified_on: "2026-10-14",
-    price_observations: [],
+    price_observations: [
+      {
+        registrar: "Porkbun",
+        first_year_price_usd: 1.54,
+        renewal_price_usd: 10.81,
+        observed_at: "2026-10-15",
+        citation:
+          "porkbun.com/products/domains, live pricing page read " +
+          "2026-10-15: $1.54 sale registration against a struck-through " +
+          "$10.81 renewal",
+      },
+    ],
     recheck_cadence_days: 180,
     honest_notes:
-      "high-band phishing rate and near-top spam rate; the name itself " +
-      "is bait for click-themed lures",
+      "high-band phishing rate, near-top spam rate, and porkbun sells " +
+      "it at $1.54 first year (2026-10-15): the cheapest sale in the " +
+      "registry, deep inside the interisle us$2-or-less abuse-price " +
+      "zone, seven cents under .top. the name itself is bait for " +
+      "click-themed lures",
   },
   {
     tld: ".xyz",
@@ -105,14 +154,27 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "lists have repeatedly ranked .xyz by share of domains flagged, " +
       "a different metric (https://www.spamhaus.org/reputation-statistics/)",
     abuse_verified_on: "2026-10-14",
-    price_observations: [],
+    price_observations: [
+      {
+        registrar: "Porkbun",
+        first_year_price_usd: 2.04,
+        renewal_price_usd: 14.21,
+        observed_at: "2026-10-15",
+        citation:
+          "porkbun.com/products/domains, live pricing page read " +
+          "2026-10-15: $2.04 sale registration against a struck-through " +
+          "$14.21 renewal",
+      },
+    ],
     recheck_cadence_days: 180,
     honest_notes:
       "the canonical abused tld, but the current interisle rate table is " +
       "honest about it: 26.1 per 100k is moderate, roughly twice the .com " +
       "rate and far below .top and .icu. spamhaus share-metrics have " +
       "ranked it worse; both metrics are carried, neither is timeless. " +
-      "cheap first-year pricing across registrars is part of its story",
+      "cheap first-year pricing is part of its story: porkbun's $2.04 " +
+      "sale sits a cent past the interisle us$2-or-less border, with a " +
+      "seven-fold renewal cliff behind it",
   },
   {
     tld: ".ltd",
@@ -136,6 +198,18 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
           "observation on spaceship.com the same day, verify the promo " +
           "at the registrar before citing",
       },
+      {
+        registrar: "Porkbun",
+        first_year_price_usd: 5.66,
+        renewal_price_usd: 34.50,
+        observed_at: "2026-10-15",
+        citation:
+          "porkbun.com/products/domains, live pricing page read " +
+          "2026-10-15: $5.66 sale registration against a struck-through " +
+          "$34.50 renewal; dynadot's blog (read 2026-10-15) reports " +
+          "identity digital registry price changes for 227 tlds " +
+          "effective october 6, 2026, so these renewals are moving",
+      },
     ],
     recheck_cadence_days: 90,
     honest_notes:
@@ -143,7 +217,9 @@ export const TLD_REGISTRY: TldRiskEntry[] = [
       "churn-driven registration economics, exactly the cheap-year " +
       "pattern interisle documents phishers exploiting (top 27 " +
       "highest-abuse tlds priced at us$2 or less; 51% of abusive " +
-      "registrations in the new gtlds). price pressure raises a prior " +
+      "registrations in the new gtlds). the pattern holds across " +
+      "storefronts: porkbun runs the same cliff, $5.66 first year " +
+      "against $34.50 (2026-10-15). price pressure raises a prior " +
       "about economics; the abuse band stays unknown because the " +
       "current datasets do not rank it, and a cheap promo alone proves " +
       "nothing about abuse",
