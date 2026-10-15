@@ -307,24 +307,38 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "pages before relying on any field",
   },
   {
-    instrument: "Ucards virtual card",
-    provider: "Ucards",
-    kind: "prepaid_card_platform",
+    instrument: "uCards virtual card",
+    provider: "uCards (ucards.uk)",
+    kind: "crypto_funded_prepaid_card",
     card_network: "unknown",
     number_rotation: "unknown",
-    kyc_posture: "unknown",
-    kyc_scope: "not verified in this pass",
-    jurisdiction: "unknown",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "the provider's own site description, read directly " +
+      "2026-10-15: 'no kyc, instant setup', crypto payments " +
+      "supported. the page read was an app shell: deeper faq, " +
+      "pricing and tos pages still to read",
+    jurisdiction: "uk domain, global service per its own description",
     issuance_scope: "global",
-    funding_anonymity: "not read in this pass",
+    funding_anonymity:
+      "crypto payments for 'ai subscriptions, ad spending, and " +
+      "global purchases' in its own words, so the tether sits at " +
+      "the crypto on-ramp, not at the card issuer",
     caps: "not read in this pass",
-    citation: "owner-named 2026-10-15 (community knowledge), to research and verify",
-    verified_on: null,
+    citation:
+      "https://ucards.uk/ (own site, read directly 2026-10-15; " +
+      "owner supplied the domain after the first pass found nothing)",
+    verified_on: "2026-10-15",
     recheck_cadence_days: 90,
     honest_notes:
-      "unverified seed from the owner's community knowledge, named " +
-      "with the global-us-card group: no primary source found in the " +
-      "pass that looked, which is itself recorded. verify before " +
-      "relying",
+      "upgraded from owner-named seed to primary-source row: the " +
+      "owner supplied the domain the first pass missed, and the " +
+      "site's own description verifies the row's shape, including " +
+      "the marketing that names ai subscriptions and ad spending " +
+      "as use cases, the onboarding-stack angle in the issuer's " +
+      "own words. kind set to crypto_funded_prepaid_card per its " +
+      "own crypto-payments description; no-kyc is the issuer's " +
+      "claim, recorded as observed on its site with the date. " +
+      "recheck at every cadence tick, this ecosystem churns fast",
   },
 ];
