@@ -149,5 +149,88 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
     honest_notes:
       "unverified seed: disposable-number consumer app. verify against " +
       "its own pages before relying",
+  },  {
+    provider: "Quackr",
+    tier: "public_sms_receiver",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "no account or payment observed in this pass: free public " +
+      "numbers, 1,000+ of them across 24 countries, 2 million+ users " +
+      "by its own claim",
+    market: "global web",
+    payment_privacy: "not applicable: free tier with no payment at all",
+    citation:
+      "https://quackr.io/ (own site, read via research pass " +
+      "2026-10-15 through a search cache), " +
+      "https://pvacodes.com/what-is-quackr-a-guide-to-free-temporary-phone-numbers-for-sms-verifica",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the phone analog of mailinator: a shared public number whose " +
+      "verification sms lands in public view, the most disposable " +
+      "layer of the onboarding stack and the one platforms are best " +
+      "at rejecting. community-sourced name, first pass at it through " +
+      "a cache: re-verify in a browser at the next cadence tick. a " +
+      "public number is not a verdict about anyone reading it",
+  },
+  {
+    provider: "Crypton.sh",
+    tier: "retail_front",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "listed among the leading no-kyc crypto-paid phone number " +
+      "services in 2026 (privacynumber comparison page, read " +
+      "2026-10-15); own site not read in this pass",
+    market: "global retail",
+    payment_privacy: "crypto-paid per the community comparison",
+    citation:
+      "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
+      "https://crypton.sh/ (to verify)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass (kycnot-style " +
+      "directories, no-kyc roundups): verify against the provider's " +
+      "own pages before relying on any field of this row",
+  },
+  {
+    provider: "Silent.link",
+    tier: "retail_front",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "listed among the leading no-kyc crypto-paid phone number " +
+      "services (privacynumber comparison page, read 2026-10-15); " +
+      "own site not read in this pass",
+    market: "global retail",
+    payment_privacy: "crypto-paid per the community comparison",
+    citation:
+      "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
+      "https://silent.link/ (to verify)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: verify against the " +
+      "provider's own pages before relying",
+  },
+  {
+    provider: "JMP.chat",
+    tier: "retail_front",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "listed among the leading no-kyc crypto-paid phone number " +
+      "services (privacynumber comparison page, read 2026-10-15); " +
+      "xmpp-based number service; own docs not read in this pass",
+    market: "global retail",
+    payment_privacy: "crypto-paid per the community comparison",
+    citation:
+      "https://privacynumber.io/fa/compare/ (read 2026-10-15), " +
+      "https://jmp.chat/ (to verify)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: xmpp-based, popular " +
+      "in the f-droid and mobile-linux crowd, which is exactly why " +
+      "community sources surface names seo misses. verify against its " +
+      "own pages before relying",
   },
 ];

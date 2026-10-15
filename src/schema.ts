@@ -2,7 +2,10 @@
 // registry: tier, kyc posture, kyc scope, market, cited and dated.
 // unknown is first-class; observed absence is recorded as observed
 // absence, never as proof
-export const SCHEMA_VERSION = "0.2.0";
+export const SCHEMA_VERSION = "0.3.0";
+// 0.3.0: public_sms_receiver tier. the phone analog of a public
+// disposable inbox: shared numbers whose sms land in public view, the
+// most disposable layer of the onboarding stack
 // 0.2.0: payment_privacy joins the axes, because the payment rail is
 // part of the anonymity path: crypto buys with no card trail are a
 // different fact from card billing, whatever the kyc posture says
@@ -13,7 +16,9 @@ export type ProviderTier =
   // consumer storefront selling numbers, often riding upstream pipes
   | "retail_front"
   // end-user product with an app in front
-  | "consumer_app";
+  | "consumer_app"
+  // shared public numbers whose incoming sms are publicly visible
+  | "public_sms_receiver";
 
 export type KycPosture =
   // documents or identity verification required for the covered scope
