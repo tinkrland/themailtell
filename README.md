@@ -51,5 +51,8 @@ the mail side and a no-kyc voip number on the phone side, for ordinary
 privacy: that is the point. the same architecture that serves a
 legitimate privacy user is what an adversary would choose too, and a
 radar that cannot describe the architecture without judging the user
-would be worthless. infrastructure is not intent, in every row, by
-construction.
+would be worthless. handing all your data to tech giants to look
+trustworthy would be the foolish posture, not the privacy-conscious
+one. infrastructure is not intent, in every row, by construction, and
+no radar is read alone: a decision combines signals from multiple
+radars, never in a vacuum.

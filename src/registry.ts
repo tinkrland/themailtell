@@ -45,10 +45,11 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "privacy use",
     market: "global retail",
     payment_privacy:
-      "owner-reported crypto acceptance (2026-10-15), not found on the " +
-      "homepage, pricing, or terms pages read today; verify at checkout " +
-      "before relying. terms page mentions card chargebacks, so card " +
-      "billing exists alongside whatever the checkout accepts",
+      "crypto accepted, owner-verified at checkout: the owner paid by " +
+      "card on 2026-10-15 and the checkout offered crypto alongside " +
+      "cards. the homepage, pricing, and terms pages read the same day " +
+      "do not mention it, which is its own honest note: the payment " +
+      "rail is visible at the register, not in the marketing",
     citation:
       "https://fanytel.com/blog/virtual-number-for-whatsapp-2025 and " +
       "https://fanytel.com/blog/f/virtual-number-for-telegram (read " +
@@ -60,9 +61,9 @@ export const VOIP_REGISTRY: VoipProviderEntry[] = [
       "identity verification requirements anywhere in it, purchase to " +
       "invoice to instant delivery, which strengthens the no_kyc " +
       "reading from a primary source. crypto acceptance is " +
-      "owner-reported and stays marked as such until verified at " +
-      "checkout. observed absence with dates, never proof of absence " +
-      "everywhere in the flow",
+      "owner-reported then owner-verified at checkout the same day. " +
+      "observed absence with dates is still the rule elsewhere in the " +
+      "registry: never proof of absence everywhere in the flow",
   },
   {
     provider: "TextNow",
