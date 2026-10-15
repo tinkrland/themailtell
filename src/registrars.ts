@@ -254,5 +254,39 @@ export const REGISTRAR_REGISTRY: BoutiqueRegistrarEntry[] = [
       "grace periods. resolution is not dns: web3 names need browser " +
       "or extension support, so their abuse path runs through where " +
       "they do resolve",
+  },  {
+    registrar: "FlokiNET",
+    kind: "consumer_boutique",
+    sale_pattern: "unknown",
+    payment_privacy: "accepts cryptocurrency (privacy community vetting)",
+    ownership_note:
+      "iceland-based, founded by activists and digital rights " +
+      "advocates (its own site, read via research pass 2026-10-15)",
+    citation:
+      "https://flokinet.is/privacy (own site, read 2026-10-15), " +
+      "http://www.privacytools.io/private-hosting (community vetting)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "community-sourced: privacy-first iceland registrar-host, " +
+      "bitcoin-accepting, surfaced by the privacytools crowd rather " +
+      "than seo. not a buffer: the registrant owns the domain, " +
+      "unlike njalla. records architecture, never the user",
+  },
+  {
+    registrar: "1984 Hosting",
+    kind: "consumer_boutique",
+    sale_pattern: "unknown",
+    payment_privacy: "accepts cryptocurrency (privacy community vetting)",
+    ownership_note: "iceland-based privacy-first host and registrar (not verified in this pass)",
+    citation:
+      "http://www.privacytools.io/private-hosting (community vetting, " +
+      "read 2026-10-15), https://1984.hosting/ (to verify)",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "unverified seed from the community pass: the iceland privacy " +
+      "registrar named by the privacytools crowd. verify against its " +
+      "own pages before relying on any field of this row",
   },
 ];
