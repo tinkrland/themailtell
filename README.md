@@ -42,6 +42,12 @@ the scale, anchored by the rows:
   identity for the user: open-loop prepaid debit (what the market
   calls a visa gift card, spendable anywhere the network is accepted)
   and merchant-locked retail gift cards
+- **the walk-up tier**: consumer self-serve, bought preloaded by one
+  person with no business involved: cash vouchers at retail
+  registers (moneypak, paysafecard), crypto-bought vouchers with no
+  account (bitrefill, cryptorefills). the consumer tier the registry
+  exists for, and the rung below it: retail-bought does not mean
+  no tether (netspend carries a full us identity)
 - **registration only**: a billing zip to make online use work, which
   is friction, not an identity
 - **limited-kyc ladder**: regulator-capped anonymous-ish tiers with a

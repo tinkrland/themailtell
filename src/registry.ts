@@ -426,5 +426,185 @@ export const INSTRUMENT_REGISTRY: PaymentInstrumentEntry[] = [
       "people walking them: remittances and gifts are the ordinary " +
       "use. own pages read via search cache with the bot checkpoint " +
       "recorded; re-verify in a browser at the next cadence tick",
+  },  {
+    instrument: "MoneyPak cash reload voucher",
+    provider: "Green Dot (MoneyPak)",
+    kind: "topup_voucher",
+    card_network: "unknown",
+    number_rotation: "static",
+    kyc_posture: "registration_only",
+    kyc_scope:
+      "must be 18 or older to buy (the issuer's own page); the " +
+      "redemption flow's verification steps were not read in this " +
+      "pass, and the product has historically carried them against " +
+      "fraud: verify at the issuer's site",
+    jurisdiction: "us",
+    issuance_scope: "us_resident_only",
+    funding_anonymity:
+      "the purest cash rail in the registry: bought with cash at " +
+      "thousands of retail registers ('in the prepaid or gift card " +
+      "section at thousands of stores nationwide', the issuer's own " +
+      "help page), the cashier loads the cash plus a fee onto the " +
+      "pack, and the pack loads to nearly any card. the instrument " +
+      "is cash in voucher form",
+    caps: "register fee plus load limits, to verify on the issuer's site",
+    citation:
+      "https://www.greendot.com/for-people/our-products/moneypak and " +
+      "https://www.greendot.com/helpcenter/send-and-receive-money/send-or-receive-money-with-mone " +
+      "(issuer's own pages, read via research pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named with the consumer self-serve group: the walk-up " +
+      "tier, bought preloaded by one person at a register, no " +
+      "business required. historically abused for phone scams " +
+      "precisely because it is cash-shaped, which is an ecosystem " +
+      "fact about the rail; the row records the rail and its fee, " +
+      "never the people at the register",
+  },
+  {
+    instrument: "Netspend prepaid card",
+    provider: "Netspend",
+    kind: "regulated_prepaid_wallet",
+    card_network: "mastercard",
+    number_rotation: "static",
+    kyc_posture: "full_kyc",
+    kyc_scope:
+      "identity verification at account opening per the issuer's own " +
+      "cardholder agreement ('opening a card account (identity " +
+      "verification)'; 'registration/activation'), and identifying " +
+      "information including ssn and proof of residency per " +
+      "third-party reporting (cardrates, read 2026-10-15)",
+    jurisdiction: "us",
+    issuance_scope: "us_resident_only",
+    funding_anonymity:
+      "retail-bought and reloadable but bank-regulated: the tether " +
+      "is a full us identity, the same class as pockets and pockit " +
+      "on their ladders. reloadable with cash at retail partners, " +
+      "which is why it sits in the consumer self-serve group despite " +
+      "the kyc",
+    caps: "not read in this pass",
+    citation:
+      "https://www.prepaidlf.com/terms/750379324.pdf (issuer's own " +
+      "cardholder agreement, section 2: opening a card account, " +
+      "identity verification), https://www.cardrates.com/advice/prepaid-cards-without-ssn/ " +
+      "(third-party), netspend.com to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named with the consumer group, and a useful contrast " +
+      "row: retail walk-up purchase does not mean no tether, this " +
+      "one carries a full identity. read via the issuer's own " +
+      "agreement pdf and third-party reporting, not the product " +
+      "site, so verified_on stays null until netspend.com is read " +
+      "directly",
+  },
+  {
+    instrument: "Paysafecard voucher",
+    provider: "Paysafecard",
+    kind: "topup_voucher",
+    card_network: "unknown",
+    number_rotation: "static",
+    kyc_posture: "registration_only",
+    kyc_scope:
+      "no account needed to pay with the voucher ('minimizing the " +
+      "personal information you share online since you don't need a " +
+      "bank account', the provider's own support page); the " +
+      "optional account unlocks more and carries threshold " +
+      "verification at limits, to verify",
+    jurisdiction: "eu and uk core, us variant now a closed-loop gift card",
+    issuance_scope: "global",
+    funding_anonymity:
+      "the european cash rail: vouchers bought with cash at retail, " +
+      "spent by entering a 16-digit pin, no bank account at any " +
+      "step. the us product was reshaped into a closed-loop gift " +
+      "card per the provider's own us page, a jurisdictional shape " +
+      "change recorded as such",
+    caps: "denomination-limited at retail; aggregation and higher limits move to the account tier",
+    citation:
+      "https://www.paysafecard.com/en-gb/support/question/128/ and " +
+      "https://www.paysafecard.com/en-us/ (provider's own pages, " +
+      "read via research pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the most cash-adjacent european instrument and the standard " +
+      "answer to 'pay online with cash' across the eu. gaming and " +
+      "beting sites read it natively, and the same cash-shape that " +
+      "makes it useful for privacy makes it the classic scam " +
+      "collection rail, an ecosystem fact about cash itself. the " +
+      "row records the voucher, never the buyer",
+  },
+  {
+    instrument: "Bitrefill crypto voucher",
+    provider: "Bitrefill",
+    kind: "topup_voucher",
+    card_network: "unknown",
+    number_rotation: "unknown",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "the no-account structure per third-party review: an email for " +
+      "delivery and a wallet for payment is the full interaction " +
+      "(cryptorefills comparison and cryptolinks review, read " +
+      "2026-10-15); surprise kyc checks on some larger orders are " +
+      "reported and recorded. provider's own pages not read in this " +
+      "pass",
+    jurisdiction: "global service",
+    issuance_scope: "global",
+    funding_anonymity:
+      "crypto in, gift cards and prepaid refills out: the tether " +
+      "sits at the on-ramp where the crypto was bought, never at " +
+      "bitrefill. the catalog spans gift cards, esims, mobile " +
+      "top-ups and now a card product per third-party reviews",
+    caps: "blockchain fees plus a spread baked into the price per third-party review",
+    citation:
+      "https://cryptolinks.com/970/bitrefill and " +
+      "https://www.cryptorefills.com/en/insights/best-bitrefill-alternatives-crypto-gift-cards " +
+      "(third-party reviews, read 2026-10-15), bitrefill.com to verify",
+    verified_on: null,
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named with the consumer group, and the reference " +
+      "standard for spending crypto directly per reviewers. " +
+      "recorded at the third-party ceiling: verified_on stays null " +
+      "until the provider's own pages are read. the row records the " +
+      "voucher rail and its spread, never the spender",
+  },
+  {
+    instrument: "CryptoRefills voucher",
+    provider: "CryptoRefills",
+    kind: "topup_voucher",
+    card_network: "unknown",
+    number_rotation: "unknown",
+    kyc_posture: "no_kyc_observed",
+    kyc_scope:
+      "the provider's own insight pages: no kyc for standard " +
+      "purchases across gift cards, mobile top-up, esim, flights " +
+      "and stays; verification only requested when spending exceeds " +
+      "the daily or monthly limits the provider sets",
+    jurisdiction: "global service, catalog thins outside north america and western europe",
+    issuance_scope: "global",
+    funding_anonymity:
+      "the composite chain in one instrument: pay with bitcoin, " +
+      "usdt, usdc or 100+ coins and receive a prepaid mastercard " +
+      "gift card by email (the provider's own how-to), plus gift " +
+      "cards, refills and esims. crypto in, open-loop network prepaid " +
+      "out: the full tether migration from on-ramp to usable card " +
+      "in one purchase, and the row records the chain",
+    caps: "denominations vary by country and provider per the provider's own insight pages",
+    citation:
+      "https://www.cryptorefills.com/en/insights/buy-mastercard-with-crypto " +
+      "and /en/insights/cryptorefills-vs-bitrefill (provider's own " +
+      "pages, read via research pass 2026-10-15)",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "owner-named with the consumer group, verified from its own " +
+      "pages: the explicit no-kyc-for-standard-purchases claim is " +
+      "the provider's, recorded as observed with the date, and the " +
+      "limits-triggered verification is recorded in the same row. " +
+      "people buy gift cards with crypto for reasons as ordinary as " +
+      "avoiding an exchange withdrawal; the row records rails, " +
+      "never the buyer",
   },
 ];
