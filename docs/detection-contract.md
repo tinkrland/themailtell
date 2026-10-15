@@ -39,3 +39,15 @@ the scale itself is restated: essentially no instrument in payment
 rails is truly no-kyc, because AML reaches card programs, e-money
 issuers and on-ramps almost everywhere. what varies is where the
 identity sits. the rows record that.
+
+## scope, stated plainly
+
+this radar is not crime detection. global AML regimes and the teams
+that run them have money laundering handled, and nothing in these
+rows implies law-breaking by an issuer or a user. the scope is the
+consumer tos-bypass read for turnkey saas: what a signup form
+verifies, what a single consumer can swap out at each field without
+breaking a law, and what the saas side already does about it. the
+rows record capability and counter-capability, never accusation, and
+the composite decision layer reads this radar alongside the provider,
+voip and tld radars, never in a vacuum.
