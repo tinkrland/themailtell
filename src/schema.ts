@@ -1,7 +1,11 @@
 // theccradar schema 0.1.0. the entry shape for the payment instrument
 // registry: what identity stands behind the money, cited and dated.
 // unknown is first-class; registration is never conflated with kyc
-export const SCHEMA_VERSION = "0.3.0";
+export const SCHEMA_VERSION = "0.4.0";
+// 0.4.0: issuance_scope and the prepaid_card_platform kind. the
+// capability privacy.com cannot serve: a us-issued card available to
+// a non-us person, which is how global users reach us-card-only
+// onboarding, mostly in good faith
 // 0.3.0: crypto_funded_prepaid_card kind. fixed-balance virtual cards
 // bought with crypto and no kyc: the community's no-kyc spending
 // instrument, distinct from gift cards and bank-tethered masking
@@ -24,6 +28,9 @@ export type InstrumentKind =
   | "web3_direct_payment"
   // fixed-balance virtual cards bought with crypto, no issuer kyc
   | "crypto_funded_prepaid_card"
+  // balance-funded virtual card platforms with their own identity
+  // check: privacy.com-like issuers, some global
+  | "prepaid_card_platform"
   | "unknown";
 
 export type CardNetwork =
@@ -39,6 +46,14 @@ export type NumberRotation =
   | "static"
   // no card number at all
   | "none"
+  | "unknown";
+
+export type IssuanceScope =
+  | "us_resident_only"
+  | "uk_resident_only"
+  | "india_resident_only"
+  // a us-issued card a non-us person can hold
+  | "global"
   | "unknown";
 
 export type KycPosture =
@@ -67,6 +82,8 @@ export interface PaymentInstrumentEntry {
   // what is verified, by whom, under which regulation
   kyc_scope: string;
   jurisdiction: string;
+  // who can actually hold the instrument: the global-us-card axis
+  issuance_scope: IssuanceScope;
   // funding rails as published: cash, cards, bank, crypto
   funding_anonymity: string;
   // load and spend caps as published, with their source

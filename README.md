@@ -48,6 +48,20 @@ the scale, anchored by the rows:
 - **full kyc**: bank-linked instruments whose issuer verified the
   account holder before the first charge
 
+## the global us-card axis
+
+privacy.com needs a us bank and, through it, a us identity. the
+capability it cannot serve is a us-issued card in a non-us person's
+hands, and that capability exists: halocard's own description is
+'us-issued visa cards to consumers and businesses around the world',
+identity-checked with a national id and a selfie rather than an
+american ssn, funded by card, bank, stablecoin or crypto, with a
+billing address the holder sets per card. the issuer's own words
+carry the point: 'merchants verify against what you set, not against
+where you live'. most of these holders are in good faith: they are
+paying for us services unavailable in their region. the axis records
+the capability and its tether, never a verdict about the holder.
+
 ## the india case
 
 RBI's master directions on prepaid payment instruments built the
