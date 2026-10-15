@@ -19,6 +19,15 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_transparency_report",
     abuse_posture: "mainstream_abuse_desk",
     jurisdiction: "Switzerland",
+    account_age_signal:
+      "domain era bounds the account: @proton.me addresses cannot " +
+      "predate the proton.me domain introduction (proton's own " +
+      "announcement, proton.me/news/protonme-domain, 2022) and " +
+      "@protonmail.com goes back to the 2014 launch. free accounts " +
+      "are deleted after 12 consecutive months of inactivity " +
+      "(proton's own inactive-accounts page and terms), so a live " +
+      "free account has been active within the last year. bounds, " +
+      "never dates: no public account-creation timestamp exists",
     citation:
       "https://proton.me/mail/security (zero-access architecture), " +
       "https://proton.me/legal/transparency (transparency report), " +
@@ -29,7 +38,11 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
       "read from proton's own pages on 2026-10-14: zero-access plus " +
       "end-to-end encryption between proton accounts, aggregate swiss " +
       "legal-order statistics published. sits at the privacy end of the " +
-      "radar on architecture, not on the character of its users",
+      "radar on architecture, not on the character of its users. " +
+      "a fresh free proton.me and a 2014 protonmail.com account read " +
+      "differently on the age axis: era bounds plus the inactivity " +
+      "policy are the honest signal, and neither says anything about " +
+      "the person behind the address",
   },
   {
     provider: "Tuta",
@@ -38,6 +51,11 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "unknown",
     abuse_posture: "mainstream_abuse_desk",
     jurisdiction: "Germany",
+    account_age_signal:
+      "domain era bounds the account: @tutanota.com addresses go back " +
+      "to the 2014 launch, @tuta.com addresses postdate the 2023 " +
+      "rebrand (itsfoss reporting, read 2026-10-15). bounds, never " +
+      "dates: no public account-creation timestamp exists",
     citation:
       "https://euvetted.com/de/p/tuta (hannover-based, end-to-end " +
       "encrypted, own german data centre, formerly tutanota), " +
@@ -60,6 +78,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_transparency_report",
     abuse_posture: "mainstream_abuse_desk",
     jurisdiction: "United States",
+    account_age_signal:
+      "no public account-age signal found in this pass; unknown",
     citation:
       "https://www.mailhippo.com/blog/are-emails-encrypted/ (gmail " +
       "encrypts in transit and at rest, but not end to end, read " +
@@ -80,6 +100,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_transparency_report",
     abuse_posture: "mainstream_abuse_desk",
     jurisdiction: "United States",
+    account_age_signal:
+      "no public account-age signal found in this pass; unknown",
     citation:
       "https://www.microsoft.com/en-us/corporate-responsibility/reports/government-requests/customer-data " +
       "(government requests for customer data report, covering " +
@@ -100,6 +122,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "unknown",
     abuse_posture: "mainstream_abuse_desk",
     jurisdiction: "United States",
+    account_age_signal:
+      "no public account-age signal found in this pass; unknown",
     citation: "https://www.yahoo.com/everywhere/ (to verify)",
     verified_on: null,
     recheck_cadence_days: 180,
@@ -117,6 +141,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_none",
     abuse_posture: "disposable_by_design",
     jurisdiction: "United States",
+    account_age_signal:
+      "meaningless by design: inboxes are created when email first arrives (mailinator's own documentation), so an inbox's age is the age of its last arrival",
     citation:
       "https://www.mailinator.com/documentation/docs/core/publicmailbox/ " +
       "(read 2026-10-14: 'all inboxes and emails are in the public " +
@@ -137,6 +163,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_none",
     abuse_posture: "disposable_by_design",
     jurisdiction: "unknown",
+    account_age_signal:
+      "meaningless by design: self-destructing addresses",
     citation:
       "https://10minutemail.com/vi/what-is-temporary-email and " +
       "https://10minutemail.com/throwaway-email (read 2026-10-14: " +
@@ -156,6 +184,8 @@ export const PROVIDER_REGISTRY: ProviderRiskEntry[] = [
     transparency: "publishes_none",
     abuse_posture: "disposable_by_design",
     jurisdiction: "unknown",
+    account_age_signal:
+      "meaningless by design: short-lived disposable inboxes",
     citation:
       "https://www.guerrillamail.com/ (read 2026-10-14: disposable " +
       "email service, 'keeping your real inbox safe and clean', " +
