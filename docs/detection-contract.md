@@ -72,3 +72,14 @@ fresh .com is not dirty by novelty, and moneyed registrants can be
 nefarious too. no axis is read in a vacuum, and none of this is class
 profiling: the radar records economics and gates, never verdicts
 about people.
+
+## schema 0.5.0: registry storefronts
+
+the registrar table gains registry_storefront: the registry itself
+selling direct to consumers and cutting out registrars. gen.xyz is
+the case: the same organization sets .xyz wholesale pricing and sells
+retail, which is vertical integration the boutique-registrar framing
+misses. a registry storefront's claims about its own fraud screening
+are recorded as claims, and a storefront that is cloudflare-gated to
+automated reads says so, with the read that did land carried with its
+date and its route.

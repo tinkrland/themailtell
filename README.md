@@ -58,6 +58,10 @@ six storefronts, each a different point on the human path:
   shows the price-pressure signal absent
 - **Njalla**: the extreme privacy path, a buffer that owns the domain
   for the registrant, bitcoin-friendly
+- **gen.xyz**: the .xyz registry's own storefront, vertically
+  integrated on both sides of the wholesale/retail line ($15/yr flat
+  default, via research pass 2026-10-15; cloudflare-gated to direct
+  reads)
 
 a registrar row records architecture and economics, never a verdict
 about its customers.

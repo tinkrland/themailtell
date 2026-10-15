@@ -141,5 +141,33 @@ export const REGISTRAR_REGISTRY: BoutiqueRegistrarEntry[] = [
       "trail entirely. privacy is a right that shields dissidents " +
       "and abusers alike; the row records the architecture, never " +
       "the user",
+  },  {
+    registrar: "gen.xyz",
+    kind: "registry_storefront",
+    sale_pattern: "unknown",
+    payment_privacy: "not verified in this pass",
+    ownership_note:
+      "the .xyz registry's own direct storefront: the same organization " +
+      "sets the tld's wholesale pricing and sells retail here, so the " +
+      ".xyz row in the tld registry and this storefront row trace to " +
+      "one registry",
+    citation:
+      "https://gen.xyz/pricing (default price $15 per year to create, " +
+      "renew, and transfer, including the icann fee; read via research " +
+      "pass 2026-10-15), https://gen.xyz/account/knowledgebase.php " +
+      "(registry claims fraud detection software against malicious " +
+      "registrations). gen.xyz is cloudflare-gated to direct automated " +
+      "reads today, observed 2026-10-15, so both readings came through " +
+      "a search cache, re-verify in a browser",
+    verified_on: "2026-10-15",
+    recheck_cadence_days: 90,
+    honest_notes:
+      "the registry storefront: one organization on both sides of the " +
+      "wholesale/retail line for .xyz, which is the vertical integration " +
+      "the boutique-registrar story misses. its own knowledgebase " +
+      "claims fraud detection software, and that claim is recorded as a " +
+      "claim. standard .xyz sales are open registration: no content " +
+      "requirements, no mandatory audits, standard gtld policy, per " +
+      "tld-list's verified reading today",
   },
 ];
