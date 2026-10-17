@@ -645,6 +645,13 @@ export const SYSTEM_MINTED_ACCOUNT_ENTRIES: SystemMintedAccountEntry[] = [
       "over, is not eligible for extension, must not be converted to a " +
       "paid subscription, and remains the property of microsoft. lab " +
       "login is the global administrator account provided for the lab. " +
+      "the lab host's student guide (helix by xtremelabs, the moc " +
+      "hosted lab environment) documents the credential lifetimes: " +
+      "cloud credentials are assigned for the duration of the lab " +
+      "session and the cloud resources are torn down and deleted when " +
+      "the session ends, while an office 365 or dynamics 365 tenant " +
+      "credential expires 14 to 25 days from the date it is assigned, " +
+      "so the tenant can outlive the class itself " +
       "tenant names vary per class, so no narrower match is possible. " +
       "whether a training-tenant user completes a third-party " +
       "work-or-school sign-in depends on the relying party: the v2 " +
@@ -675,7 +682,15 @@ export const SYSTEM_MINTED_ACCOUNT_ENTRIES: SystemMintedAccountEntry[] = [
       "(microsoft learn labs that cannot be signed into with a personal " +
       "account use hosted lab tenants), " +
       "https://learn.microsoft.com/en-us/answers/questions/5775291/ " +
-      "(microsoft learn sandbox runs on the learner's own account)",
+      "(microsoft learn sandbox runs on the learner's own account), " +
+      "https://labs.xtremelabs.io/LabManuals/Guides/Self-ServiceStudentGuidetoXLabs_HTML5.pdf " +
+      "(cloud credentials assigned for the duration of the lab session, " +
+      "cloud resources torn down and deleted when the session ends; " +
+      "o365 and d365 tenant credentials expire 14 to 25 days from " +
+      "assignment), " +
+      "https://labs.xtremelabs.io/Account/FAQ " +
+      "(helix by xtremelabs is the microsoft official courseware " +
+      "hosted lab environment)",
     verified_on: "2026-10-17",
   },
 ];
