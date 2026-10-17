@@ -392,3 +392,20 @@ test("dkim probe ignores wildcard txt answers that are not dkim records", () => 
   });
   assert.ok(!r.signals.some((s) => s.name === "dkim_forwarder_selector"));
 });
+
+test("qwiklabs lab accounts: ephemeral account domain, oauth-honest", () => {
+  const r = analyze(ev("student-31-abc1234@qwiklabs.net"));
+  const s = r.signals.find((x) => x.name === "ephemeral_account_domain");
+  assert.ok(s && s.strength === "recognized");
+  assert.ok(s!.detail.includes("deleted when the session ends"));
+  assert.ok(s!.detail.includes("never an ownership or age bound"));
+  assert.match(s!.source, /^builtin-list\//);
+  // the class a disposable list misses: no disposable hit fires
+  assert.ok(!r.signals.some((x) => x.name === "disposable_service"));
+  assert.equal(r.state, "signals_present");
+});
+
+test("ephemeral account domains match by suffix like every list", () => {
+  const r = analyze(ev("student-1-abcdef@lab.qwiklabs.net"));
+  assert.ok(r.signals.some((x) => x.name === "ephemeral_account_domain"));
+});

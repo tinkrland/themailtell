@@ -518,6 +518,74 @@ export function domainMatchesList(domain: string, list: string[]): boolean {
   return list.some((e) => d === e || d.endsWith("." + e));
 }
 
+// ephemeral account domains: providers that mint full, functional
+// accounts on a session timer. the class a disposable list misses and
+// an sso gate blesses: while the account lives it is real, receives
+// mail, and signs in with the provider's own single sign-on, so both
+// checks pass. the account is deleted when the session that granted
+// it ends. provenance is per row: verified_on is the date the
+// citations were read, and owner-reported facts are marked as such.
+export interface EphemeralAccountEntry {
+  // host or parent domain of the account addresses
+  match: string;
+  provider: string;
+  // what mints the accounts, what they can do, and when they die
+  note: string;
+  citations: string;
+  // the date the citations were read
+  verified_on: string;
+}
+
+export const EPHEMERAL_ACCOUNT_ENTRIES: EphemeralAccountEntry[] = [
+  {
+    match: "qwiklabs.net",
+    provider: "google skills (qwiklabs) lab account",
+    note:
+      "every lab start mints a fresh student-xx-xxxxxx@qwiklabs.net " +
+      "google account, real while the lab runs: it signs into the " +
+      "cloud console, and gmail labs grant it a gmail inbox for the " +
+      "duration. it is a full google account, so sign-in-with-google " +
+      "on a third-party site completes normally: owner-reported, " +
+      "confirmed first-hand 2026-10-17. most gates read an oauth pass " +
+      "as a trust indicator and miss the class entirely, because the " +
+      "domain is also on no public disposable list. when the lab " +
+      "timer ends the account and its project are deleted, and mail " +
+      "sent to the address stops existing; the deletion on lab end is " +
+      "the provider's own documentation",
+    citations:
+      "https://www.skills.google/focuses/2794?parent=catalog (make " +
+      "sure to use the student-xx-xxxxxx@qwiklabs.net email to sign " +
+      "in; the temporary project and everything it contains gets " +
+      "deleted when the lab ends), " +
+      "https://support.google.com/qwiklabs/answer/9134811 (temporary " +
+      "credentials are created after start lab), " +
+      "https://www.skills.google/focuses/5825?parent=catalog (gmail " +
+      "labs give new temporary credentials that access gmail for the " +
+      "duration of the lab)",
+    verified_on: "2026-10-17",
+  },
+];
+
+// returns the ephemeral account entry a domain belongs to, longest
+// suffix match wins, same convention as the mx entry lookup
+export function findEphemeralAccount(
+  domain: string
+): EphemeralAccountEntry | undefined {
+  const h = domain.toLowerCase().trim().replace(/\.$/, "");
+  let best: EphemeralAccountEntry | undefined;
+  let bestLen = -1;
+  for (const e of EPHEMERAL_ACCOUNT_ENTRIES) {
+    const m = e.match.toLowerCase();
+    if (h === m || h.endsWith("." + m)) {
+      if (m.length > bestLen) {
+        best = e;
+        bestLen = m.length;
+      }
+    }
+  }
+  return best;
+}
+
 // returns which disposable source matched, for provenance and staleness
 export function findDisposableSource(
   domain: string

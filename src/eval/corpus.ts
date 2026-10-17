@@ -149,6 +149,16 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "ephemeral-oauth-account",
+    arrangement: "temporary full account on a session-timer domain",
+    scope: "domain",
+    evidence: ev("student-31-abc1234@qwiklabs.net"),
+    expectations: {
+      expect_signals: ["ephemeral_account_domain"],
+      expect_state: "signals_present",
+    },
+  },
+  {
     id: "mixed-routing",
     arrangement: "mixed mail infrastructure",
     scope: "provider_infrastructure",

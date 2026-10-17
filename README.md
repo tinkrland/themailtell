@@ -26,6 +26,10 @@ verdict. the relevant evidence concerns the mail service and routing behind it.
 ## what themailtell does
 
 - detects known disposable-mail services and known masking/relay services.
+- detects ephemeral account domains: providers that mint full accounts on a
+  session timer, real enough to complete sign-in-with-google while they live
+  and deleted when the session ends. an oauth pass there is never an
+  ownership or age bound.
 - examines public mail-routing evidence, including mx records and recognized
   provider infrastructure, to identify custom-domain forwarding where possible.
 - identifies address-syntax features that may indicate aliases, without silently
