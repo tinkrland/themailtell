@@ -34,7 +34,7 @@ export function domainIntelligence(domain: string): Signal[] {
       scope: "domain",
       source: `builtin-list/${PROVIDER_TABLE_VERSION}`,
       observed_at: systemMinted.verified_on,
-      strength: "recognized",
+      strength: systemMinted.signal_strength ?? "recognized",
       detail: systemMinted.signal_detail,
     });
   }

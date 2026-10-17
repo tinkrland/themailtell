@@ -169,6 +169,16 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
+    id: "system-minted-entra-suggestive",
+    arrangement: "entra initial domain: durable tenants and disposable wwl training tenants share the suffix",
+    scope: "domain",
+    evidence: ev("admin@wwlxazurems123456.onmicrosoft.com"),
+    expectations: {
+      expect_signals_any_strength: ["system_minted_account_domain"],
+      expect_state: "signals_present",
+    },
+  },
+  {
     id: "mixed-routing",
     arrangement: "mixed mail infrastructure",
     scope: "provider_infrastructure",

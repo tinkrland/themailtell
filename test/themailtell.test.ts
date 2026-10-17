@@ -417,6 +417,18 @@ test("gtempaccount: google shadow accounts carry the class signal", () => {
   assert.equal(r.state, "signals_present");
 });
 
+test("entra initial domains stay suggestive: the class cannot be isolated", () => {
+  for (const addr of ["admin@wwlxazurems123456.onmicrosoft.com", "user@contoso.onmicrosoft.com"]) {
+    const r = analyze(ev(addr));
+    const s = r.signals.find((x) => x.name === "system_minted_account_domain");
+    assert.ok(s, addr);
+    assert.equal(s!.strength, "suggestive", addr);
+    assert.ok(s!.detail.includes("cannot establish the class"), addr);
+    assert.ok(s!.detail.includes("never a verdict"), addr);
+    assert.equal(r.state, "signals_present");
+  }
+});
+
 test("system-minted account domains match by suffix like every list", () => {
   for (const addr of ["student-1-abcdef@lab.qwiklabs.net", "x@shadow.gtempaccount.com"]) {
     const r = analyze(ev(addr));

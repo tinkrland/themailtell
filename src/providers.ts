@@ -16,6 +16,7 @@ import {
   COMMUNITY_DISPOSABLE_DOMAINS,
   COMMUNITY_LIST_SNAPSHOT,
 } from "./generated/disposable-domains.js";
+import type { EvidenceStrength } from "./schema.js";
 
 export type InfrastructureCategory =
   | "mailbox_capable"
@@ -540,6 +541,9 @@ export interface SystemMintedAccountEntry {
   citations: string;
   // the date the citations were read
   verified_on: string;
+  // rows whose domain cannot isolate the class emit suggestive instead.
+  // recognized is the default: the class fact is established at the domain.
+  signal_strength?: EvidenceStrength;
 }
 
 export const SYSTEM_MINTED_ACCOUNT_ENTRIES: SystemMintedAccountEntry[] = [
@@ -623,6 +627,55 @@ export const SYSTEM_MINTED_ACCOUNT_ENTRIES: SystemMintedAccountEntry[] = [
       "account; delete or associate them), " +
       "https://it.lbl.gov/googles-critical-security-alert-email/ " +
       "(gtempaccount sign-in alerts explained)",
+    verified_on: "2026-10-17",
+  },
+  {
+    match: "onmicrosoft.com",
+    provider: "entra initial domain (suggestive: class cannot be isolated)",
+    note:
+      "why this row is suggestive while the members above are recognized: " +
+      "the suffix onmicrosoft.com is assigned by microsoft entra itself to " +
+      "every tenant, durable corporate tenants and disposable training " +
+      "tenants alike, so the domain alone cannot establish which one an " +
+      "address belongs to. the documented disposable sub-class is " +
+      "microsoft worldwide learning training tenants: official " +
+      "instructor-led courses issue a full microsoft 365 e5 trial tenant " +
+      "per class, and the terms of use in the course lab instructions " +
+      "state the tenant cannot be used or accessed after the class is " +
+      "over, is not eligible for extension, must not be converted to a " +
+      "paid subscription, and remains the property of microsoft. lab " +
+      "login is the global administrator account provided for the lab. " +
+      "tenant names vary per class, so no narrower match is possible. " +
+      "whether a training-tenant user completes a third-party " +
+      "work-or-school sign-in depends on the relying party: the v2 " +
+      "common authority accepts work and school accounts from any tenant. " +
+      "microsoft learn sandboxes are a different mechanism and not a " +
+      "member: the sandbox activates a temporary azure subscription on " +
+      "the learner's own account, minting no new identity. azure devops " +
+      "demo generator and azuredevopslabs.com also use your own account",
+    signal_detail:
+      "entra initial domain: every microsoft entra tenant has a " +
+      "name.onmicrosoft.com address domain and most tenants are durable " +
+      "corporate identities, so the domain alone cannot establish the " +
+      "class. one documented disposable sub-class is microsoft's " +
+      "training tenants, deleted after the class. an address on this " +
+      "suffix is unusual and worth a look, never a verdict",
+    signal_strength: "suggestive",
+    citations:
+      "https://raw.githubusercontent.com/MicrosoftLearning/SC-300-Identity-and-Access-Administrator/master/Instructions/Labs/Lab_01_ManageUserRoles.md " +
+      "(WWL tenants terms of use: trial tenant, cannot be used or " +
+      "accessed after the class is over, not eligible for extension, " +
+      "must not be converted to a paid subscription, remain the " +
+      "property of microsoft; sign in using the global administrator " +
+      "account provided for this lab), " +
+      "https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols " +
+      "(the common authority accepts work and school accounts from any " +
+      "tenant), " +
+      "https://learn.microsoft.com/en-us/training/modules/accounting-distributions-invoice-validation-dyn365-finance-ops-pro-erp/ " +
+      "(microsoft learn labs that cannot be signed into with a personal " +
+      "account use hosted lab tenants), " +
+      "https://learn.microsoft.com/en-us/answers/questions/5775291/ " +
+      "(microsoft learn sandbox runs on the learner's own account)",
     verified_on: "2026-10-17",
   },
 ];

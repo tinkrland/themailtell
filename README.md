@@ -31,6 +31,9 @@ verdict. the relevant evidence concerns the mail service and routing behind it.
   sign-in-with-google while they live and are deleted when the session ends,
   and google auto-created shadow accounts (gtempaccount.com) the owner may
   not know exist. an oauth pass there is never an ownership or age bound.
+  entra initial domains (onmicrosoft.com) carry the same signal only
+  suggestively: every tenant has one, and microsoft's disposable training
+  tenants are a sub-class the domain cannot isolate.
 - examines public mail-routing evidence, including mx records and recognized
   provider infrastructure, to identify custom-domain forwarding where possible.
 - identifies address-syntax features that may indicate aliases, without silently
