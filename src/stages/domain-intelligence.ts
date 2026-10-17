@@ -11,7 +11,7 @@ import {
   PROVIDER_TABLE_AS_OF,
   domainMatchesList,
   findDisposableSource,
-  findEphemeralAccount,
+  findSystemMintedAccount,
 } from "../providers.js";
 import type { Signal } from "../schema.js";
 
@@ -27,19 +27,15 @@ export function domainIntelligence(domain: string): Signal[] {
       detail: "domain belongs to a known masking/relay service",
     });
   }
-  const ephemeral = findEphemeralAccount(domain);
-  if (ephemeral) {
+  const systemMinted = findSystemMintedAccount(domain);
+  if (systemMinted) {
     signals.push({
-      name: "ephemeral_account_domain",
+      name: "system_minted_account_domain",
       scope: "domain",
       source: `builtin-list/${PROVIDER_TABLE_VERSION}`,
-      observed_at: ephemeral.verified_on,
+      observed_at: systemMinted.verified_on,
       strength: "recognized",
-      detail:
-        `${ephemeral.provider}: accounts on this domain are minted ` +
-        "per session and deleted when the session ends. while they " +
-        "live they are full accounts that pass sso gates, so an " +
-        "oauth pass here is never an ownership or age bound",
+      detail: systemMinted.signal_detail,
     });
   }
   const disposable = findDisposableSource(domain);

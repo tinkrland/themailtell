@@ -149,12 +149,22 @@ export const CORPUS: CorpusCase[] = [
     },
   },
   {
-    id: "ephemeral-oauth-account",
+    id: "system-minted-qwiklabs",
     arrangement: "temporary full account on a session-timer domain",
     scope: "domain",
     evidence: ev("student-31-abc1234@qwiklabs.net"),
     expectations: {
-      expect_signals: ["ephemeral_account_domain"],
+      expect_signals: ["system_minted_account_domain"],
+      expect_state: "signals_present",
+    },
+  },
+  {
+    id: "system-minted-google-shadow",
+    arrangement: "auto-created persistent account the owner may not know exists",
+    scope: "domain",
+    evidence: ev("netid%example.edu@gtempaccount.com"),
+    expectations: {
+      expect_signals: ["system_minted_account_domain"],
       expect_state: "signals_present",
     },
   },

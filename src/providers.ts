@@ -518,25 +518,31 @@ export function domainMatchesList(domain: string, list: string[]): boolean {
   return list.some((e) => d === e || d.endsWith("." + e));
 }
 
-// ephemeral account domains: providers that mint full, functional
-// accounts on a session timer. the class a disposable list misses and
-// an sso gate blesses: while the account lives it is real, receives
-// mail, and signs in with the provider's own single sign-on, so both
-// checks pass. the account is deleted when the session that granted
-// it ends. provenance is per row: verified_on is the date the
-// citations were read, and owner-reported facts are marked as such.
-export interface EphemeralAccountEntry {
+// system-minted account domains: providers whose accounts a system
+// created, not a person. two flavors so far: session-minted lab
+// accounts, real full accounts that receive mail, sign in with the
+// provider's own sso, and are deleted when the session that granted
+// them ends; and auto-created shadow accounts, which a provider
+// provisioned in the background and whose owner may not even know
+// they exist. an sso gate passes in both cases, which is exactly why
+// gates that read oauth as a trust indicator miss the class. the
+// disposable lists do not carry these domains either. provenance is
+// per row: verified_on is the date the citations were read, and
+// owner-reported facts are marked as such.
+export interface SystemMintedAccountEntry {
   // host or parent domain of the account addresses
   match: string;
   provider: string;
   // what mints the accounts, what they can do, and when they die
   note: string;
+  // the signal detail this row emits; the honest counter per class
+  signal_detail: string;
   citations: string;
   // the date the citations were read
   verified_on: string;
 }
 
-export const EPHEMERAL_ACCOUNT_ENTRIES: EphemeralAccountEntry[] = [
+export const SYSTEM_MINTED_ACCOUNT_ENTRIES: SystemMintedAccountEntry[] = [
   {
     match: "qwiklabs.net",
     provider: "google skills (qwiklabs) lab account",
@@ -546,12 +552,24 @@ export const EPHEMERAL_ACCOUNT_ENTRIES: EphemeralAccountEntry[] = [
       "cloud console, and gmail labs grant it a gmail inbox for the " +
       "duration. it is a full google account, so sign-in-with-google " +
       "on a third-party site completes normally: owner-reported, " +
-      "confirmed first-hand 2026-10-17. most gates read an oauth pass " +
-      "as a trust indicator and miss the class entirely, because the " +
-      "domain is also on no public disposable list. when the lab " +
-      "timer ends the account and its project are deleted, and mail " +
-      "sent to the address stops existing; the deletion on lab end is " +
-      "the provider's own documentation",
+      "confirmed first-hand 2026-10-17, including the owner's actual " +
+      "use for it, satisfying gates that demand connecting a google " +
+      "calendar without exposing the real account. most gates read " +
+      "an oauth pass as a trust indicator and miss the class " +
+      "entirely, because the domain is also on no public disposable " +
+      "list. when the lab timer ends the account and its project " +
+      "are deleted, and mail sent to the address stops existing; the " +
+      "deletion on lab end is the provider's own documentation. " +
+      "supply routes are wider than skills.google alone: coursera " +
+      "and pluralsight deliver their google cloud labs through " +
+      "embedded qwiklabs, so the same student accounts mint from " +
+      "those platforms too",
+    signal_detail:
+      "google skills (qwiklabs) lab account: accounts on this domain " +
+      "are minted per session and deleted when the session ends. " +
+      "while they live they are full google accounts that complete " +
+      "sign-in-with-google, so an oauth pass here is never an " +
+      "ownership or age bound",
     citations:
       "https://www.skills.google/focuses/2794?parent=catalog (make " +
       "sure to use the student-xx-xxxxxx@qwiklabs.net email to sign " +
@@ -561,20 +579,63 @@ export const EPHEMERAL_ACCOUNT_ENTRIES: EphemeralAccountEntry[] = [
       "credentials are created after start lab), " +
       "https://www.skills.google/focuses/5825?parent=catalog (gmail " +
       "labs give new temporary credentials that access gmail for the " +
-      "duration of the lab)",
+      "duration of the lab), " +
+      "https://support.google.com/qwiklabs/answer/16918189 (run labs " +
+      "in incognito to prevent conflicts between your personal " +
+      "account and your temporary student account), " +
+      "https://help.pluralsight.com/help/learn-google-cloud-with-qwiklabs " +
+      "(pluralsight's google cloud labs run on embedded qwiklabs), " +
+      "https://www.coursera.support/s/article/learner-000001503 " +
+      "(coursera's google cloud assignments use qwiklabs)",
+    verified_on: "2026-10-17",
+  },
+  {
+    match: "gtempaccount.com",
+    provider: "google shadow account",
+    note:
+      "created automatically by google, not chosen by a person: when " +
+      "a google workspace share or invite reached a personal " +
+      "non-google address, google provisioned a full google account " +
+      "at @gtempaccount.com tied to that address, and the owner may " +
+      "not know the account exists. university it desks document the " +
+      "class and the confusion it causes: sign-in warnings for " +
+      "accounts users never created, with the original address " +
+      "percent-encoded into the local part. unlike the qwiklabs " +
+      "member this class is not ephemeral: the account persists " +
+      "until the user converts or deletes it, so the class fact is " +
+      "provenance, not lifetime. a system-created account completes " +
+      "sign-in-with-google like any google account. google's own " +
+      "documentation of the mechanism is sparse; the citations are " +
+      "university google workspace knowledge bases",
+    signal_detail:
+      "google shadow account: accounts on this domain were " +
+      "auto-created by google when a workspace share hit a " +
+      "non-google address, and the owner may not know the account " +
+      "exists. they are persistent full google accounts that " +
+      "complete sign-in-with-google, so an oauth pass here is never " +
+      "an ownership or age bound",
+    citations:
+      "https://ithelp.brown.edu/kb/articles/warning-notices-about-gtempaccounts " +
+      "(sign-in warnings about @gtempaccount.com accounts users did " +
+      "not create, updated 2021-07-09), " +
+      "https://services.udel.edu/TDClient/32/Portal/KB/ArticleDet?ID=277 " +
+      "(conflicting gtemp accounts are independent of the workspace " +
+      "account; delete or associate them), " +
+      "https://it.lbl.gov/googles-critical-security-alert-email/ " +
+      "(gtempaccount sign-in alerts explained)",
     verified_on: "2026-10-17",
   },
 ];
 
-// returns the ephemeral account entry a domain belongs to, longest
+// returns the system-minted account entry a domain belongs to, longest
 // suffix match wins, same convention as the mx entry lookup
-export function findEphemeralAccount(
+export function findSystemMintedAccount(
   domain: string
-): EphemeralAccountEntry | undefined {
+): SystemMintedAccountEntry | undefined {
   const h = domain.toLowerCase().trim().replace(/\.$/, "");
-  let best: EphemeralAccountEntry | undefined;
+  let best: SystemMintedAccountEntry | undefined;
   let bestLen = -1;
-  for (const e of EPHEMERAL_ACCOUNT_ENTRIES) {
+  for (const e of SYSTEM_MINTED_ACCOUNT_ENTRIES) {
     const m = e.match.toLowerCase();
     if (h === m || h.endsWith("." + m)) {
       if (m.length > bestLen) {

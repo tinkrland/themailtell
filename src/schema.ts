@@ -1,11 +1,14 @@
 // schema.ts — versioned result format.
 // required concepts, deliberately not invented probabilities.
 
-export const SCHEMA_VERSION = "0.4.0";
-// 0.4.0: ephemeral_account_domain, for providers that mint full
-// accounts on a session timer: real accounts that pass sso gates
-// while they live and are deleted when the session ends. an oauth
-// pass on such a domain is never an ownership or age bound.
+export const SCHEMA_VERSION = "0.5.0";
+// 0.5.0: ephemeral_account_domain renamed system_minted_account_domain.
+// the 0.4.0 name was named after its first member: session-minted lab
+// accounts deleted when the session ends. the second member, google's
+// auto-created shadow accounts at gtempaccount.com, is persistent, so
+// the class truth is provenance, not ephemerality: a system created
+// the account, no person chose it. both members complete sso gates,
+// so an oauth pass on such a domain is never an ownership or age bound.
 
 // the signal kinds. each is independent evidence, never a verdict.
 export type SignalName =
@@ -15,7 +18,7 @@ export type SignalName =
   | "mailbox_capable_infrastructure" // mx maps to a service that hosts inboxes
   | "gateway_infrastructure" // mx maps to a recognized security gateway
   | "shared_mail_infrastructure" // mx maps to infrastructure shared by forwarding and mailbox products; no arrangement claim
-  | "ephemeral_account_domain" // accounts on this domain are minted per session and deleted when the session ends; full accounts that pass sso checks while they live
+  | "system_minted_account_domain" // accounts on this domain were created by a system, not chosen by a person: session-minted lab accounts or auto-created shadow accounts; they complete sso gates
   | "alias_syntax" // address-level syntax that may indicate an alias
   | "spf_forwarding_include" // the domain's spf includes a known forwarding service (send-path evidence, separate from mx)
   | "dkim_forwarder_selector" // a dkim selector matching a known forwarding convention publishes signing keys for the domain
